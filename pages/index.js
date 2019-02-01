@@ -78,7 +78,7 @@ class Index extends React.Component {
       <div>
         <p>Hello Next.js</p>
         <button onClick={this.spawnAgent}>Spawn Agent</button>
-        <Stage width={200} height={500} style={{ backgroundColor: "red" }}>
+        <Stage width={500} height={500}>
           <Layer>
             {Object.keys(entities).map(id => {
               const e = entities[id];
