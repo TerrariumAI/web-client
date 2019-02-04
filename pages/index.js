@@ -3,14 +3,12 @@ import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
 
 const {
-  ObserveRequestMessage,
-  EntityUpdateMessage,
-  SpawnAgentMessage
+  SpectateRequest,
+  SpawnAgentRequest,
+  AgentActionRequest,
+  EntityUpdate
 } = require("../lib/proto/simulation_pb");
 const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
-
-// if (!process.browser) {
-// }
 
 class Index extends React.Component {
   state = {
@@ -29,9 +27,9 @@ class Index extends React.Component {
       simService
     });
 
-    var request = new ObserveRequestMessage();
+    var request = new SpectateRequest();
     var metadata = {};
-    var stream = simService.observe(request, metadata);
+    var stream = simService.spectate(request, metadata);
 
     stream.on("data", this.onData);
 
@@ -47,11 +45,12 @@ class Index extends React.Component {
 
   onData = response => {
     // Parse the data
-    const id = response.getId();
+    console.log(response.getEntity().get);
+    const id = response.getEntity().getId();
     const entity = {
-      class: response.getClass(),
-      x: response.getX(),
-      y: response.getY()
+      class: response.getEntity().getClass(),
+      x: response.getEntity().getX(),
+      y: response.getEntity().getY()
     };
 
     // update state
@@ -65,8 +64,22 @@ class Index extends React.Component {
   spawnAgent = () => {
     const { simService } = this.state;
 
-    var req = new SpawnAgentMessage();
-    simService.spawnAgent(req, {}, function(err, response) {
+    var req = new SpawnAgentRequest();
+    simService.spawnAgent(req, {}, (err, response) => {
+      console.log(err);
+      console.log(response);
+      this.setState({
+        currentAgentId: response.getId()
+      });
+    });
+  };
+
+  agentAction = action => () => {
+    const { simService, currentAgentId } = this.state;
+    var req = new AgentActionRequest();
+    req.setId(currentAgentId);
+    req.setAction(action);
+    simService.agentAction(req, {}, (err, response) => {
       console.log(err);
       console.log(response);
     });
@@ -78,6 +91,7 @@ class Index extends React.Component {
       <div>
         <p>Hello Next.js</p>
         <button onClick={this.spawnAgent}>Spawn Agent</button>
+        <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button>
         <Stage width={500} height={500}>
           <Layer>
             {Object.keys(entities).map(id => {
