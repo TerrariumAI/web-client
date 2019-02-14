@@ -10,9 +10,11 @@ const {
 } = require("../lib/proto/simulation_pb");
 const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
 
+const world_center_offset = 400;
+
 class Index extends React.Component {
   state = {
-    entities: {}
+    cells: {}
   };
 
   async componentDidMount() {
@@ -45,59 +47,73 @@ class Index extends React.Component {
 
   onData = response => {
     // Parse the data
-    console.log(response.getEntity().get);
-    const id = response.getEntity().getId();
-    const entity = {
-      class: response.getEntity().getClass(),
-      x: response.getEntity().getX(),
-      y: response.getEntity().getY()
+    const cellUpdate = {
+      x: response.getX(),
+      y: response.getY(),
+      occupant: response.getOccupant()
     };
+    console.log("Response: ", response);
+    console.log("CellUpdate: ", cellUpdate);
 
     // update state
-    const entities = { ...this.state.entities };
-    entities[id] = entity;
+    const cells = { ...this.state.cells };
+    cells[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate;
     this.setState({
-      entities
+      cells
     });
   };
 
-  spawnAgent = () => {
-    const { simService } = this.state;
+  // spawnAgent = () => {
+  //   const { simService } = this.state;
 
-    var req = new SpawnAgentRequest();
-    simService.spawnAgent(req, {}, (err, response) => {
-      console.log(err);
-      console.log(response);
-      this.setState({
-        currentAgentId: response.getId()
-      });
-    });
-  };
+  //   var req = new SpawnAgentRequest();
+  //   simService.spawnAgent(req, {}, (err, response) => {
+  //     console.log(err);
+  //     console.log(response);
+  //     this.setState({
+  //       currentAgentId: response.getId()
+  //     });
+  //   });
+  // };
 
-  agentAction = action => () => {
-    const { simService, currentAgentId } = this.state;
-    var req = new AgentActionRequest();
-    req.setId(currentAgentId);
-    req.setAction(action);
-    simService.agentAction(req, {}, (err, response) => {
-      console.log(err);
-      console.log(response);
-    });
-  };
+  // agentAction = action => () => {
+  //   const { simService, currentAgentId } = this.state;
+  //   var req = new AgentActionRequest();
+  //   req.setId(currentAgentId);
+  //   req.setAction(action);
+  //   simService.agentAction(req, {}, (err, response) => {
+  //     console.log(err);
+  //     console.log(response);
+  //   });
+  // };
 
   render() {
-    const { entities } = this.state;
+    const { cells } = this.state;
+    console.log(cells);
     return (
       <div>
         <p>Hello Next.js</p>
-        <button onClick={this.spawnAgent}>Spawn Agent</button>
-        <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button>
+        {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
+        <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
         <Stage width={500} height={500}>
           <Layer>
-            {Object.keys(entities).map(id => {
-              const e = entities[id];
+            {Object.keys(cells).map(id => {
+              const c = cells[id];
+              let fill = "white";
+              if (c.occupant === "AGENT") {
+                fill = "blue";
+              } else if (c.occupant === "FOOD") {
+                fill = "green";
+              }
+
               return (
-                <Rect x={e.x} y={e.y} width={25} height={25} fill={"green"} />
+                <Rect
+                  x={world_center_offset + c.x * 10}
+                  y={world_center_offset + c.y * 10}
+                  width={10}
+                  height={10}
+                  fill={fill}
+                />
               );
             })}
           </Layer>
