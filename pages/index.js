@@ -4,6 +4,7 @@ import { Stage, Layer, Rect, Text } from "react-konva";
 
 const {
   SpectateRequest,
+  SubscribeToRegionRequest,
   SpawnAgentRequest,
   AgentActionRequest,
   EntityUpdate
@@ -11,6 +12,8 @@ const {
 const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
 
 const world_center_offset = 400;
+
+const client_id = "test_id";
 
 class Index extends React.Component {
   state = {
@@ -23,13 +26,10 @@ class Index extends React.Component {
       null,
       null
     );
-
-    // add service to state
-    this.setState({
-      simService
-    });
+    this.simService = simService;
 
     var request = new SpectateRequest();
+    request.setId(client_id);
     var metadata = {};
     var stream = simService.spectate(request, metadata);
 
@@ -45,6 +45,38 @@ class Index extends React.Component {
     });
   }
 
+  spectateRegion = (x, y) => {
+    if (x === null || y === null) {
+      console.log("spectateRegion(): NULL VALUES");
+      return;
+    }
+    const { simService } = this;
+    // Subscribe to region
+    var request = new SubscribeToRegionRequest();
+    request.setId(client_id);
+    request.setX(x);
+    request.setY(y);
+    var metadata = {};
+    const call = simService.subscribeToRegion(
+      request,
+      metadata,
+      (err, resp) => {
+        console.log(resp);
+      }
+    );
+    call.on("status", status => {
+      console.log(status);
+    });
+  };
+
+  spectateRegion_TEST = () => {
+    console.log("SPEC GTEST");
+    this.spectateRegion(1, 1);
+    this.spectateRegion(-1, 1);
+    this.spectateRegion(1, -1);
+    this.spectateRegion(-1, -1);
+  };
+
   onData = response => {
     // Parse the data
     const cellUpdate = {
@@ -52,9 +84,12 @@ class Index extends React.Component {
       y: response.getY(),
       occupant: response.getOccupant()
     };
+    console.log("Cell update: ", cellUpdate);
+    if (cellUpdate.occupant === "WORLD_RESET") {
+      this.setState({ cells: {} });
+    }
     console.log("Response: ", response);
     console.log("CellUpdate: ", cellUpdate);
-
     // update state
     const cells = { ...this.state.cells };
     cells[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate;
@@ -93,6 +128,7 @@ class Index extends React.Component {
     return (
       <div>
         <p>Hello Next.js</p>
+        <button onClick={this.spectateRegion_TEST}>Spectate</button>
         {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
         <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
         <Stage width={500} height={500}>
@@ -109,7 +145,7 @@ class Index extends React.Component {
               return (
                 <Rect
                   x={world_center_offset + c.x * 10}
-                  y={world_center_offset + c.y * 10}
+                  y={world_center_offset + -c.y * 10}
                   width={10}
                   height={10}
                   fill={fill}
