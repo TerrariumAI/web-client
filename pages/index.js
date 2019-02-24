@@ -5,15 +5,20 @@ import { Stage, Layer, Rect, Text } from "react-konva";
 const {
   SpectateRequest,
   SubscribeToRegionRequest,
-  SpawnAgentRequest,
-  AgentActionRequest,
-  EntityUpdate
+  SpawnAgentRequest
 } = require("../lib/proto/simulation_pb");
 const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
 
-const world_center_offset = 400;
-
+const CELLS_IN_REGION = 10;
+const CELL_SIZE = 20;
+const WORLD_CENTER_OFFSET = CELLS_IN_REGION * CELL_SIZE;
+const CANVAS_SIZE = CELLS_IN_REGION * 2 * CELL_SIZE;
 const client_id = "test_id";
+
+const LEFT_KEY_CODE = 37;
+const RIGHT_KEY_CODE = 39;
+const UP_KEY_CODE = 38;
+const DOWN_KEY_CODE = 40;
 
 class Index extends React.Component {
   state = {
@@ -27,6 +32,10 @@ class Index extends React.Component {
       null
     );
     this.simService = simService;
+    this.targetRegion = {
+      x: 1,
+      y: 1
+    };
 
     var request = new SpectateRequest();
     request.setId(client_id);
@@ -43,9 +52,22 @@ class Index extends React.Component {
     stream.on("end", function(end) {
       // stream end signal
     });
+
+    // Add key listener
+    document.addEventListener("keydown", this._handleKeyDown);
   }
 
-  spectateRegion = (x, y) => {
+  _handleKeyDown = event => {
+    switch (event.keyCode) {
+      case LEFT_KEY_CODE:
+        this.state.activePopover.hide();
+        break;
+      default:
+        break;
+    }
+  };
+
+  subscribeToRegion = (x, y) => {
     if (x === null || y === null) {
       console.log("spectateRegion(): NULL VALUES");
       return;
@@ -69,12 +91,11 @@ class Index extends React.Component {
     });
   };
 
-  spectateRegion_TEST = () => {
-    console.log("SPEC GTEST");
-    this.spectateRegion(1, 1);
-    this.spectateRegion(-1, 1);
-    this.spectateRegion(1, -1);
-    this.spectateRegion(-1, -1);
+  subscribeToRegion_TEST = () => {
+    this.subscribeToRegion(1, 1);
+    this.subscribeToRegion(-1, 1);
+    this.subscribeToRegion(1, -1);
+    this.subscribeToRegion(-1, -1);
   };
 
   onData = response => {
@@ -84,12 +105,10 @@ class Index extends React.Component {
       y: response.getY(),
       occupant: response.getOccupant()
     };
-    console.log("Cell update: ", cellUpdate);
     if (cellUpdate.occupant === "WORLD_RESET") {
       this.setState({ cells: {} });
     }
-    console.log("Response: ", response);
-    console.log("CellUpdate: ", cellUpdate);
+    console.log(`[CellUpdate] X: ${cellUpdate.x} Y: ${cellUpdate.y} `);
     // update state
     const cells = { ...this.state.cells };
     cells[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate;
@@ -111,16 +130,9 @@ class Index extends React.Component {
   //   });
   // };
 
-  // agentAction = action => () => {
-  //   const { simService, currentAgentId } = this.state;
-  //   var req = new AgentActionRequest();
-  //   req.setId(currentAgentId);
-  //   req.setAction(action);
-  //   simService.agentAction(req, {}, (err, response) => {
-  //     console.log(err);
-  //     console.log(response);
-  //   });
-  // };
+  handleKeyPress = event => {
+    console.log(event.key);
+  };
 
   render() {
     const { cells } = this.state;
@@ -128,26 +140,34 @@ class Index extends React.Component {
     return (
       <div>
         <p>Hello Next.js</p>
-        <button onClick={this.spectateRegion_TEST}>Spectate</button>
+        <button onClick={this.subscribeToRegion_TEST}>Spectate</button>
         {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
         <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
-        <Stage width={500} height={500}>
+        <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
           <Layer>
+            <Rect
+              x={0}
+              y={0}
+              width={CANVAS_SIZE}
+              height={CANVAS_SIZE}
+              fill={"#32ff7e"}
+            />
+
             {Object.keys(cells).map(id => {
               const c = cells[id];
               let fill = "white";
               if (c.occupant === "AGENT") {
-                fill = "blue";
+                fill = "#18dcff";
               } else if (c.occupant === "FOOD") {
-                fill = "green";
+                fill = "#3ae374";
               }
 
               return (
                 <Rect
-                  x={world_center_offset + c.x * 10}
-                  y={world_center_offset + -c.y * 10}
-                  width={10}
-                  height={10}
+                  x={WORLD_CENTER_OFFSET + c.x * CELL_SIZE}
+                  y={WORLD_CENTER_OFFSET + -c.y * CELL_SIZE}
+                  width={CELL_SIZE}
+                  height={CELL_SIZE}
                   fill={fill}
                 />
               );
