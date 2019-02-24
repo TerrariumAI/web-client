@@ -1,6 +1,7 @@
 import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
+import uuidv1 from "uuid/v1";
 
 const {
   SpectateRequest,
@@ -13,7 +14,6 @@ const CELLS_IN_REGION = 10;
 const CELL_SIZE = 20;
 const WORLD_CENTER_OFFSET = CELLS_IN_REGION * CELL_SIZE;
 const CANVAS_SIZE = CELLS_IN_REGION * 2 * CELL_SIZE;
-const client_id = "test_id";
 
 const LEFT_KEY_CODE = 37;
 const RIGHT_KEY_CODE = 39;
@@ -26,6 +26,10 @@ class Index extends React.Component {
   };
 
   async componentDidMount() {
+    // TODO - Change this to the user id
+    this.clientId = uuidv1();
+
+    console.log("CLIENT ID: ", this.clientId);
     var simService = new SimulationClient(
       "http://" + window.location.hostname + ":8080",
       null,
@@ -38,7 +42,7 @@ class Index extends React.Component {
     };
 
     var request = new SpectateRequest();
-    request.setId(client_id);
+    request.setId(this.clientId);
     var metadata = {};
     var stream = simService.spectate(request, metadata);
 
@@ -75,7 +79,7 @@ class Index extends React.Component {
     const { simService } = this;
     // Subscribe to region
     var request = new SubscribeToRegionRequest();
-    request.setId(client_id);
+    request.setId(this.clientId);
     request.setX(x);
     request.setY(y);
     var metadata = {};
@@ -160,6 +164,8 @@ class Index extends React.Component {
                 fill = "#18dcff";
               } else if (c.occupant === "FOOD") {
                 fill = "#3ae374";
+              } else if (c.occupant === "EMPTY") {
+                fill = "rgba(0, 0, 0, 0)";
               }
 
               return (
