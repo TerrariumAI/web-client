@@ -37,7 +37,7 @@ class Index extends React.Component {
     // console.log("CLIENT ID: ", this.clientId);
 
     var todoService = new ToDoServiceClient(
-      "http://127.0.0.1:9091/",
+      "http://192.168.99.100:30224",
       null,
       null
     );
