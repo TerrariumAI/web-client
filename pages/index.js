@@ -9,11 +9,17 @@ import axios from "axios";
 //   Create
 // } = require("../pkg/api/v1/simulation/todo-service_pb");
 const {
-  CreateRequest,
-  Create,
-  ToDo
-} = require("../pkg/api/v1/todo-service_pb");
-const { ToDoServiceClient } = require("../pkg/api/v1/todo-service_grpc_web_pb");
+  CreateAgentRequest,
+  CreateSpectatorRequest,
+  SubscribeSpectatorToRegionRequest,
+  Region,
+  Agent
+} = require("../pkg/api/v1/simulation-service_pb");
+const {
+  SimulationServiceClient
+} = require("../pkg/api/v1/simulation-service_grpc_web_pb");
+
+const API_VERSION = "v1";
 
 const CELLS_IN_REGION = 10;
 const CELL_SIZE = 20;
@@ -36,59 +42,56 @@ class Index extends React.Component {
 
     // console.log("CLIENT ID: ", this.clientId);
 
-    var todoService = new ToDoServiceClient(
-      "http://192.168.99.100:30224",
+    var simService = new SimulationServiceClient(
+      "http://localhost:9091",
       null,
       null
     );
 
-    console.log(todoService);
+    // var agent = new Agent();
+    // agent.setX(0);
+    // agent.setY(0);
+    // var createAgentRequest = new CreateAgentRequest();
+    // createAgentRequest.setApi("v1");
+    // createAgentRequest.setAgent(agent);
 
-    var todo = new ToDo();
-    todo.setTitle("JS Created ToDo");
-    todo.setDescription("This todo was created with JS client");
-    var createRequest = new CreateRequest();
-    createRequest.setApi("v1");
-    createRequest.setTodo(todo);
-
-    var response = await todoService.create(
-      createRequest,
-      {},
-      (err, response) => {
-        if (err) {
-          console.log(err.code);
-          console.log(err.message);
-        } else {
-          console.log(response);
-        }
-      }
-    );
+    // var response = await simService.createAgent(
+    //   createAgentRequest,
+    //   {},
+    //   (err, response) => {
+    //     if (err) {
+    //       console.log(err.code);
+    //       console.log(err.message);
+    //     } else {
+    //       console.log(response);
+    //     }
+    //   }
+    // );
 
     // console.log(response);
 
-    // this.simService = simService;
-    // this.targetRegion = {
-    //   x: 1,
-    //   y: 1
-    // };
+    this.simService = simService;
+    this.targetRegion = {
+      x: 1,
+      y: 1
+    };
 
-    // var spectator = new Spectator();
-    // spectator.setId(this.clientId);
-    // var request = new CreateSpectatorRequest();
-    // request.setSpectator(spectator);
-    // var metadata = {};
-    // var stream = simService.createSpectator(request, metadata);
+    var request = new CreateSpectatorRequest();
+    request.setApi(API_VERSION);
+    request.setId(this.clientId);
+    var metadata = {};
+    var stream = simService.createSpectator(request, metadata);
 
-    // stream.on("data", this.onData);
+    stream.on("data", this.onData);
 
-    // stream.on("status", function(status) {
-    //   console.log(status.code);
-    //   console.log(status.details);
-    //   console.log(status.metadata);
-    // });
-    // stream.on("end", function(end) {
-    //   // stream end signal
-    // });
+    stream.on("status", function(status) {
+      console.log(status.code);
+      console.log(status.details);
+      console.log(status.metadata);
+    });
+    stream.on("end", function(end) {
+      // stream end signal
+    });
 
     // Add key listener
     document.addEventListener("keydown", this._handleKeyDown);
@@ -111,14 +114,15 @@ class Index extends React.Component {
     }
     const { simService } = this;
     // Subscribe to region
-    var request = new SubscribeSpectatorRequest();
-    request.setSpectator(this.clientId);
     var region = new Region();
     region.setX(x);
     region.setY(y);
+    var request = new SubscribeSpectatorToRegionRequest();
+    request.setApi(API_VERSION);
+    request.setId(this.clientId);
     request.setRegion(region);
     var metadata = {};
-    const call = simService.subscribeSpectator(
+    const call = simService.subscribeSpectatorToRegion(
       request,
       metadata,
       (err, resp) => {
@@ -135,16 +139,6 @@ class Index extends React.Component {
     this.subscribeToRegion(-1, 1);
     this.subscribeToRegion(1, -1);
     this.subscribeToRegion(-1, -1);
-    // var req = new SpawnAgentRequest();
-    // req.setX(0);
-    // req.setY(0);
-    // this.simService.spawnAgent(req, {}, (err, response) => {
-    //   console.log(err);
-    //   console.log(response);
-    //   this.setState({
-    //     currentAgentId: response.getId()
-    //   });
-    // });
   };
 
   onData = response => {
