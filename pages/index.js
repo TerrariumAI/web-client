@@ -2,13 +2,18 @@ import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import uuidv1 from "uuid/v1";
+import axios from "axios";
 
+// const {
+//   CreateRequest,
+//   Create
+// } = require("../pkg/api/v1/simulation/todo-service_pb");
 const {
-  SpectateRequest,
-  SubscribeToRegionRequest,
-  SpawnAgentRequest
-} = require("../lib/proto/simulation_pb");
-const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
+  CreateRequest,
+  Create,
+  ToDo
+} = require("../pkg/api/v1/todo-service_pb");
+const { ToDoServiceClient } = require("../pkg/api/v1/todo-service_grpc_web_pb");
 
 const CELLS_IN_REGION = 10;
 const CELL_SIZE = 20;
@@ -29,33 +34,61 @@ class Index extends React.Component {
     // TODO - Change this to the user id
     this.clientId = uuidv1();
 
-    console.log("CLIENT ID: ", this.clientId);
-    var simService = new SimulationClient(
-      "http://" + window.location.hostname + ":8080",
+    // console.log("CLIENT ID: ", this.clientId);
+
+    var todoService = new ToDoServiceClient(
+      "http://127.0.0.1:9091/",
       null,
       null
     );
-    this.simService = simService;
-    this.targetRegion = {
-      x: 1,
-      y: 1
-    };
 
-    var request = new SpectateRequest();
-    request.setId(this.clientId);
-    var metadata = {};
-    var stream = simService.spectate(request, metadata);
+    console.log(todoService);
 
-    stream.on("data", this.onData);
+    var todo = new ToDo();
+    todo.setTitle("JS Created ToDo");
+    todo.setDescription("This todo was created with JS client");
+    var createRequest = new CreateRequest();
+    createRequest.setApi("v1");
+    createRequest.setTodo(todo);
 
-    stream.on("status", function(status) {
-      console.log(status.code);
-      console.log(status.details);
-      console.log(status.metadata);
-    });
-    stream.on("end", function(end) {
-      // stream end signal
-    });
+    var response = await todoService.create(
+      createRequest,
+      {},
+      (err, response) => {
+        if (err) {
+          console.log(err.code);
+          console.log(err.message);
+        } else {
+          console.log(response);
+        }
+      }
+    );
+
+    // console.log(response);
+
+    // this.simService = simService;
+    // this.targetRegion = {
+    //   x: 1,
+    //   y: 1
+    // };
+
+    // var spectator = new Spectator();
+    // spectator.setId(this.clientId);
+    // var request = new CreateSpectatorRequest();
+    // request.setSpectator(spectator);
+    // var metadata = {};
+    // var stream = simService.createSpectator(request, metadata);
+
+    // stream.on("data", this.onData);
+
+    // stream.on("status", function(status) {
+    //   console.log(status.code);
+    //   console.log(status.details);
+    //   console.log(status.metadata);
+    // });
+    // stream.on("end", function(end) {
+    //   // stream end signal
+    // });
 
     // Add key listener
     document.addEventListener("keydown", this._handleKeyDown);
@@ -78,16 +111,18 @@ class Index extends React.Component {
     }
     const { simService } = this;
     // Subscribe to region
-    var request = new SubscribeToRegionRequest();
-    request.setId(this.clientId);
-    request.setX(x);
-    request.setY(y);
+    var request = new SubscribeSpectatorRequest();
+    request.setSpectator(this.clientId);
+    var region = new Region();
+    region.setX(x);
+    region.setY(y);
+    request.setRegion(region);
     var metadata = {};
-    const call = simService.subscribeToRegion(
+    const call = simService.subscribeSpectator(
       request,
       metadata,
       (err, resp) => {
-        console.log(resp);
+        console.log("Sub response: ", resp);
       }
     );
     call.on("status", status => {
@@ -100,6 +135,16 @@ class Index extends React.Component {
     this.subscribeToRegion(-1, 1);
     this.subscribeToRegion(1, -1);
     this.subscribeToRegion(-1, -1);
+    // var req = new SpawnAgentRequest();
+    // req.setX(0);
+    // req.setY(0);
+    // this.simService.spawnAgent(req, {}, (err, response) => {
+    //   console.log(err);
+    //   console.log(response);
+    //   this.setState({
+    //     currentAgentId: response.getId()
+    //   });
+    // });
   };
 
   onData = response => {
