@@ -43,7 +43,7 @@ class Index extends React.Component {
     // console.log("CLIENT ID: ", this.clientId);
 
     var simService = new SimulationServiceClient(
-      "http://localhost:9091",
+      "http://192.168.99.100:30224",
       null,
       null
     );
@@ -121,7 +121,7 @@ class Index extends React.Component {
     request.setApi(API_VERSION);
     request.setId(this.clientId);
     request.setRegion(region);
-    var metadata = {};
+    var metadata = { "auth-token": "TEST_AUTH_TOKEN" };
     const call = simService.subscribeSpectatorToRegion(
       request,
       metadata,
