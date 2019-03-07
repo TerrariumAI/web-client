@@ -2,12 +2,16 @@ import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import uuidv1 from "uuid/v1";
-import axios from "axios";
+import { compose } from "redux";
+import { withStyles } from "@material-ui/core";
+import withNavBar from "../lib/withNavBar";
 
-// const {
-//   CreateRequest,
-//   Create
-// } = require("../pkg/api/v1/simulation/todo-service_pb");
+const styles = ({ palette, spacing, breakpoints }) => ({
+  root: {
+    flexGrow: 1
+  }
+});
+
 const {
   CreateAgentRequest,
   CreateSpectatorRequest,
@@ -224,4 +228,7 @@ class Index extends React.Component {
   }
 }
 
-export default Index;
+export default compose(
+  withNavBar({ useBuffer: true }),
+  withStyles(styles)
+)(Index);
