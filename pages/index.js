@@ -1,10 +1,12 @@
 import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
+import { withStyles, Typography } from "@material-ui/core";
 import uuidv1 from "uuid/v1";
+import { connect } from "react-redux";
 import { compose } from "redux";
-import { withStyles } from "@material-ui/core";
 import withNavBar from "../lib/withNavBar";
+import { withFirebase, firebaseConnect } from "react-redux-firebase";
 
 const styles = ({ palette, spacing, breakpoints }) => ({
   root: {
@@ -47,33 +49,12 @@ class Index extends React.Component {
     // console.log("CLIENT ID: ", this.clientId);
 
     var simService = new SimulationServiceClient(
-      "http://192.168.99.100:30224",
+      "http://127.0.0.1:9091",
       null,
       null
     );
 
-    // var agent = new Agent();
-    // agent.setX(0);
-    // agent.setY(0);
-    // var createAgentRequest = new CreateAgentRequest();
-    // createAgentRequest.setApi("v1");
-    // createAgentRequest.setAgent(agent);
-
-    // var response = await simService.createAgent(
-    //   createAgentRequest,
-    //   {},
-    //   (err, response) => {
-    //     if (err) {
-    //       console.log(err.code);
-    //       console.log(err.message);
-    //     } else {
-    //       console.log(response);
-    //     }
-    //   }
-    // );
-
-    // console.log(response);
-
+    // Create spectator
     this.simService = simService;
     this.targetRegion = {
       x: 1,
@@ -101,6 +82,36 @@ class Index extends React.Component {
     document.addEventListener("keydown", this._handleKeyDown);
   }
 
+  createAgent = async () => {
+    const { firebase } = this.props;
+    const { simService } = this;
+    const TEST_POS = 0;
+    // Get current user's auth token
+    firebase
+      .auth()
+      .currentUser.getIdToken()
+      .then(token => {
+        // Create the new agent
+        var agent = new Agent();
+        agent.setX(TEST_POS);
+        agent.setY(TEST_POS);
+        var request = new CreateAgentRequest();
+        request.setApi(API_VERSION);
+        request.setAgent(agent);
+        var metadata = { "auth-token": token };
+        const call = simService.createAgent(request, metadata, (err, resp) => {
+          console.log("Sub response: ", resp);
+        });
+        call.on("status", status => {
+          console.log("Create agent status: ", status);
+        });
+      })
+      .catch(err => {
+        console.error("Error refreshing id token", err);
+        return false;
+      });
+  };
+
   _handleKeyDown = event => {
     switch (event.keyCode) {
       case LEFT_KEY_CODE:
@@ -111,12 +122,13 @@ class Index extends React.Component {
     }
   };
 
-  subscribeToRegion = (x, y) => {
+  subscribeToRegion = async (x, y) => {
+    const { simService } = this;
+    // Sub to region call
     if (x === null || y === null) {
       console.log("spectateRegion(): NULL VALUES");
       return;
     }
-    const { simService } = this;
     // Subscribe to region
     var region = new Region();
     region.setX(x);
@@ -125,7 +137,7 @@ class Index extends React.Component {
     request.setApi(API_VERSION);
     request.setId(this.clientId);
     request.setRegion(region);
-    var metadata = { "auth-token": "TEST_AUTH_TOKEN" };
+    var metadata = {};
     const call = simService.subscribeSpectatorToRegion(
       request,
       metadata,
@@ -155,7 +167,11 @@ class Index extends React.Component {
     if (cellUpdate.occupant === "WORLD_RESET") {
       this.setState({ cells: {} });
     }
-    console.log(`[CellUpdate] X: ${cellUpdate.x} Y: ${cellUpdate.y} `);
+    console.log(
+      `[CellUpdate] X: ${cellUpdate.x} Y: ${cellUpdate.y} Occ: ${
+        cellUpdate.occupant
+      } `
+    );
     // update state
     const cells = { ...this.state.cells };
     cells[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate;
@@ -186,8 +202,9 @@ class Index extends React.Component {
     console.log(cells);
     return (
       <div>
-        <p>Hello Next.js</p>
+        <Typography variant="h4">Hello Twitch!</Typography>
         <button onClick={this.subscribeToRegion_TEST}>Spectate</button>
+        <button onClick={this.createAgent}>Create Agent</button>
         {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
         <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
         <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
@@ -230,5 +247,6 @@ class Index extends React.Component {
 
 export default compose(
   withNavBar({ useBuffer: true }),
-  withStyles(styles)
+  withStyles(styles),
+  withFirebase
 )(Index);

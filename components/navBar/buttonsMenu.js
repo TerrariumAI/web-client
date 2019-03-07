@@ -16,52 +16,7 @@ const styles = theme => ({
 
 const ButtonsMenu = ({ classes, isSignedIn }) => (
   <div style={{ display: 'inline-block' }}>
-    <Button
-      onClick={() => {
-        Router.push('/');
-      }}
-      color="inherit"
-    >
-      Home
-    </Button>
 
-    <Button
-      onClick={() => {
-        Router.push('/howItWorks');
-      }}
-      color="inherit"
-    >
-      How It Works
-    </Button>
-
-    <Button
-      onClick={() => {
-        Router.push('/information');
-      }}
-      color="inherit"
-    >
-      Information
-    </Button>
-
-    <Button
-      onClick={() => {
-        Router.push('/contact');
-      }}
-      color="inherit"
-    >
-      Contact Us
-    </Button>
-    <SwitchComponent show={isSignedIn}>
-      <Button
-        onClick={() => {
-          Router.push('/campaigns');
-        }}
-        color="inherit"
-        className={classes.myCampaignsButton}
-      >
-        My Campaigns
-      </Button>
-    </SwitchComponent>
   </div>
 );
 
