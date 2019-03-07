@@ -2,13 +2,24 @@ import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import uuidv1 from "uuid/v1";
+import axios from "axios";
 
+// const {
+//   CreateRequest,
+//   Create
+// } = require("../pkg/api/v1/simulation/todo-service_pb");
 const {
-  SpectateRequest,
-  SubscribeToRegionRequest,
-  SpawnAgentRequest
-} = require("../lib/proto/simulation_pb");
-const { SimulationClient } = require("../lib/proto/simulation_grpc_web_pb");
+  CreateAgentRequest,
+  CreateSpectatorRequest,
+  SubscribeSpectatorToRegionRequest,
+  Region,
+  Agent
+} = require("../pkg/api/v1/simulation-service_pb");
+const {
+  SimulationServiceClient
+} = require("../pkg/api/v1/simulation-service_grpc_web_pb");
+
+const API_VERSION = "v1";
 
 const CELLS_IN_REGION = 10;
 const CELL_SIZE = 20;
@@ -29,22 +40,47 @@ class Index extends React.Component {
     // TODO - Change this to the user id
     this.clientId = uuidv1();
 
-    console.log("CLIENT ID: ", this.clientId);
-    var simService = new SimulationClient(
-      "http://" + window.location.hostname + ":8080",
+    // console.log("CLIENT ID: ", this.clientId);
+
+    var simService = new SimulationServiceClient(
+      "http://192.168.99.100:30224",
       null,
       null
     );
+
+    // var agent = new Agent();
+    // agent.setX(0);
+    // agent.setY(0);
+    // var createAgentRequest = new CreateAgentRequest();
+    // createAgentRequest.setApi("v1");
+    // createAgentRequest.setAgent(agent);
+
+    // var response = await simService.createAgent(
+    //   createAgentRequest,
+    //   {},
+    //   (err, response) => {
+    //     if (err) {
+    //       console.log(err.code);
+    //       console.log(err.message);
+    //     } else {
+    //       console.log(response);
+    //     }
+    //   }
+    // );
+
+    // console.log(response);
+
     this.simService = simService;
     this.targetRegion = {
       x: 1,
       y: 1
     };
 
-    var request = new SpectateRequest();
+    var request = new CreateSpectatorRequest();
+    request.setApi(API_VERSION);
     request.setId(this.clientId);
     var metadata = {};
-    var stream = simService.spectate(request, metadata);
+    var stream = simService.createSpectator(request, metadata);
 
     stream.on("data", this.onData);
 
@@ -78,16 +114,19 @@ class Index extends React.Component {
     }
     const { simService } = this;
     // Subscribe to region
-    var request = new SubscribeToRegionRequest();
+    var region = new Region();
+    region.setX(x);
+    region.setY(y);
+    var request = new SubscribeSpectatorToRegionRequest();
+    request.setApi(API_VERSION);
     request.setId(this.clientId);
-    request.setX(x);
-    request.setY(y);
-    var metadata = {};
-    const call = simService.subscribeToRegion(
+    request.setRegion(region);
+    var metadata = { "auth-token": "TEST_AUTH_TOKEN" };
+    const call = simService.subscribeSpectatorToRegion(
       request,
       metadata,
       (err, resp) => {
-        console.log(resp);
+        console.log("Sub response: ", resp);
       }
     );
     call.on("status", status => {
