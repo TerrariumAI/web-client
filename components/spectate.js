@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import uuidv1 from "uuid/v1";
-import { withStyles, Typography } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import {
   CreateAgentRequest,
@@ -11,6 +11,7 @@ import {
   Agent
 } from "../pkg/api/v1/simulation-service_pb";
 import { SimulationServiceClient } from "../pkg/api/v1/simulation-service_grpc_web_pb";
+import { Grid, Paper, Typography } from "@material-ui/core";
 
 const API_VERSION = "v1";
 
@@ -27,12 +28,19 @@ const DOWN_KEY_CODE = 40;
 const styles = theme => ({
   root: {
     display: "flex"
+  },
+  stagePaperContainer: {
+    padding: 25
+  },
+  errorText: {
+    color: "red"
   }
 });
 
 class Spectate extends React.Component {
   state = {
-    cells: {}
+    cells: {},
+    error: ""
   };
 
   async componentDidMount() {
@@ -84,13 +92,19 @@ class Spectate extends React.Component {
       metadata,
       (err, resp) => {
         if (err) {
-          console.err("Error subscribing to region: ", err);
+          console.error("Error subscribing to region: ", err);
+          this.setState({
+            error: "Error sending subscribing to region call: " + err.message
+          });
         }
       }
     );
     call.on("status", status => {
       if (status.code !== 0) {
         console.error("Error subscribing to region: ", status);
+        this.setState({
+          error: "Error subscribing to region: " + status.message
+        });
       }
     });
   };
@@ -140,49 +154,59 @@ class Spectate extends React.Component {
   };
 
   render() {
-    const { cells } = this.state;
+    const { classes } = this.props;
+    const { cells, error } = this.state;
     return (
-      <div>
-        {/* <button onClick={this.subscribeToRegion_TEST}>Spectate</button> */}
-        {/* <button onClick={this.createAgent}>Create Agent</button> */}
-        {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
+      <Grid container justify="center">
+        <Typography className={classes.errorText} variant="subtitle1">
+          {error}
+        </Typography>
+        <Grid item>
+          <Paper className={classes.stagePaperContainer}>
+            <Typography variant="subtitle1">World View</Typography>
+
+            {/* <button onClick={this.subscribeToRegion_TEST}>Spectate</button> */}
+            {/* <button onClick={this.createAgent}>Create Agent</button> */}
+            {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
         <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
-        <button onClick={this.subscribeToInitialRegions}>Spectate</button>
-        <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
-          <Layer>
-            <Rect
-              x={0}
-              y={0}
-              width={CANVAS_SIZE}
-              height={CANVAS_SIZE}
-              fill={"#32ff7e"}
-            />
-
-            {Object.keys(cells).map(id => {
-              const c = cells[id];
-              let fill = "white";
-              if (c.occupant === "AGENT") {
-                fill = "#18dcff";
-              } else if (c.occupant === "FOOD") {
-                fill = "#3ae374";
-              } else if (c.occupant === "EMPTY") {
-                fill = "rgba(0, 0, 0, 0)";
-              }
-
-              return (
+            {/* <button onClick={this.subscribeToInitialRegions}>Spectate</button> */}
+            <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
+              <Layer>
                 <Rect
-                  key={"" + c.x + c.y}
-                  x={WORLD_CENTER_OFFSET + c.x * CELL_SIZE}
-                  y={WORLD_CENTER_OFFSET + -c.y * CELL_SIZE}
-                  width={CELL_SIZE}
-                  height={CELL_SIZE}
-                  fill={fill}
+                  x={0}
+                  y={0}
+                  width={CANVAS_SIZE}
+                  height={CANVAS_SIZE}
+                  fill={"#32ff7e"}
                 />
-              );
-            })}
-          </Layer>
-        </Stage>
-      </div>
+
+                {Object.keys(cells).map(id => {
+                  const c = cells[id];
+                  let fill = "white";
+                  if (c.occupant === "AGENT") {
+                    fill = "#18dcff";
+                  } else if (c.occupant === "FOOD") {
+                    fill = "#3ae374";
+                  } else if (c.occupant === "EMPTY") {
+                    fill = "rgba(0, 0, 0, 0)";
+                  }
+
+                  return (
+                    <Rect
+                      key={"" + c.x + c.y}
+                      x={WORLD_CENTER_OFFSET + c.x * CELL_SIZE}
+                      y={WORLD_CENTER_OFFSET + -c.y * CELL_SIZE}
+                      width={CELL_SIZE}
+                      height={CELL_SIZE}
+                      fill={fill}
+                    />
+                  );
+                })}
+              </Layer>
+            </Stage>
+          </Paper>
+        </Grid>
+      </Grid>
     );
   }
 }
