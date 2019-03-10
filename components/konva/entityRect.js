@@ -11,11 +11,11 @@ class EntityRect extends React.Component {
   };
 
   render() {
-    const { entity, x, y, w, h, fill, selected, onClick } = this.props;
+    const { entity, w, h, fill, selected, onClick } = this.props;
     return (
       <Rect
-        x={x}
-        y={y}
+        x={entity.x * w}
+        y={-entity.y * h}
         width={w}
         height={h}
         fill={fill}

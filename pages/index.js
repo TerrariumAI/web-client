@@ -1,7 +1,7 @@
 import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
-import { withStyles, Typography } from "@material-ui/core";
+import { withStyles, Typography, Grid, Paper } from "@material-ui/core";
 import uuidv1 from "uuid/v1";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -12,6 +12,9 @@ import { withFirebase, firebaseConnect } from "react-redux-firebase";
 const styles = ({ palette, spacing, breakpoints }) => ({
   root: {
     flexGrow: 1
+  },
+  cellInspectorContainer: {
+    padding: 10
   }
 });
 
@@ -40,7 +43,7 @@ const DOWN_KEY_CODE = 40;
 
 class Index extends React.Component {
   state = {
-    cells: {}
+    selectedEntity: null
   };
 
   async componentDidMount() {
@@ -86,30 +89,43 @@ class Index extends React.Component {
       });
   };
 
-  // _handleKeyDown = event => {
-  //   switch (event.keyCode) {
-  //     case LEFT_KEY_CODE:
-  //       this.state.activePopover.hide();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // };
-
-  // handleKeyPress = event => {
-  //   console.log(event.key);
-  // };
+  // When an entity is clicked in the spectate window,
+  //  add it's data to the side bar
+  onEntityClick = entity => {
+    this.setState({
+      selectedEntity: entity
+    });
+  };
 
   render() {
-    const { cells } = this.state;
-    console.log(cells);
+    const { classes } = this.props;
+    const { selectedEntity } = this.state;
     return (
       <div>
-        <Typography variant="h4">Hello Twitch!</Typography>
-        <Spectate />
+        <Grid container spacing={32} justify="center">
+          <Grid item xs={12}>
+            <Typography variant="h4">Hello Twitch!</Typography>
+          </Grid>
+          <Grid item>
+            <Spectate onEntityClick={this.onEntityClick} />
+          </Grid>
+          <Grid item xs={3}>
+            <Paper className={classes.cellInspectorContainer}>
+              <Typography>
+                <b>Cell Inspector</b>
+              </Typography>
+              {selectedEntity ? (
+                <Typography>
+                  <b>Id: </b> {selectedEntity.id}
+                  <br />
+                  <b>Class: </b> {selectedEntity.class}
+                </Typography>
+              ) : null}
+            </Paper>
+          </Grid>
+        </Grid>
+
         <button onClick={this.createAgent}>Create Agent</button>
-        {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
-        <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
       </div>
     );
   }

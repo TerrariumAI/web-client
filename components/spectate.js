@@ -82,7 +82,6 @@ class Spectate extends React.Component {
     const { simService } = this;
     // Sub to region call
     if (x === null || y === null) {
-      console.log("spectateRegion(): NULL VALUES");
       return;
     }
     // Subscribe to region
@@ -172,67 +171,65 @@ class Spectate extends React.Component {
   };
 
   onEntityClick = e => {
-    console.log(e);
+    const { onEntityClick } = this.props;
     this.setState({
       selectedEntityId: e.id
     });
+    if (onEntityClick) {
+      onEntityClick(e);
+    }
   };
 
   render() {
     const { classes, onEntityClick } = this.props;
     const { posEntityMap, error, selectedEntityId } = this.state;
     return (
-      <Grid container justify="center">
+      <div>
         <Typography className={classes.errorText} variant="subtitle1">
           {error}
         </Typography>
-        <Grid item>
-          <Paper className={classes.stagePaperContainer}>
-            <Typography variant="subtitle1">World View</Typography>
-            <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
-              <Layer>
-                <Rect
-                  x={0}
-                  y={0}
-                  width={CANVAS_SIZE}
-                  height={CANVAS_SIZE}
-                  fill={"#32ff7e"}
-                />
+        <Paper className={classes.stagePaperContainer}>
+          <Typography variant="subtitle1">World View</Typography>
+          <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
+            <Layer
+              offsetX={-WORLD_CENTER_OFFSET}
+              offsetY={-WORLD_CENTER_OFFSET}
+            >
+              <Rect
+                x={-WORLD_CENTER_OFFSET}
+                y={-WORLD_CENTER_OFFSET}
+                width={CANVAS_SIZE}
+                height={CANVAS_SIZE}
+                fill={"#32ff7e"}
+              />
 
-                {Object.keys(posEntityMap).map(position => {
-                  const e = posEntityMap[position];
-                  let fill = "white";
-                  console.log(e);
-                  if (e.class === "AGENT") {
-                    fill = "#18dcff";
-                  } else if (e.class === "FOOD") {
-                    fill = "#3ae374";
-                  } else if (e.class === "EMPTY") {
-                    fill = "rgba(0, 0, 0, 0)";
-                  }
+              {Object.keys(posEntityMap).map(position => {
+                const e = posEntityMap[position];
+                let fill = "white";
+                if (e.class === "AGENT") {
+                  fill = "#18dcff";
+                } else if (e.class === "FOOD") {
+                  fill = "#3ae374";
+                } else if (e.class === "EMPTY") {
+                  fill = "rgba(0, 0, 0, 0)";
+                }
 
-                  console.log("Selected enttiy id: ", selectedEntityId);
-                  console.log("Enttiy id: ", e.id);
-
-                  return (
-                    <EntityRect
-                      entity={e}
-                      key={"" + e.x + e.y}
-                      x={WORLD_CENTER_OFFSET + e.x * CELL_SIZE}
-                      y={WORLD_CENTER_OFFSET + -e.y * CELL_SIZE}
-                      w={CELL_SIZE}
-                      h={CELL_SIZE}
-                      fill={fill}
-                      selected={selectedEntityId === e.id}
-                      onClick={this.onEntityClick}
-                    />
-                  );
-                })}
-              </Layer>
-            </Stage>
-          </Paper>
-        </Grid>
-      </Grid>
+                return (
+                  <EntityRect
+                    entity={e}
+                    key={"" + e.x + e.y}
+                    w={CELL_SIZE}
+                    h={CELL_SIZE}
+                    fill={fill}
+                    selected={selectedEntityId === e.id}
+                    onClick={this.onEntityClick}
+                  />
+                );
+              })}
+            </Layer>
+          </Stage>
+        </Paper>
+      </div>
     );
   }
 }
