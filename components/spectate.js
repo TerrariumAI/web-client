@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import uuidv1 from "uuid/v1";
 import { withStyles } from "@material-ui/core/styles";
 import { Stage, Layer, Rect, Text } from "react-konva";
+import EntityRect from "./konva/entityRect";
 import {
   CreateAgentRequest,
   CreateSpectatorRequest,
@@ -39,7 +40,13 @@ const styles = theme => ({
 
 class Spectate extends React.Component {
   state = {
-    cells: {},
+    // Map from pos -> entity
+    posEntityMap: {},
+    // Map from id -> entity
+    entities: {},
+    // Currently selected entity
+    selectedEntity: "",
+    // Any errors that come up
     error: ""
   };
 
@@ -130,23 +137,34 @@ class Spectate extends React.Component {
     const cellUpdate = {
       x: response.getX(),
       y: response.getY(),
-      occupant: response.getOccupant()
+      entity: {
+        id: response.getEntity().getId(),
+        x: response.getEntity().getX(),
+        y: response.getEntity().getY(),
+        class: response.getEntity().getClass()
+      }
     };
+    // Handle action occupants
+    //  These are cells who come in as an update rather than an actual cell
     if (cellUpdate.occupant === "WORLD_RESET") {
-      this.setState({ cells: {} });
+      this.setState({ posEntityMap: {} });
     }
     console.log(
       `[CellUpdate] X: ${cellUpdate.x} Y: ${cellUpdate.y} Occ: ${
-        cellUpdate.occupant
+        cellUpdate.entity
       } `
     );
     // update state
-    const cells = { ...this.state.cells };
-    cells[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate;
+    const posEntityMap = { ...this.state.posEntityMap };
+    posEntityMap[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate.entity;
     this.setState({
-      cells
+      posEntityMap
     });
   };
+
+  getCellPositionID(cell) {
+    return `${cell.x}.${cell.y}`;
+  }
 
   // On stream ended
   onEnd = end => {
@@ -155,7 +173,7 @@ class Spectate extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { cells, error } = this.state;
+    const { posEntityMap, error } = this.state;
     return (
       <Grid container justify="center">
         <Typography className={classes.errorText} variant="subtitle1">
@@ -164,12 +182,6 @@ class Spectate extends React.Component {
         <Grid item>
           <Paper className={classes.stagePaperContainer}>
             <Typography variant="subtitle1">World View</Typography>
-
-            {/* <button onClick={this.subscribeToRegion_TEST}>Spectate</button> */}
-            {/* <button onClick={this.createAgent}>Create Agent</button> */}
-            {/* <button onClick={this.spawnAgent}>Spawn Agent</button>
-        <button onClick={this.agentAction("RIGHT")}>Agent Action Right</button> */}
-            {/* <button onClick={this.subscribeToInitialRegions}>Spectate</button> */}
             <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
               <Layer>
                 <Rect
@@ -180,24 +192,25 @@ class Spectate extends React.Component {
                   fill={"#32ff7e"}
                 />
 
-                {Object.keys(cells).map(id => {
-                  const c = cells[id];
+                {Object.keys(posEntityMap).map(position => {
+                  const e = posEntityMap[position];
                   let fill = "white";
-                  if (c.occupant === "AGENT") {
+                  console.log(e);
+                  if (e.class === "AGENT") {
                     fill = "#18dcff";
-                  } else if (c.occupant === "FOOD") {
+                  } else if (e.class === "FOOD") {
                     fill = "#3ae374";
-                  } else if (c.occupant === "EMPTY") {
+                  } else if (e.class === "EMPTY") {
                     fill = "rgba(0, 0, 0, 0)";
                   }
 
                   return (
-                    <Rect
-                      key={"" + c.x + c.y}
-                      x={WORLD_CENTER_OFFSET + c.x * CELL_SIZE}
-                      y={WORLD_CENTER_OFFSET + -c.y * CELL_SIZE}
-                      width={CELL_SIZE}
-                      height={CELL_SIZE}
+                    <EntityRect
+                      key={"" + e.x + e.y}
+                      x={WORLD_CENTER_OFFSET + e.x * CELL_SIZE}
+                      y={WORLD_CENTER_OFFSET + -e.y * CELL_SIZE}
+                      w={CELL_SIZE}
+                      h={CELL_SIZE}
                       fill={fill}
                     />
                   );

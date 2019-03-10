@@ -135,52 +135,52 @@ proto.v1.SimulationServicePromiseClient.prototype.createAgent =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.GetAgentRequest,
- *   !proto.v1.GetAgentResponse>}
+ *   !proto.v1.GetEntityRequest,
+ *   !proto.v1.GetEntityResponse>}
  */
-const methodInfo_SimulationService_GetAgent = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.GetAgentResponse,
-  /** @param {!proto.v1.GetAgentRequest} request */
+const methodInfo_SimulationService_GetEntity = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.v1.GetEntityResponse,
+  /** @param {!proto.v1.GetEntityRequest} request */
   function(request) {
     return request.serializeBinary();
   },
-  proto.v1.GetAgentResponse.deserializeBinary
+  proto.v1.GetEntityResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.v1.GetAgentRequest} request The
+ * @param {!proto.v1.GetEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.GetAgentResponse)}
+ * @param {function(?grpc.web.Error, ?proto.v1.GetEntityResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.GetAgentResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.GetEntityResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServiceClient.prototype.getAgent =
+proto.v1.SimulationServiceClient.prototype.getEntity =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/GetAgent',
+      '/v1.SimulationService/GetEntity',
       request,
       metadata,
-      methodInfo_SimulationService_GetAgent,
+      methodInfo_SimulationService_GetEntity,
       callback);
 };
 
 
 /**
- * @param {!proto.v1.GetAgentRequest} request The
+ * @param {!proto.v1.GetEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.v1.GetAgentResponse>}
+ * @return {!Promise<!proto.v1.GetEntityResponse>}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServicePromiseClient.prototype.getAgent =
+proto.v1.SimulationServicePromiseClient.prototype.getEntity =
     function(request, metadata) {
   return new Promise((resolve, reject) => {
-    this.delegateClient_.getAgent(
+    this.delegateClient_.getEntity(
       request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
