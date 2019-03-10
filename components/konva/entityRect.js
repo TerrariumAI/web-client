@@ -4,17 +4,6 @@ import { Stage, Layer, Rect, Text } from "react-konva";
 import Konva from "konva";
 
 class EntityRect extends React.Component {
-  state = {
-    clicked: false,
-    fill: "green"
-  };
-
-  componentDidMount() {
-    this.setState({
-      fill: this.props.fill || ""
-    });
-  }
-
   handleClick = () => {
     this.setState({
       clicked: true
@@ -22,8 +11,7 @@ class EntityRect extends React.Component {
   };
 
   render() {
-    const { x, y, w, h } = this.props;
-    const { fill, clicked } = this.state;
+    const { entity, x, y, w, h, fill, selected, onClick } = this.props;
     return (
       <Rect
         x={x}
@@ -31,8 +19,8 @@ class EntityRect extends React.Component {
         width={w}
         height={h}
         fill={fill}
-        shadowBlur={clicked ? 5 : 0}
-        onClick={this.handleClick}
+        shadowBlur={selected ? 5 : 0}
+        onClick={() => onClick(entity)}
       />
     );
   }

@@ -45,7 +45,7 @@ class Spectate extends React.Component {
     // Map from id -> entity
     entities: {},
     // Currently selected entity
-    selectedEntity: "",
+    selectedEntityId: null,
     // Any errors that come up
     error: ""
   };
@@ -171,9 +171,16 @@ class Spectate extends React.Component {
     console.log("Stream ended!");
   };
 
+  onEntityClick = e => {
+    console.log(e);
+    this.setState({
+      selectedEntityId: e.id
+    });
+  };
+
   render() {
-    const { classes } = this.props;
-    const { posEntityMap, error } = this.state;
+    const { classes, onEntityClick } = this.props;
+    const { posEntityMap, error, selectedEntityId } = this.state;
     return (
       <Grid container justify="center">
         <Typography className={classes.errorText} variant="subtitle1">
@@ -204,14 +211,20 @@ class Spectate extends React.Component {
                     fill = "rgba(0, 0, 0, 0)";
                   }
 
+                  console.log("Selected enttiy id: ", selectedEntityId);
+                  console.log("Enttiy id: ", e.id);
+
                   return (
                     <EntityRect
+                      entity={e}
                       key={"" + e.x + e.y}
                       x={WORLD_CENTER_OFFSET + e.x * CELL_SIZE}
                       y={WORLD_CENTER_OFFSET + -e.y * CELL_SIZE}
                       w={CELL_SIZE}
                       h={CELL_SIZE}
                       fill={fill}
+                      selected={selectedEntityId === e.id}
+                      onClick={this.onEntityClick}
                     />
                   );
                 })}
