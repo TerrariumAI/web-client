@@ -54,7 +54,7 @@ class Index extends React.Component {
         <Grid container spacing={32} justify="center">
           <Grid item xs={12} className={classes.centerText}>
             <Typography variant="h4">
-              The worlds first shared, online, persistant AI environment
+              The worlds first online, persistant environment for AI
             </Typography>
           </Grid>
           {/* Spectate Window */}

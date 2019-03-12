@@ -4,6 +4,7 @@ import uuidv1 from "uuid/v1";
 import { withStyles } from "@material-ui/core/styles";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import EntityRect from "./konva/entityRect";
+import { ServerAddress } from "../lib/constants";
 import {
   CreateAgentRequest,
   CreateSpectatorRequest,
@@ -54,11 +55,7 @@ class Spectate extends React.Component {
     // TODO - Change this to the user id
     this.clientId = uuidv1();
     // Create client
-    var simService = new SimulationServiceClient(
-      "http://127.0.0.1:9091",
-      null,
-      null
-    );
+    var simService = new SimulationServiceClient(ServerAddress, null, null);
     this.simService = simService;
     this.targetRegion = {
       x: 1,
@@ -136,23 +133,31 @@ class Spectate extends React.Component {
     const cellUpdate = {
       x: response.getX(),
       y: response.getY(),
-      entity: {
-        id: response.getEntity().getId(),
-        x: response.getEntity().getX(),
-        y: response.getEntity().getY(),
-        class: response.getEntity().getClass()
-      }
+      action: response.getAction(),
+      entity: response.getEntity()
     };
     // Handle action occupants
     //  These are cells who come in as an update rather than an actual cell
-    if (cellUpdate.occupant === "WORLD_RESET") {
+    if (cellUpdate.action === "RESET") {
       this.setState({ posEntityMap: {} });
+      return;
     }
-    console.log(
-      `[CellUpdate] X: ${cellUpdate.x} Y: ${cellUpdate.y} Occ: ${
-        cellUpdate.entity
-      } `
-    );
+    // If entity is null then this is an empty cell
+    if (!cellUpdate.entity) {
+      const posEntityMap = { ...this.state.posEntityMap };
+      posEntityMap[`${cellUpdate.x}.${cellUpdate.y}`] = {
+        x: cellUpdate.x,
+        y: cellUpdate.y,
+        class: "EMPTY"
+      };
+      this.setState({
+        posEntityMap
+      });
+      return;
+    }
+    cellUpdate.entity.x = cellUpdate.entity.getX();
+    cellUpdate.entity.y = cellUpdate.entity.getY();
+    cellUpdate.entity.class = cellUpdate.entity.getClass();
     // update state
     const posEntityMap = { ...this.state.posEntityMap };
     posEntityMap[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate.entity;
@@ -211,7 +216,7 @@ class Spectate extends React.Component {
                 } else if (e.class === "FOOD") {
                   fill = "#3ae374";
                 } else if (e.class === "EMPTY") {
-                  fill = "rgba(0, 0, 0, 0)";
+                  fill = "#32ff7e";
                 }
 
                 return (

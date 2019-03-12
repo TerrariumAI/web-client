@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import { ServerAddress } from "../lib/constants";
 import { Grid, Typography, Paper, TextField, Button } from "@material-ui/core";
 
 const {
@@ -32,11 +33,7 @@ class CreateAgent extends React.Component {
   };
 
   componentDidMount() {
-    this.simService = new SimulationServiceClient(
-      "http://127.0.0.1:9091",
-      null,
-      null
-    );
+    this.simService = new SimulationServiceClient(ServerAddress, null, null);
   }
 
   createAgent = async () => {

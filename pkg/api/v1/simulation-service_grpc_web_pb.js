@@ -462,5 +462,61 @@ proto.v1.SimulationServicePromiseClient.prototype.subscribeSpectatorToRegion =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.v1.ResetWorldRequest,
+ *   !proto.v1.ResetWorldResponse>}
+ */
+const methodInfo_SimulationService_ResetWorld = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.v1.ResetWorldResponse,
+  /** @param {!proto.v1.ResetWorldRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.v1.ResetWorldResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.v1.ResetWorldRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.v1.ResetWorldResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.ResetWorldResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.v1.SimulationServiceClient.prototype.resetWorld =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/v1.SimulationService/ResetWorld',
+      request,
+      metadata,
+      methodInfo_SimulationService_ResetWorld,
+      callback);
+};
+
+
+/**
+ * @param {!proto.v1.ResetWorldRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.v1.ResetWorldResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.v1.SimulationServicePromiseClient.prototype.resetWorld =
+    function(request, metadata) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.resetWorld(
+      request, metadata, (error, response) => {
+        error ? reject(error) : resolve(response);
+      });
+  });
+};
+
+
 module.exports = proto.v1;
 
