@@ -360,15 +360,15 @@ proto.v1.SimulationServicePromiseClient.prototype.getAgentObservation =
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.v1.CreateSpectatorRequest,
- *   !proto.v1.CellUpdate>}
+ *   !proto.v1.SpectateResponse>}
  */
 const methodInfo_SimulationService_CreateSpectator = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.CellUpdate,
+  proto.v1.SpectateResponse,
   /** @param {!proto.v1.CreateSpectatorRequest} request */
   function(request) {
     return request.serializeBinary();
   },
-  proto.v1.CellUpdate.deserializeBinary
+  proto.v1.SpectateResponse.deserializeBinary
 );
 
 
@@ -376,7 +376,7 @@ const methodInfo_SimulationService_CreateSpectator = new grpc.web.AbstractClient
  * @param {!proto.v1.CreateSpectatorRequest} request The request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.CellUpdate>}
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.SpectateResponse>}
  *     The XHR Node Readable Stream
  */
 proto.v1.SimulationServiceClient.prototype.createSpectator =
@@ -393,7 +393,7 @@ proto.v1.SimulationServiceClient.prototype.createSpectator =
  * @param {!proto.v1.CreateSpectatorRequest} request The request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.CellUpdate>}
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.SpectateResponse>}
  *     The XHR Node Readable Stream
  */
 proto.v1.SimulationServicePromiseClient.prototype.createSpectator =

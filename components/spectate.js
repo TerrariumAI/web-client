@@ -17,11 +17,12 @@ import { Grid, Paper, Typography } from "@material-ui/core";
 
 const API_VERSION = "v1";
 
+const CANVAS_SIZE = 400;
 const CELLS_IN_REGION = 10;
-const CELL_SIZE = 20;
-const WORLD_CENTER_OFFSET = CELLS_IN_REGION * CELL_SIZE;
-const CANVAS_SIZE = CELLS_IN_REGION * 2 * CELL_SIZE;
-
+const CELL_SIZE = CANVAS_SIZE / (CELLS_IN_REGION * 3); // 3 because the user looks at center with 2 each side, 3 regions
+const WORLD_CENTER_OFFSET =
+  (CELLS_IN_REGION + CELLS_IN_REGION / 2) * CELL_SIZE - CELL_SIZE / 2;
+console.log(CANVAS_SIZE);
 const LEFT_KEY_CODE = 37;
 const RIGHT_KEY_CODE = 39;
 const UP_KEY_CODE = 38;
@@ -155,6 +156,7 @@ class Spectate extends React.Component {
       });
       return;
     }
+    cellUpdate.entity.id = cellUpdate.entity.getId();
     cellUpdate.entity.x = cellUpdate.entity.getX();
     cellUpdate.entity.y = cellUpdate.entity.getY();
     cellUpdate.entity.class = cellUpdate.entity.getClass();

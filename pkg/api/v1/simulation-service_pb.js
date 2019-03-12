@@ -31,6 +31,8 @@ goog.exportSymbol('proto.v1.Observation', null, global);
 goog.exportSymbol('proto.v1.Region', null, global);
 goog.exportSymbol('proto.v1.ResetWorldRequest', null, global);
 goog.exportSymbol('proto.v1.ResetWorldResponse', null, global);
+goog.exportSymbol('proto.v1.ServerAction', null, global);
+goog.exportSymbol('proto.v1.SpectateResponse', null, global);
 goog.exportSymbol('proto.v1.SubscribeSpectatorToRegionRequest', null, global);
 goog.exportSymbol('proto.v1.SubscribeSpectatorToRegionResponse', null, global);
 
@@ -81,8 +83,6 @@ proto.v1.Entity.prototype.toObject = function(opt_includeInstance) {
 proto.v1.Entity.toObject = function(includeInstance, msg) {
   var f, obj = {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    x: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    y: jspb.Message.getFieldWithDefault(msg, 3, 0),
     pb_class: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
@@ -124,14 +124,6 @@ proto.v1.Entity.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {number} */ (reader.readInt64());
       msg.setId(value);
       break;
-    case 2:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setX(value);
-      break;
-    case 3:
-      var value = /** @type {number} */ (reader.readInt32());
-      msg.setY(value);
-      break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setClass(value);
@@ -172,20 +164,6 @@ proto.v1.Entity.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getX();
-  if (f !== 0) {
-    writer.writeInt32(
-      2,
-      f
-    );
-  }
-  f = message.getY();
-  if (f !== 0) {
-    writer.writeInt32(
-      3,
-      f
-    );
-  }
   f = message.getClass();
   if (f.length > 0) {
     writer.writeString(
@@ -208,36 +186,6 @@ proto.v1.Entity.prototype.getId = function() {
 /** @param {number} value */
 proto.v1.Entity.prototype.setId = function(value) {
   jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional int32 x = 2;
- * @return {number}
- */
-proto.v1.Entity.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
-};
-
-
-/** @param {number} value */
-proto.v1.Entity.prototype.setX = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
-};
-
-
-/**
- * optional int32 y = 3;
- * @return {number}
- */
-proto.v1.Entity.prototype.getY = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/** @param {number} value */
-proto.v1.Entity.prototype.setY = function(value) {
-  jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
@@ -596,7 +544,7 @@ proto.v1.Observation.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * repeated string Cells = 1;
+ * repeated string cells = 1;
  * @return {!Array<string>}
  */
 proto.v1.Observation.prototype.getCellsList = function() {
@@ -625,7 +573,7 @@ proto.v1.Observation.prototype.clearCellsList = function() {
 
 
 /**
- * optional bool Alive = 2;
+ * optional bool alive = 2;
  * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
  * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
@@ -642,7 +590,7 @@ proto.v1.Observation.prototype.setAlive = function(value) {
 
 
 /**
- * optional int32 Energy = 3;
+ * optional int32 energy = 3;
  * @return {number}
  */
 proto.v1.Observation.prototype.getEnergy = function() {
@@ -657,7 +605,7 @@ proto.v1.Observation.prototype.setEnergy = function(value) {
 
 
 /**
- * optional int32 Health = 4;
+ * optional int32 health = 4;
  * @return {number}
  */
 proto.v1.Observation.prototype.getHealth = function() {
@@ -720,7 +668,6 @@ proto.v1.CellUpdate.toObject = function(includeInstance, msg) {
   var f, obj = {
     x: jspb.Message.getFieldWithDefault(msg, 1, 0),
     y: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    action: jspb.Message.getFieldWithDefault(msg, 3, ""),
     entity: (f = msg.getEntity()) && proto.v1.Entity.toObject(includeInstance, f)
   };
 
@@ -765,10 +712,6 @@ proto.v1.CellUpdate.deserializeBinaryFromReader = function(msg, reader) {
     case 2:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setY(value);
-      break;
-    case 3:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setAction(value);
       break;
     case 4:
       var value = new proto.v1.Entity;
@@ -818,13 +761,6 @@ proto.v1.CellUpdate.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getAction();
-  if (f.length > 0) {
-    writer.writeString(
-      3,
-      f
-    );
-  }
   f = message.getEntity();
   if (f != null) {
     writer.writeMessage(
@@ -867,21 +803,6 @@ proto.v1.CellUpdate.prototype.setY = function(value) {
 
 
 /**
- * optional string action = 3;
- * @return {string}
- */
-proto.v1.CellUpdate.prototype.getAction = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
-};
-
-
-/** @param {string} value */
-proto.v1.CellUpdate.prototype.setAction = function(value) {
-  jspb.Message.setProto3StringField(this, 3, value);
-};
-
-
-/**
  * optional Entity entity = 4;
  * @return {?proto.v1.Entity}
  */
@@ -908,6 +829,377 @@ proto.v1.CellUpdate.prototype.clearEntity = function() {
  */
 proto.v1.CellUpdate.prototype.hasEntity = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.v1.ServerAction = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.v1.ServerAction, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.v1.ServerAction.displayName = 'proto.v1.ServerAction';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.v1.ServerAction.prototype.toObject = function(opt_includeInstance) {
+  return proto.v1.ServerAction.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.v1.ServerAction} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.ServerAction.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    action: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.v1.ServerAction}
+ */
+proto.v1.ServerAction.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.v1.ServerAction;
+  return proto.v1.ServerAction.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.v1.ServerAction} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.v1.ServerAction}
+ */
+proto.v1.ServerAction.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAction(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.v1.ServerAction.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.v1.ServerAction.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.v1.ServerAction} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.ServerAction.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getAction();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string action = 1;
+ * @return {string}
+ */
+proto.v1.ServerAction.prototype.getAction = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.v1.ServerAction.prototype.setAction = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.v1.SpectateResponse = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, proto.v1.SpectateResponse.oneofGroups_);
+};
+goog.inherits(proto.v1.SpectateResponse, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.v1.SpectateResponse.displayName = 'proto.v1.SpectateResponse';
+}
+/**
+ * Oneof group definitions for this message. Each group defines the field
+ * numbers belonging to that group. When of these fields' value is set, all
+ * other fields in the group are cleared. During deserialization, if multiple
+ * fields are encountered for a group, only the last value seen will be kept.
+ * @private {!Array<!Array<number>>}
+ * @const
+ */
+proto.v1.SpectateResponse.oneofGroups_ = [[1,2]];
+
+/**
+ * @enum {number}
+ */
+proto.v1.SpectateResponse.DataCase = {
+  DATA_NOT_SET: 0,
+  CELLUPDATE: 1,
+  SERVERACTION: 2
+};
+
+/**
+ * @return {proto.v1.SpectateResponse.DataCase}
+ */
+proto.v1.SpectateResponse.prototype.getDataCase = function() {
+  return /** @type {proto.v1.SpectateResponse.DataCase} */(jspb.Message.computeOneofCase(this, proto.v1.SpectateResponse.oneofGroups_[0]));
+};
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.v1.SpectateResponse.prototype.toObject = function(opt_includeInstance) {
+  return proto.v1.SpectateResponse.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.v1.SpectateResponse} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.SpectateResponse.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    cellupdate: (f = msg.getCellupdate()) && proto.v1.CellUpdate.toObject(includeInstance, f),
+    serveraction: (f = msg.getServeraction()) && proto.v1.ServerAction.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.v1.SpectateResponse}
+ */
+proto.v1.SpectateResponse.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.v1.SpectateResponse;
+  return proto.v1.SpectateResponse.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.v1.SpectateResponse} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.v1.SpectateResponse}
+ */
+proto.v1.SpectateResponse.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = new proto.v1.CellUpdate;
+      reader.readMessage(value,proto.v1.CellUpdate.deserializeBinaryFromReader);
+      msg.setCellupdate(value);
+      break;
+    case 2:
+      var value = new proto.v1.ServerAction;
+      reader.readMessage(value,proto.v1.ServerAction.deserializeBinaryFromReader);
+      msg.setServeraction(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.v1.SpectateResponse.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.v1.SpectateResponse.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.v1.SpectateResponse} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.SpectateResponse.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getCellupdate();
+  if (f != null) {
+    writer.writeMessage(
+      1,
+      f,
+      proto.v1.CellUpdate.serializeBinaryToWriter
+    );
+  }
+  f = message.getServeraction();
+  if (f != null) {
+    writer.writeMessage(
+      2,
+      f,
+      proto.v1.ServerAction.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional CellUpdate cellUpdate = 1;
+ * @return {?proto.v1.CellUpdate}
+ */
+proto.v1.SpectateResponse.prototype.getCellupdate = function() {
+  return /** @type{?proto.v1.CellUpdate} */ (
+    jspb.Message.getWrapperField(this, proto.v1.CellUpdate, 1));
+};
+
+
+/** @param {?proto.v1.CellUpdate|undefined} value */
+proto.v1.SpectateResponse.prototype.setCellupdate = function(value) {
+  jspb.Message.setOneofWrapperField(this, 1, proto.v1.SpectateResponse.oneofGroups_[0], value);
+};
+
+
+proto.v1.SpectateResponse.prototype.clearCellupdate = function() {
+  this.setCellupdate(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.v1.SpectateResponse.prototype.hasCellupdate = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional ServerAction serverAction = 2;
+ * @return {?proto.v1.ServerAction}
+ */
+proto.v1.SpectateResponse.prototype.getServeraction = function() {
+  return /** @type{?proto.v1.ServerAction} */ (
+    jspb.Message.getWrapperField(this, proto.v1.ServerAction, 2));
+};
+
+
+/** @param {?proto.v1.ServerAction|undefined} value */
+proto.v1.SpectateResponse.prototype.setServeraction = function(value) {
+  jspb.Message.setOneofWrapperField(this, 2, proto.v1.SpectateResponse.oneofGroups_[0], value);
+};
+
+
+proto.v1.SpectateResponse.prototype.clearServeraction = function() {
+  this.setServeraction(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.v1.SpectateResponse.prototype.hasServeraction = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -1128,7 +1420,8 @@ proto.v1.CreateAgentRequest.prototype.toObject = function(opt_includeInstance) {
 proto.v1.CreateAgentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     api: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    agent: (f = msg.getAgent()) && proto.v1.Entity.toObject(includeInstance, f)
+    x: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    y: jspb.Message.getFieldWithDefault(msg, 3, 0)
   };
 
   if (includeInstance) {
@@ -1170,9 +1463,12 @@ proto.v1.CreateAgentRequest.deserializeBinaryFromReader = function(msg, reader) 
       msg.setApi(value);
       break;
     case 2:
-      var value = new proto.v1.Entity;
-      reader.readMessage(value,proto.v1.Entity.deserializeBinaryFromReader);
-      msg.setAgent(value);
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setX(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setY(value);
       break;
     default:
       reader.skipField();
@@ -1210,12 +1506,18 @@ proto.v1.CreateAgentRequest.serializeBinaryToWriter = function(message, writer) 
       f
     );
   }
-  f = message.getAgent();
-  if (f != null) {
-    writer.writeMessage(
+  f = message.getX();
+  if (f !== 0) {
+    writer.writeInt32(
       2,
-      f,
-      proto.v1.Entity.serializeBinaryToWriter
+      f
+    );
+  }
+  f = message.getY();
+  if (f !== 0) {
+    writer.writeInt32(
+      3,
+      f
     );
   }
 };
@@ -1237,32 +1539,32 @@ proto.v1.CreateAgentRequest.prototype.setApi = function(value) {
 
 
 /**
- * optional Entity agent = 2;
- * @return {?proto.v1.Entity}
+ * optional int32 x = 2;
+ * @return {number}
  */
-proto.v1.CreateAgentRequest.prototype.getAgent = function() {
-  return /** @type{?proto.v1.Entity} */ (
-    jspb.Message.getWrapperField(this, proto.v1.Entity, 2));
+proto.v1.CreateAgentRequest.prototype.getX = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
-/** @param {?proto.v1.Entity|undefined} value */
-proto.v1.CreateAgentRequest.prototype.setAgent = function(value) {
-  jspb.Message.setWrapperField(this, 2, value);
-};
-
-
-proto.v1.CreateAgentRequest.prototype.clearAgent = function() {
-  this.setAgent(undefined);
+/** @param {number} value */
+proto.v1.CreateAgentRequest.prototype.setX = function(value) {
+  jspb.Message.setProto3IntField(this, 2, value);
 };
 
 
 /**
- * Returns whether this field is set.
- * @return {!boolean}
+ * optional int32 y = 3;
+ * @return {number}
  */
-proto.v1.CreateAgentRequest.prototype.hasAgent = function() {
-  return jspb.Message.getField(this, 2) != null;
+proto.v1.CreateAgentRequest.prototype.getY = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/** @param {number} value */
+proto.v1.CreateAgentRequest.prototype.setY = function(value) {
+  jspb.Message.setProto3IntField(this, 3, value);
 };
 
 
