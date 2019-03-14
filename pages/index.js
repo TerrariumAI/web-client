@@ -40,7 +40,7 @@ class Index extends React.Component {
 
   // When an entity is clicked in the spectate window,
   //  add it's data to the side bar
-  onEntityClick = entity => {
+  onCellClick = entity => {
     this.setState({
       selectedEntity: entity
     });
@@ -59,7 +59,7 @@ class Index extends React.Component {
           </Grid>
           {/* Spectate Window */}
           <Grid item>
-            <Spectate onEntityClick={this.onEntityClick} />
+            <Spectate onCellClick={this.onCellClick} />
           </Grid>
           {/* Side bar */}
           <Grid item xs={3}>

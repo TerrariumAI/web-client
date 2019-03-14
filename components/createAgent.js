@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { ServerAddress } from "../lib/constants";
 import { Grid, Typography, Paper, TextField, Button } from "@material-ui/core";
+import { withFirebase } from "react-redux-firebase";
 
 const {
   CreateAgentRequest,
@@ -45,13 +46,10 @@ class CreateAgent extends React.Component {
       .auth()
       .currentUser.getIdToken()
       .then(token => {
-        // Create the new agent
-        var agent = new Entity();
-        agent.setX(x);
-        agent.setY(y);
         var request = new CreateAgentRequest();
+        request.setX(x);
+        request.setY(y);
         request.setApi(API_VERSION);
-        request.setAgent(agent);
         var metadata = { "auth-token": token };
         const call = this.simService.createAgent(
           request,
@@ -125,7 +123,7 @@ class CreateAgent extends React.Component {
             }}
             margin="normal"
           />
-          <Button color="primary" onClick={this.createAgent_test}>
+          <Button color="primary" onClick={this.createAgent}>
             Create
           </Button>
         </Paper>
@@ -140,7 +138,5 @@ CreateAgent.propTypes = {
 
 export default compose(
   withStyles(styles),
-  connect(state => {
-    console.log(state);
-  })
+  withFirebase
 )(CreateAgent);

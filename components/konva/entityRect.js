@@ -11,16 +11,32 @@ class EntityRect extends React.Component {
   };
 
   render() {
-    const { entity, w, h, fill, selected, onClick } = this.props;
+    const {
+      entity,
+      screenPos,
+      worldPos,
+      width,
+      height,
+      selected,
+      onClick
+    } = this.props;
+    let fill = "white";
+    if (!entity || entity.class === "EMPTY") {
+      fill = "#32ff7e";
+    } else if (entity.class === "AGENT") {
+      fill = "#18dcff";
+    } else if (entity.class === "FOOD") {
+      fill = "#3ae374";
+    }
     return (
       <Rect
-        x={entity.x * w}
-        y={-entity.y * h}
-        width={w}
-        height={h}
+        x={screenPos.x}
+        y={screenPos.y}
+        width={width}
+        height={height}
         fill={fill}
         shadowBlur={selected ? 5 : 0}
-        onClick={() => onClick(entity)}
+        onClick={() => onClick(worldPos)}
       />
     );
   }

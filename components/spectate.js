@@ -14,19 +14,9 @@ import {
 } from "../pkg/api/v1/simulation-service_pb";
 import { SimulationServiceClient } from "../pkg/api/v1/simulation-service_grpc_web_pb";
 import { Grid, Paper, Typography } from "@material-ui/core";
+import World from "./konva/world";
 
 const API_VERSION = "v1";
-
-const CANVAS_SIZE = 400;
-const CELLS_IN_REGION = 10;
-const CELL_SIZE = CANVAS_SIZE / (CELLS_IN_REGION * 3); // 3 because the user looks at center with 2 each side, 3 regions
-const WORLD_CENTER_OFFSET =
-  (CELLS_IN_REGION + CELLS_IN_REGION / 2) * CELL_SIZE - CELL_SIZE / 2;
-console.log(CANVAS_SIZE);
-const LEFT_KEY_CODE = 37;
-const RIGHT_KEY_CODE = 39;
-const UP_KEY_CODE = 38;
-const DOWN_KEY_CODE = 40;
 
 const styles = theme => ({
   root: {
@@ -44,10 +34,6 @@ class Spectate extends React.Component {
   state = {
     // Map from pos -> entity
     posEntityMap: {},
-    // Map from id -> entity
-    entities: {},
-    // Currently selected entity
-    selectedEntityId: null,
     // Any errors that come up
     error: ""
   };
@@ -58,10 +44,6 @@ class Spectate extends React.Component {
     // Create client
     var simService = new SimulationServiceClient(ServerAddress, null, null);
     this.simService = simService;
-    this.targetRegion = {
-      x: 1,
-      y: 1
-    };
     // Create spectator
     var request = new CreateSpectatorRequest();
     request.setApi(API_VERSION);
@@ -128,113 +110,102 @@ class Spectate extends React.Component {
     console.log("Status MD: ", status.metadata);
   };
 
-  // On data received from stream
-  onData = response => {
-    // Parse the data
-    const cellUpdate = {
-      x: response.getX(),
-      y: response.getY(),
-      action: response.getAction(),
-      entity: response.getEntity()
-    };
-    // Handle action occupants
-    //  These are cells who come in as an update rather than an actual cell
-    if (cellUpdate.action === "RESET") {
-      this.setState({ posEntityMap: {} });
-      return;
-    }
-    // If entity is null then this is an empty cell
-    if (!cellUpdate.entity) {
-      const posEntityMap = { ...this.state.posEntityMap };
-      posEntityMap[`${cellUpdate.x}.${cellUpdate.y}`] = {
-        x: cellUpdate.x,
-        y: cellUpdate.y,
-        class: "EMPTY"
-      };
-      this.setState({
-        posEntityMap
-      });
-      return;
-    }
-    cellUpdate.entity.id = cellUpdate.entity.getId();
-    cellUpdate.entity.x = cellUpdate.entity.getX();
-    cellUpdate.entity.y = cellUpdate.entity.getY();
-    cellUpdate.entity.class = cellUpdate.entity.getClass();
-    // update state
+  posToEntityId = pos => {
+    return `${pos.x}.${pos.y}`;
+  };
+
+  setCellToEntity = (x, y, entity) => {
     const posEntityMap = { ...this.state.posEntityMap };
-    posEntityMap[`${cellUpdate.x}.${cellUpdate.y}`] = cellUpdate.entity;
+    const id = this.posToEntityId({ x, y });
+    posEntityMap[id] = entity;
     this.setState({
       posEntityMap
     });
   };
 
-  getCellPositionID(cell) {
-    return `${cell.x}.${cell.y}`;
-  }
+  setCellToEmpty = (x, y) => {
+    const posEntityMap = { ...this.state.posEntityMap };
+    const id = this.posToEntityId({ x, y });
+    delete posEntityMap[id];
+    this.setState({
+      posEntityMap
+    });
+  };
+
+  handleCellUpdate = cellUpdate => {
+    const x = cellUpdate.getX();
+    const y = cellUpdate.getY();
+    // Check if the update has an Entity
+    if (cellUpdate.hasEntity()) {
+      const cellUpdateEntity = cellUpdate.getEntity();
+      const entity = {
+        id: cellUpdateEntity.getId(),
+        class: cellUpdateEntity.getClass(),
+        x,
+        y
+      };
+      this.setCellToEntity(x, y, entity);
+    } else {
+      // It is telling us this cell is empty now
+      this.setCellToEmpty(x, y);
+    }
+  };
+
+  handleServerAction = serverAction => {
+    let { posEntityMap } = this.state;
+    const action = serverAction.getAction();
+    if (action === "RESET") {
+      posEntityMap = {};
+      this.setState({ posEntityMap });
+    }
+  };
+
+  // On data received from stream
+  onData = response => {
+    if (response.hasCellupdate()) {
+      this.handleCellUpdate(response.getCellupdate());
+    } else if (response.hasServeraction()) {
+      this.handleServerAction(response.getServeraction());
+    }
+  };
 
   // On stream ended
   onEnd = end => {
     console.log("Stream ended!");
   };
 
-  onEntityClick = e => {
-    const { onEntityClick } = this.props;
-    this.setState({
-      selectedEntityId: e.id
-    });
-    if (onEntityClick) {
-      onEntityClick(e);
+  /**
+   * onCellClick - When a cell is clicked, get the entity for this cell then
+   *   pass it up to the parent.
+   * @param pos {x, y} - the position that was clicked
+   */
+  onCellClick = pos => {
+    const { onCellClick } = this.props;
+    if (onCellClick) {
+      const entity = this.getEntityByPos(pos);
+      onCellClick(entity);
     }
   };
 
+  getEntityByPos = pos => {
+    const { posEntityMap } = this.state;
+    const id = this.posToEntityId(pos);
+    return posEntityMap[id];
+  };
+
   render() {
-    const { classes, onEntityClick } = this.props;
-    const { posEntityMap, error, selectedEntityId } = this.state;
+    const { classes } = this.props;
+    const { error } = this.state;
     return (
       <div>
         <Typography className={classes.errorText} variant="subtitle1">
           {error}
         </Typography>
         <Paper className={classes.stagePaperContainer}>
-          <Typography variant="subtitle1">World View</Typography>
-          <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
-            <Layer
-              offsetX={-WORLD_CENTER_OFFSET}
-              offsetY={-WORLD_CENTER_OFFSET}
-            >
-              <Rect
-                x={-WORLD_CENTER_OFFSET}
-                y={-WORLD_CENTER_OFFSET}
-                width={CANVAS_SIZE}
-                height={CANVAS_SIZE}
-                fill={"#32ff7e"}
-              />
-
-              {Object.keys(posEntityMap).map(position => {
-                const e = posEntityMap[position];
-                let fill = "white";
-                if (e.class === "AGENT") {
-                  fill = "#18dcff";
-                } else if (e.class === "FOOD") {
-                  fill = "#3ae374";
-                } else if (e.class === "EMPTY") {
-                  fill = "#32ff7e";
-                }
-
-                return (
-                  <EntityRect
-                    entity={e}
-                    key={"" + e.x + e.y}
-                    w={CELL_SIZE}
-                    h={CELL_SIZE}
-                    fill={fill}
-                    selected={selectedEntityId === e.id}
-                    onClick={this.onEntityClick}
-                  />
-                );
-              })}
-            </Layer>
-          </Stage>
+          <World
+            getEntityByPos={this.getEntityByPos}
+            onCellClick={this.onCellClick}
+          />
         </Paper>
       </div>
     );
