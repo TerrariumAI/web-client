@@ -21,6 +21,7 @@
     "google-protobuf": "^3.6.1",
     "grpc-web": "^1.0.3",
     "konva": "^2.6.0",
+    "lodash": "^4.17.11",
     "next": "^7.0.2",
     "prop-types": "15.6.2",
     "react": "16.7.0",

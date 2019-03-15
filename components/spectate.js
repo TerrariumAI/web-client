@@ -37,6 +37,9 @@ class Spectate extends React.Component {
     // Any errors that come up
     error: ""
   };
+  // Keeps track of what regions we are subbed to
+  // Not in state because we don't need to refresh the view when this changes
+  regionSubs = [];
 
   async componentDidMount() {
     // TODO - Change this to the user id
@@ -53,17 +56,28 @@ class Spectate extends React.Component {
     stream.on("data", this.onData);
     stream.on("status", this.onStatus);
     stream.on("end", this.onEnd);
-    // Subscribe to initial regions
-    this.subscribeToInitialRegions();
+    // Subscribe to the initial regions manually
+    this.onRegionChange({ x: 0, y: 0 });
   }
 
-  // Subscribe to a specific region
+  /**
+   * subscribeToRegion - send a request to sub to a region
+   */
   subscribeToRegion = async (x, y) => {
-    const { simService } = this;
-    // Sub to region call
+    const { simService, regionSubs } = this;
+    // Make sure x and y exist!
     if (x === null || y === null) {
+      console.error("subscribeToRegion(): X or Y is null");
       return;
     }
+    // Check if we are already subbed to this region, exit if so
+    if (regionSubs.includes(`${x}.${y}`)) {
+      return;
+    }
+    // Add the region to the regionSubs list
+    regionSubs.push(`${x}.${y}`);
+    console.log("Subbed to ", { x, y });
+    console.log(this.regionSubs);
     // Subscribe to region
     var region = new Region();
     region.setX(x);
@@ -95,13 +109,85 @@ class Spectate extends React.Component {
     });
   };
 
-  // Initial regions to subscribe to
-  subscribeToInitialRegions = () => {
-    this.subscribeToRegion(1, 1);
-    this.subscribeToRegion(-1, 1);
-    this.subscribeToRegion(1, -1);
-    this.subscribeToRegion(-1, -1);
+  /**
+   * unsubscribeToRegion - send a request to unsub to a region
+   * TODO
+   */
+  unsubscribeFromRegion = async (x, y) => {
+    const { simService, regionSubs } = this;
+    // Make sure x and y exist!
+    if (x === null || y === null) {
+      console.error("ubsubscribeFromRegion(): X or Y is null");
+      return;
+    }
+    // Remove this region from the region subs array
+    _.pull(this.regionSubs, `${x}.${y}`);
+    console.log("Unsubbed from ", { x, y });
+    console.log(this.regionSubs);
+    // // Subscribe to region
+    // var region = new Region();
+    // region.setX(x);
+    // region.setY(y);
+    // var request = new SubscribeSpectatorToRegionRequest();
+    // request.setApi(API_VERSION);
+    // request.setId(this.clientId);
+    // request.setRegion(region);
+    // var metadata = {};
+    // const call = simService.subscribeSpectatorToRegion(
+    //   request,
+    //   metadata,
+    //   (err, resp) => {
+    //     if (err) {
+    //       console.error("Error subscribing to region: ", err);
+    //       this.setState({
+    //         error: "Error sending subscribing to region call: " + err.message
+    //       });
+    //     }
+    //   }
+    // );
+    // call.on("status", status => {
+    //   if (status.code !== 0) {
+    //     console.error("Error subscribing to region: ", status);
+    //     this.setState({
+    //       error: "Error subscribing to region: " + status.message
+    //     });
+    //   }
+    // });
   };
+
+  /**
+   * getRegionsAroundInclusive - return the regions around another region
+   *   INCLUDING the region provided
+   */
+  getRegionsAroundInclusive = region => {
+    let regions = [];
+    for (let x = -1; x <= 1; x++) {
+      for (let y = -1; y <= 1; y++) {
+        regions.push({ x: x + region.x, y: y + region.y });
+      }
+    }
+    return regions;
+  };
+
+  // Initial regions to subscribe to
+  onRegionChange = region => {
+    let newRegionSubs = this.getRegionsAroundInclusive(region);
+    newRegionSubs.forEach(region => {
+      this.subscribeToRegion(region.x, region.y);
+    });
+  };
+
+  // initSubs = () => {
+  //   this.subscribeToRegion(0, 0);
+  //   this.subscribeToRegion(-1, 0);
+  //   this.subscribeToRegion(0, -1);
+  //   this.subscribeToRegion(1, 0);
+  //   this.subscribeToRegion(0, 1);
+  //   this.subscribeToRegion(-1, -1);
+  //   this.subscribeToRegion(1, 1);
+  //   this.subscribeToRegion(1, -1);
+  //   this.subscribeToRegion(-1, 1);
+  // };
 
   // On stream status change
   onStatus = status => {
@@ -203,6 +289,7 @@ class Spectate extends React.Component {
         </Typography>
         <Paper className={classes.stagePaperContainer}>
           <World
+            onRegionChange={this.onRegionChange}
             getEntityByPos={this.getEntityByPos}
             onCellClick={this.onCellClick}
           />
