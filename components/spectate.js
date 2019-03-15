@@ -71,13 +71,11 @@ class Spectate extends React.Component {
       return;
     }
     // Check if we are already subbed to this region, exit if so
-    if (regionSubs.includes(`${x}.${y}`)) {
+    if (_.find(regionSubs, { x, y })) {
       return;
     }
     // Add the region to the regionSubs list
-    regionSubs.push(`${x}.${y}`);
-    console.log("Subbed to ", { x, y });
-    console.log(this.regionSubs);
+    regionSubs.push({ x, y });
     // Subscribe to region
     var region = new Region();
     region.setX(x);
@@ -121,38 +119,7 @@ class Spectate extends React.Component {
       return;
     }
     // Remove this region from the region subs array
-    _.pull(this.regionSubs, `${x}.${y}`);
-    console.log("Unsubbed from ", { x, y });
-    console.log(this.regionSubs);
-    // // Subscribe to region
-    // var region = new Region();
-    // region.setX(x);
-    // region.setY(y);
-    // var request = new SubscribeSpectatorToRegionRequest();
-    // request.setApi(API_VERSION);
-    // request.setId(this.clientId);
-    // request.setRegion(region);
-    // var metadata = {};
-    // const call = simService.subscribeSpectatorToRegion(
-    //   request,
-    //   metadata,
-    //   (err, resp) => {
-    //     if (err) {
-    //       console.error("Error subscribing to region: ", err);
-    //       this.setState({
-    //         error: "Error sending subscribing to region call: " + err.message
-    //       });
-    //     }
-    //   }
-    // );
-    // call.on("status", status => {
-    //   if (status.code !== 0) {
-    //     console.error("Error subscribing to region: ", status);
-    //     this.setState({
-    //       error: "Error subscribing to region: " + status.message
-    //     });
-    //   }
-    // });
+    this.regionSubs = this.regionSubs.filter(r => !_.isEqual(r, { x, y }));
   };
 
   /**
@@ -172,8 +139,15 @@ class Spectate extends React.Component {
   // Initial regions to subscribe to
   onRegionChange = region => {
     let newRegionSubs = this.getRegionsAroundInclusive(region);
-    newRegionSubs.forEach(region => {
+    let regionsToUnsubFrom = this.regionSubs.filter(
+      r => !_.find(newRegionSubs, r)
+    );
+    let regionsToSubTo = newRegionSubs.filter(r => !_.find(this.regionSubs, r));
+    regionsToSubTo.forEach(region => {
       this.subscribeToRegion(region.x, region.y);
+    });
+    regionsToUnsubFrom.forEach(region => {
+      this.unsubscribeFromRegion(region.x, region.y);
     });
   };
 
