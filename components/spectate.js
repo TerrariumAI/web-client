@@ -9,6 +9,7 @@ import {
   CreateAgentRequest,
   CreateSpectatorRequest,
   SubscribeSpectatorToRegionRequest,
+  UnsubscribeSpectatorFromRegionRequest,
   Region,
   Agent
 } from "../pkg/api/v1/simulation-service_pb";
@@ -120,6 +121,35 @@ class Spectate extends React.Component {
     }
     // Remove this region from the region subs array
     this.regionSubs = this.regionSubs.filter(r => !_.isEqual(r, { x, y }));
+    // Region to unsub from
+    var region = new Region();
+    region.setX(x);
+    region.setY(y);
+    var request = new UnsubscribeSpectatorFromRegionRequest();
+    request.setApi(API_VERSION);
+    request.setId(this.clientId);
+    request.setRegion(region);
+    var metadata = {};
+    const call = simService.unsubscribeSpectatorFromRegion(
+      request,
+      metadata,
+      (err, resp) => {
+        if (err) {
+          console.error("Error subscribing to region: ", err);
+          this.setState({
+            error: "Error sending subscribing to region call: " + err.message
+          });
+        }
+      }
+    );
+    call.on("status", status => {
+      if (status.code !== 0) {
+        console.error("Error subscribing to region: ", status);
+        this.setState({
+          error: "Error subscribing to region: " + status.message
+        });
+      }
+    });
   };
 
   /**
