@@ -143,6 +143,7 @@ class World extends React.Component {
         };
         cells.push(
           <EntityRect
+            key={`${worldPos.x}.${worldPos.y}`}
             entity={getEntityByPos(worldPos)}
             screenPos={screenPos}
             worldPos={worldPos}
