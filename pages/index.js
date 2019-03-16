@@ -82,8 +82,6 @@ class Index extends React.Component {
             </Grid>
           </Grid>
         </Grid>
-
-        <button onClick={this.createAgent}>Create Agent</button>
       </div>
     );
   }
