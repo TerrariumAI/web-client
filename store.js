@@ -9,7 +9,14 @@ import firebase from "firebase";
 import "firebase/firestore"; // <- needed if using firestore
 // import 'firebase/functions' // <- needed if using httpsCallable
 
-const firebaseConfig = {};
+const firebaseConfig = {
+  apiKey: "AIzaSyBt8vNHODTsGxeN8wU7rpgjmW9O5b0o__k",
+  authDomain: "olamaai.firebaseapp.com",
+  databaseURL: "https://olamaai.firebaseio.com",
+  projectId: "olamaai",
+  storageBucket: "olamaai.appspot.com",
+  messagingSenderId: "193693743424"
+};
 
 // react-redux-firebase config
 const rrfConfig = {
@@ -23,9 +30,6 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
   // Initialize Cloud Firestore through Firebase
   const firestore = firebase.firestore();
-  firestore.settings({
-    timestampsInSnapshots: true
-  });
 }
 
 // Initialize other services on firebase instance
