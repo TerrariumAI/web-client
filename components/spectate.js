@@ -291,13 +291,11 @@ class Spectate extends React.Component {
         <Typography className={classes.errorText} variant="subtitle1">
           {error}
         </Typography>
-        <Paper className={classes.stagePaperContainer}>
-          <World
-            onRegionChange={this.onRegionChange}
-            getEntityByPos={this.getEntityByPos}
-            onCellClick={this.onCellClick}
-          />
-        </Paper>
+        <World
+          onRegionChange={this.onRegionChange}
+          getEntityByPos={this.getEntityByPos}
+          onCellClick={this.onCellClick}
+        />
       </div>
     );
   }

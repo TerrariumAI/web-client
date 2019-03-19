@@ -1,32 +1,53 @@
 import Konva from "konva";
 import { render } from "react-dom";
 import { Stage, Layer, Rect, Text } from "react-konva";
-import { withStyles, Typography, Grid, Paper } from "@material-ui/core";
+import {
+  withStyles,
+  Typography,
+  Grid,
+  Paper,
+  Card,
+  CardActionArea,
+  CardContent,
+  CardActions,
+  Button
+} from "@material-ui/core";
+import Computer from "@material-ui/icons/Computer";
+import ImportExport from "@material-ui/icons/ImportExport";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 import uuidv1 from "uuid/v1";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import Spectate from "../components/spectate";
-import CreateAgent from "../components/createAgent";
+import Router from "next/router";
 import withNavBar from "../lib/withNavBar";
 import { withFirebase, firebaseConnect } from "react-redux-firebase";
-
 const styles = ({ palette, spacing, breakpoints }) => ({
   root: {
-    flexGrow: 1
+    paddingTop: 40
+  },
+  worldImg: {
+    width: "80%"
   },
   cellInspectorContainer: {
     padding: 10
   },
   centerText: {
     textAlign: "center"
+  },
+  paper: {
+    padding: 15
+  },
+  cardContent: {
+    height: 250
+  },
+  cardTitle: {
+    textAlign: "center"
+  },
+  icon: {
+    color: palette.primary.main,
+    fontSize: 40
   }
 });
-
-const {
-  SimulationServiceClient
-} = require("../pkg/api/v1/simulation-service_grpc_web_pb");
-
-const API_VERSION = "v1";
 
 class Index extends React.Component {
   state = {
@@ -50,35 +71,139 @@ class Index extends React.Component {
     const { classes } = this.props;
     const { selectedEntity } = this.state;
     return (
-      <div>
+      <div className={classes.root}>
         <Grid container spacing={32} justify="center">
-          <Grid item xs={12} className={classes.centerText}>
-            <Typography variant="h4">
-              The worlds first online, persistant environment for AI
+          <Grid item xs={12} className={classes.centerText} />
+          <Grid item xs={5}>
+            <img
+              src="/static/world.png"
+              alt="my image"
+              className={classes.worldImg}
+            />
+          </Grid>
+          <Grid item xs={5}>
+            <Typography variant="h4">Welcome to Olam AI</Typography>
+            <Typography variant="subheading">
+              Compete for survival in a persistant online world
             </Typography>
+            <br />
+            <Paper className={classes.paper}>
+              <Typography variant="subtitle2">Step 1</Typography>
+              <Typography variant="subtitle1">
+                Write a model locally using the training environment
+              </Typography>
+              <br />
+              <Typography variant="subtitle2">Step 2</Typography>
+              <Typography variant="subtitle1">
+                Connect your model to the online environment
+              </Typography>
+              <br />
+              <Typography variant="subtitle2">Step 3</Typography>
+              <Typography variant="subtitle1">
+                Watch your agents fight for survival in real time
+              </Typography>
+            </Paper>
           </Grid>
-          {/* Spectate Window */}
-          <Grid item>
-            <Spectate onCellClick={this.onCellClick} />
-          </Grid>
-          {/* Side bar */}
-          <Grid item xs={3}>
-            <Grid container spacing={16} direction="column">
-              <Grid item xs={12}>
-                <Paper className={classes.cellInspectorContainer}>
-                  <Typography>
-                    <b>Cell Inspector</b>
-                  </Typography>
-                  {selectedEntity ? (
-                    <Typography>
-                      <b>Id: </b> {selectedEntity.id}
+
+          <Grid item xs={10}>
+            <Typography variant="h4">Getting started</Typography>
+            <Typography variant="subheading">
+              Olam is easy to use and gives you ultimate freedom. You develop
+              your model and control your agents from your computer, giving you
+              complete freedom.
+            </Typography>
+            <br />
+
+            <Grid container spacing={32}>
+              <Grid item xs={4}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h6" className={classes.cardTitle}>
+                      <Computer className={classes.icon} />
                       <br />
-                      <b>Class: </b> {selectedEntity.class}
+                      Train
                     </Typography>
-                  ) : null}
-                </Paper>
+                    <br />
+                    <Typography variant="subtitle1">
+                      Run and connect to the training model locally. Use our
+                      example code and documentation to get connected and
+                      training.
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        Router.push(
+                          "https://olamai.gitbook.io/olamai/training-models/installing-the-environment"
+                        );
+                      }}
+                    >
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
               </Grid>
-              <CreateAgent />
+
+              <Grid item xs={4}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h6" className={classes.cardTitle}>
+                      <ImportExport className={classes.icon} />
+                      <br />
+                      Connect
+                    </Typography>
+                    <br />
+                    <Typography variant="subtitle1">
+                      Deploying your model is easy! Simply connect to our
+                      servers and your model will immediatly be ready to use.
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        Router.push(
+                          "https://olamai.gitbook.io/olamai/connecting-models/uploading-your-model"
+                        );
+                      }}
+                    >
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+
+              <Grid item xs={4}>
+                <Card>
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="h6" className={classes.cardTitle}>
+                      <RemoveRedEye className={classes.icon} />
+                      <br />
+                      Watch
+                    </Typography>
+                    <br />
+                    <Typography variant="subtitle1">
+                      From the website, you can create new agents that will use
+                      your model to make decisions. Watch them try to survive in
+                      the world!
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        Router.push("/environment");
+                      }}
+                    >
+                      Learn More
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
