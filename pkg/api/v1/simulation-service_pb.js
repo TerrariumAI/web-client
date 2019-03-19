@@ -1450,8 +1450,9 @@ proto.v1.CreateAgentRequest.prototype.toObject = function(opt_includeInstance) {
 proto.v1.CreateAgentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     api: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    x: jspb.Message.getFieldWithDefault(msg, 2, 0),
-    y: jspb.Message.getFieldWithDefault(msg, 3, 0)
+    modelname: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    x: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    y: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1493,10 +1494,14 @@ proto.v1.CreateAgentRequest.deserializeBinaryFromReader = function(msg, reader) 
       msg.setApi(value);
       break;
     case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setModelname(value);
+      break;
+    case 3:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setX(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setY(value);
       break;
@@ -1536,17 +1541,24 @@ proto.v1.CreateAgentRequest.serializeBinaryToWriter = function(message, writer) 
       f
     );
   }
+  f = message.getModelname();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
   f = message.getX();
   if (f !== 0) {
     writer.writeInt32(
-      2,
+      3,
       f
     );
   }
   f = message.getY();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      4,
       f
     );
   }
@@ -1569,32 +1581,47 @@ proto.v1.CreateAgentRequest.prototype.setApi = function(value) {
 
 
 /**
- * optional int32 x = 2;
- * @return {number}
+ * optional string modelName = 2;
+ * @return {string}
  */
-proto.v1.CreateAgentRequest.prototype.getX = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+proto.v1.CreateAgentRequest.prototype.getModelname = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
-/** @param {number} value */
-proto.v1.CreateAgentRequest.prototype.setX = function(value) {
-  jspb.Message.setProto3IntField(this, 2, value);
+/** @param {string} value */
+proto.v1.CreateAgentRequest.prototype.setModelname = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional int32 y = 3;
+ * optional int32 x = 3;
  * @return {number}
  */
-proto.v1.CreateAgentRequest.prototype.getY = function() {
+proto.v1.CreateAgentRequest.prototype.getX = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
 };
 
 
 /** @param {number} value */
-proto.v1.CreateAgentRequest.prototype.setY = function(value) {
+proto.v1.CreateAgentRequest.prototype.setX = function(value) {
   jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int32 y = 4;
+ * @return {number}
+ */
+proto.v1.CreateAgentRequest.prototype.getY = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/** @param {number} value */
+proto.v1.CreateAgentRequest.prototype.setY = function(value) {
+  jspb.Message.setProto3IntField(this, 4, value);
 };
 
 
@@ -4470,7 +4497,8 @@ proto.v1.CreateRemoteModelRequest.prototype.toObject = function(opt_includeInsta
  */
 proto.v1.CreateRemoteModelRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    api: jspb.Message.getFieldWithDefault(msg, 1, "")
+    api: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    name: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -4511,6 +4539,10 @@ proto.v1.CreateRemoteModelRequest.deserializeBinaryFromReader = function(msg, re
       var value = /** @type {string} */ (reader.readString());
       msg.setApi(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -4547,6 +4579,13 @@ proto.v1.CreateRemoteModelRequest.serializeBinaryToWriter = function(message, wr
       f
     );
   }
+  f = message.getName();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -4562,6 +4601,21 @@ proto.v1.CreateRemoteModelRequest.prototype.getApi = function() {
 /** @param {string} value */
 proto.v1.CreateRemoteModelRequest.prototype.setApi = function(value) {
   jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string name = 2;
+ * @return {string}
+ */
+proto.v1.CreateRemoteModelRequest.prototype.getName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.v1.CreateRemoteModelRequest.prototype.setName = function(value) {
+  jspb.Message.setProto3StringField(this, 2, value);
 };
 
 

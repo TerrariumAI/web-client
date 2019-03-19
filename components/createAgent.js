@@ -4,8 +4,18 @@ import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { ServerAddress } from "../lib/constants";
-import { Grid, Typography, Paper, TextField, Button } from "@material-ui/core";
-import { withFirebase } from "react-redux-firebase";
+import {
+  Grid,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from "@material-ui/core";
+import { withFirebase, firestoreConnect } from "react-redux-firebase";
 
 const {
   CreateAgentRequest,
@@ -24,13 +34,18 @@ const styles = theme => ({
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit
+  },
+  select: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   }
 });
 
 class CreateAgent extends React.Component {
   state = {
     x: 0,
-    y: 0
+    y: 0,
+    model: ""
   };
 
   componentDidMount() {
@@ -39,7 +54,7 @@ class CreateAgent extends React.Component {
 
   createAgent = async () => {
     const { firebase } = this.props;
-    const { x, y } = this.state;
+    const { x, y, model } = this.state;
 
     // Get current user's auth token
     firebase
@@ -49,6 +64,7 @@ class CreateAgent extends React.Component {
         var request = new CreateAgentRequest();
         request.setX(x);
         request.setY(y);
+        request.setModelname(model);
         request.setApi(API_VERSION);
         var metadata = { "auth-token": token };
         const call = this.simService.createAgent(
@@ -68,61 +84,63 @@ class CreateAgent extends React.Component {
       });
   };
 
-  // Create a new agent with a testing
-  createAgent_test = async () => {
-    const { x, y } = this.state;
-    // Create the new agent
-    var agent = new Entity();
-    agent.setX(x);
-    agent.setY(y);
-    var request = new CreateAgentRequest();
-    request.setApi(API_VERSION);
-    request.setAgent(agent);
-    var metadata = { "auth-token": "TEST-ID-TOKEN" };
-    const call = this.simService.createAgent(request, metadata, (err, resp) => {
-      console.log("Sub response: ", resp);
-    });
-    call.on("status", status => {
-      console.log("Create agent status: ", status);
-    });
-  };
-
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, remoteModels } = this.props;
+    console.log(remoteModels);
     return (
       <Grid item xs={12}>
         <Paper className={classes.paper}>
           <Typography>
             <b>Create Agent</b>
           </Typography>
-          <TextField
-            id="x"
-            label="X Position"
-            value={this.state.x}
-            onChange={this.handleChange("x")}
-            type="number"
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-            margin="normal"
-          />
-          <TextField
-            id="x"
-            label="Y Position"
-            value={this.state.y}
-            onChange={this.handleChange("y")}
-            type="number"
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true
-            }}
-            margin="normal"
-          />
+          <form className={classes.root} autoComplete="off">
+            <TextField
+              id="x"
+              label="X Position"
+              value={this.state.x}
+              onChange={this.handleChange("x")}
+              type="number"
+              className={classes.textField}
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+            />
+            <TextField
+              id="x"
+              label="Y Position"
+              value={this.state.y}
+              onChange={this.handleChange("y")}
+              type="number"
+              className={classes.textField}
+              InputLabelProps={{
+                shrink: true
+              }}
+              margin="normal"
+            />
+            <FormControl className={classes.select}>
+              <InputLabel htmlFor="model">Model</InputLabel>
+              <Select
+                value={this.state.model}
+                onChange={this.handleChange("model")}
+                inputProps={{
+                  name: "model",
+                  id: "model"
+                }}
+              >
+                {remoteModels
+                  ? remoteModels.map(model => (
+                      <MenuItem value={model.name}>{model.name}</MenuItem>
+                    ))
+                  : null}
+              </Select>
+            </FormControl>
+          </form>
+          <br />
           <Button color="primary" onClick={this.createAgent}>
             Create
           </Button>
@@ -138,5 +156,12 @@ CreateAgent.propTypes = {
 
 export default compose(
   withStyles(styles),
-  withFirebase
+  withFirebase,
+  connect(({ firestore: { ordered }, firebase: { auth } }) => ({
+    auth,
+    remoteModels: ordered.remoteModels
+  })),
+  firestoreConnect(({ auth }) => [
+    { collection: "remoteModels", where: ["user", "==", auth.uid || ""] }
+  ])
 )(CreateAgent);

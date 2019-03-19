@@ -26,7 +26,9 @@ const styles = ({ palette, spacing, breakpoints }) => ({
     paddingTop: 40
   },
   worldImg: {
-    width: "80%"
+    width: "80%",
+    maxHeight: 350,
+    maxWidth: 350
   },
   cellInspectorContainer: {
     padding: 10
@@ -73,15 +75,14 @@ class Index extends React.Component {
     return (
       <div className={classes.root}>
         <Grid container spacing={32} justify="center">
-          <Grid item xs={12} className={classes.centerText} />
-          <Grid item xs={5}>
+          <Grid item xs={10} md={5} style={{ textAlign: "center" }}>
             <img
               src="/static/world.png"
               alt="my image"
               className={classes.worldImg}
             />
           </Grid>
-          <Grid item xs={5}>
+          <Grid item xs={10} md={5}>
             <Typography variant="h4">Welcome to Olam AI</Typography>
             <Typography variant="subheading">
               Compete for survival in a persistant online world
@@ -115,7 +116,7 @@ class Index extends React.Component {
             <br />
 
             <Grid container spacing={32}>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 <Card>
                   <CardContent className={classes.cardContent}>
                     <Typography variant="h6" className={classes.cardTitle}>
@@ -126,8 +127,7 @@ class Index extends React.Component {
                     <br />
                     <Typography variant="subtitle1">
                       Run and connect to the training model locally. Use our
-                      example code and documentation to get connected and
-                      training.
+                      example code and documentation to get started.
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -146,7 +146,7 @@ class Index extends React.Component {
                 </Card>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item item xs={12} md={4}>
                 <Card>
                   <CardContent className={classes.cardContent}>
                     <Typography variant="h6" className={classes.cardTitle}>
@@ -156,8 +156,8 @@ class Index extends React.Component {
                     </Typography>
                     <br />
                     <Typography variant="subtitle1">
-                      Deploying your model is easy! Simply connect to our
-                      servers and your model will immediatly be ready to use.
+                      Using your model is easy! Simply connect to our servers
+                      and your model will immediatly be ready to use.
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -176,7 +176,7 @@ class Index extends React.Component {
                 </Card>
               </Grid>
 
-              <Grid item xs={4}>
+              <Grid item item xs={12} md={4}>
                 <Card>
                   <CardContent className={classes.cardContent}>
                     <Typography variant="h6" className={classes.cardTitle}>

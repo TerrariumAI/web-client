@@ -8,7 +8,11 @@ import { compose } from "redux";
 import Spectate from "../components/spectate";
 import CreateAgent from "../components/createAgent";
 import withNavBar from "../lib/withNavBar";
-import { withFirebase, firebaseConnect } from "react-redux-firebase";
+import {
+  withFirebase,
+  firebaseConnect,
+  firestoreConnect
+} from "react-redux-firebase";
 
 const styles = ({ palette, spacing, breakpoints }) => ({
   root: {
