@@ -6,10 +6,7 @@ import { withRouter } from "next/router";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core";
 
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import FormControl from "@material-ui/core/FormControl";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import uuidv4 from "uuid/v4";
 import { withFirebase, withFirestore } from "react-redux-firebase";
 import withNavBar from "../lib/withNavBar";
 import LoginForm from "../components/loginForm";
@@ -51,22 +48,6 @@ class Auth extends React.Component {
       password !== null &&
       password !== ""
     );
-  };
-
-  // Create user's business in their business list
-  addBusinessInfoToUserProfile = () => {
-    const { firebase, firestore } = this.props;
-    const { businessAddress, businessName } = this.state;
-    // Add business info to their profile
-    const { uid } = firebase.auth().currentUser;
-    return firestore
-      .collection("users")
-      .doc(uid)
-      .collection("businesses")
-      .add({
-        name: businessName,
-        address: businessAddress
-      });
   };
 
   onSubmit = async () => {
@@ -114,7 +95,9 @@ class Auth extends React.Component {
       }
 
       // Create user
-      firebase.createUser({ email, password }, { email, name }).then(ref => {});
+      firebase
+        .createUser({ email, password }, { email, name, secret: uuidv4() })
+        .then(ref => {});
 
       // Succesful login go back to home screen
       router.push("/");

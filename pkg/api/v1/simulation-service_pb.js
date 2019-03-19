@@ -17,6 +17,7 @@ goog.exportSymbol('proto.v1.Action', null, global);
 goog.exportSymbol('proto.v1.CellUpdate', null, global);
 goog.exportSymbol('proto.v1.CreateAgentRequest', null, global);
 goog.exportSymbol('proto.v1.CreateAgentResponse', null, global);
+goog.exportSymbol('proto.v1.CreateRemoteModelRequest', null, global);
 goog.exportSymbol('proto.v1.CreateSpectatorRequest', null, global);
 goog.exportSymbol('proto.v1.DeleteAgentRequest', null, global);
 goog.exportSymbol('proto.v1.DeleteAgentResponse', null, global);
@@ -398,7 +399,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.v1.Observation.repeatedFields_ = [1];
+proto.v1.Observation.repeatedFields_ = [2];
 
 
 
@@ -429,10 +430,11 @@ proto.v1.Observation.prototype.toObject = function(opt_includeInstance) {
  */
 proto.v1.Observation.toObject = function(includeInstance, msg) {
   var f, obj = {
-    cellsList: jspb.Message.getRepeatedField(msg, 1),
-    alive: jspb.Message.getFieldWithDefault(msg, 2, false),
-    energy: jspb.Message.getFieldWithDefault(msg, 3, 0),
-    health: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    id: jspb.Message.getFieldWithDefault(msg, 1, 0),
+    cellsList: jspb.Message.getRepeatedField(msg, 2),
+    alive: jspb.Message.getFieldWithDefault(msg, 3, false),
+    energy: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    health: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -470,18 +472,22 @@ proto.v1.Observation.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setId(value);
+      break;
+    case 2:
       var value = /** @type {string} */ (reader.readString());
       msg.addCells(value);
       break;
-    case 2:
+    case 3:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setAlive(value);
       break;
-    case 3:
+    case 4:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setEnergy(value);
       break;
-    case 4:
+    case 5:
       var value = /** @type {number} */ (reader.readInt32());
       msg.setHealth(value);
       break;
@@ -514,31 +520,38 @@ proto.v1.Observation.prototype.serializeBinary = function() {
  */
 proto.v1.Observation.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = message.getId();
+  if (f !== 0) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
   f = message.getCellsList();
   if (f.length > 0) {
     writer.writeRepeatedString(
-      1,
+      2,
       f
     );
   }
   f = message.getAlive();
   if (f) {
     writer.writeBool(
-      2,
+      3,
       f
     );
   }
   f = message.getEnergy();
   if (f !== 0) {
     writer.writeInt32(
-      3,
+      4,
       f
     );
   }
   f = message.getHealth();
   if (f !== 0) {
     writer.writeInt32(
-      4,
+      5,
       f
     );
   }
@@ -546,17 +559,32 @@ proto.v1.Observation.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * repeated string cells = 1;
+ * optional int64 id = 1;
+ * @return {number}
+ */
+proto.v1.Observation.prototype.getId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/** @param {number} value */
+proto.v1.Observation.prototype.setId = function(value) {
+  jspb.Message.setProto3IntField(this, 1, value);
+};
+
+
+/**
+ * repeated string cells = 2;
  * @return {!Array<string>}
  */
 proto.v1.Observation.prototype.getCellsList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 1));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 2));
 };
 
 
 /** @param {!Array<string>} value */
 proto.v1.Observation.prototype.setCellsList = function(value) {
-  jspb.Message.setField(this, 1, value || []);
+  jspb.Message.setField(this, 2, value || []);
 };
 
 
@@ -565,7 +593,7 @@ proto.v1.Observation.prototype.setCellsList = function(value) {
  * @param {number=} opt_index
  */
 proto.v1.Observation.prototype.addCells = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 1, value, opt_index);
+  jspb.Message.addToRepeatedField(this, 2, value, opt_index);
 };
 
 
@@ -575,49 +603,49 @@ proto.v1.Observation.prototype.clearCellsList = function() {
 
 
 /**
- * optional bool alive = 2;
+ * optional bool alive = 3;
  * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
  * You should avoid comparisons like {@code val === true/false} in those cases.
  * @return {boolean}
  */
 proto.v1.Observation.prototype.getAlive = function() {
-  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 2, false));
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 3, false));
 };
 
 
 /** @param {boolean} value */
 proto.v1.Observation.prototype.setAlive = function(value) {
-  jspb.Message.setProto3BooleanField(this, 2, value);
+  jspb.Message.setProto3BooleanField(this, 3, value);
 };
 
 
 /**
- * optional int32 energy = 3;
+ * optional int32 energy = 4;
  * @return {number}
  */
 proto.v1.Observation.prototype.getEnergy = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
-};
-
-
-/** @param {number} value */
-proto.v1.Observation.prototype.setEnergy = function(value) {
-  jspb.Message.setProto3IntField(this, 3, value);
-};
-
-
-/**
- * optional int32 health = 4;
- * @return {number}
- */
-proto.v1.Observation.prototype.getHealth = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
 };
 
 
 /** @param {number} value */
-proto.v1.Observation.prototype.setHealth = function(value) {
+proto.v1.Observation.prototype.setEnergy = function(value) {
   jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int32 health = 5;
+ * @return {number}
+ */
+proto.v1.Observation.prototype.getHealth = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/** @param {number} value */
+proto.v1.Observation.prototype.setHealth = function(value) {
+  jspb.Message.setProto3IntField(this, 5, value);
 };
 
 
@@ -4392,6 +4420,148 @@ proto.v1.UnsubscribeSpectatorFromRegionResponse.prototype.getSuccessful = functi
 /** @param {boolean} value */
 proto.v1.UnsubscribeSpectatorFromRegionResponse.prototype.setSuccessful = function(value) {
   jspb.Message.setProto3BooleanField(this, 2, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.v1.CreateRemoteModelRequest = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.v1.CreateRemoteModelRequest, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.v1.CreateRemoteModelRequest.displayName = 'proto.v1.CreateRemoteModelRequest';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.v1.CreateRemoteModelRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.v1.CreateRemoteModelRequest.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.v1.CreateRemoteModelRequest} msg The msg instance to transform.
+ * @return {!Object}
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.CreateRemoteModelRequest.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    api: jspb.Message.getFieldWithDefault(msg, 1, "")
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.v1.CreateRemoteModelRequest}
+ */
+proto.v1.CreateRemoteModelRequest.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.v1.CreateRemoteModelRequest;
+  return proto.v1.CreateRemoteModelRequest.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.v1.CreateRemoteModelRequest} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.v1.CreateRemoteModelRequest}
+ */
+proto.v1.CreateRemoteModelRequest.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setApi(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.v1.CreateRemoteModelRequest.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.v1.CreateRemoteModelRequest.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.v1.CreateRemoteModelRequest} message
+ * @param {!jspb.BinaryWriter} writer
+ * @suppress {unusedLocalVariables} f is only used for nested messages
+ */
+proto.v1.CreateRemoteModelRequest.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getApi();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string api = 1;
+ * @return {string}
+ */
+proto.v1.CreateRemoteModelRequest.prototype.getApi = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.v1.CreateRemoteModelRequest.prototype.setApi = function(value) {
+  jspb.Message.setProto3StringField(this, 1, value);
 };
 
 
