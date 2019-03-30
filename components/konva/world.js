@@ -26,8 +26,8 @@ class World extends React.Component {
     selectedPos: null,
     // What cell we are centered on
     centerPos: {
-      x: CELLS_IN_REGION / 2,
-      y: CELLS_IN_REGION / 2 - 1
+      x: 0,
+      y: 0
     },
     region: this.getRegionForPos({ x: 0, y: 0 }),
     // Any errors that come up

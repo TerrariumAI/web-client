@@ -9,14 +9,27 @@ import firebase from "firebase";
 import "firebase/firestore"; // <- needed if using firestore
 // import 'firebase/functions' // <- needed if using httpsCallable
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBt8vNHODTsGxeN8wU7rpgjmW9O5b0o__k",
-  authDomain: "olamaai.firebaseapp.com",
-  databaseURL: "https://olamaai.firebaseio.com",
-  projectId: "olamaai",
-  storageBucket: "olamaai.appspot.com",
-  messagingSenderId: "193693743424"
+let firebaseConfig = {
+  apiKey: "AIzaSyDpQXU2exKpLVi30gpsBK2ekX79wQU5Np0",
+  authDomain: "olamai-d64a7.firebaseapp.com",
+  databaseURL: "https://olamai-d64a7.firebaseio.com",
+  projectId: "olamai-d64a7",
+  storageBucket: "olamai-d64a7.appspot.com",
+  messagingSenderId: "1045534123345"
 };
+
+console.log(process.env.NODE_ENV);
+
+if (process.env.NODE_ENV == "development") {
+  firebaseConfig = {
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    databaseURL: process.env.DATABASE_URL,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID
+  };
+}
 
 // react-redux-firebase config
 const rrfConfig = {

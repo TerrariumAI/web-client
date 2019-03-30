@@ -53,35 +53,35 @@ class CreateAgent extends React.Component {
   }
 
   createAgent = async () => {
-    const { firebase } = this.props;
+    const { firebase, profile } = this.props;
     const { x, y, model } = this.state;
 
-    // Get current user's auth token
-    firebase
-      .auth()
-      .currentUser.getIdToken()
-      .then(token => {
-        var request = new CreateAgentRequest();
-        request.setX(x);
-        request.setY(y);
-        request.setModelname(model);
-        request.setApi(API_VERSION);
-        var metadata = { "auth-token": token };
-        const call = this.simService.createAgent(
-          request,
-          metadata,
-          (err, resp) => {
-            console.log("Sub response: ", resp);
-          }
-        );
-        call.on("status", status => {
-          console.log("Create agent status: ", status);
-        });
-      })
-      .catch(err => {
-        console.error("Error refreshing id token", err);
-        return false;
-      });
+    var request = new CreateAgentRequest();
+    request.setX(x);
+    request.setY(y);
+    request.setModelname(model);
+    request.setApi(API_VERSION);
+    var metadata = { "auth-secret": profile.secret };
+    const call = this.simService.createAgent(
+      request,
+      metadata,
+      (err, resp) => {}
+    );
+    call.on("status", status => {
+      console.log("Create agent status: ", status);
+    });
+
+    // // Get current user's auth token
+    // firebase
+    //   .auth()
+    //   .currentUser.getIdToken()
+    //   .then(token => {
+
+    //   })
+    //   .catch(err => {
+    //     console.error("Error refreshing id token", err);
+    //     return false;
+    //   });
   };
 
   handleChange = name => event => {
@@ -90,7 +90,6 @@ class CreateAgent extends React.Component {
 
   render() {
     const { classes, remoteModels } = this.props;
-    console.log(remoteModels);
     return (
       <Grid item xs={12}>
         <Paper className={classes.paper}>
@@ -157,8 +156,9 @@ CreateAgent.propTypes = {
 export default compose(
   withStyles(styles),
   withFirebase,
-  connect(({ firestore: { ordered }, firebase: { auth } }) => ({
+  connect(({ firestore: { ordered }, firebase: { auth, profile } }) => ({
     auth,
+    profile,
     remoteModels: ordered.remoteModels
   })),
   firestoreConnect(({ auth }) => [
