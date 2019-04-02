@@ -18,8 +18,6 @@ let firebaseConfig = {
   messagingSenderId: "1045534123345"
 };
 
-console.log(process.env.NODE_ENV);
-
 if (process.env.NODE_ENV == "development") {
   firebaseConfig = {
     apiKey: process.env.API_KEY,
