@@ -44,15 +44,16 @@ class Index extends React.Component {
 
   // When an entity is clicked in the spectate window,
   //  add it's data to the side bar
-  onCellClick = entity => {
+  onCellClick = (pos, entity) => {
     this.setState({
-      selectedEntity: entity
+      selectedEntity: entity,
+      selectedPos: pos
     });
   };
 
   render() {
     const { classes } = this.props;
-    const { selectedEntity } = this.state;
+    const { selectedEntity, selectedPos } = this.state;
     return (
       <div className={classes.root}>
         <Grid container spacing={32} justify="center">
@@ -77,7 +78,7 @@ class Index extends React.Component {
                   ) : null}
                 </Paper>
               </Grid>
-              <CreateAgent />
+              <CreateAgent selectedPos={selectedPos || { x: 0, y: 0 }} />
             </Grid>
           </Grid>
         </Grid>

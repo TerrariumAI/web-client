@@ -43,8 +43,6 @@ const styles = theme => ({
 
 class CreateAgent extends React.Component {
   state = {
-    x: 0,
-    y: 0,
     model: ""
   };
 
@@ -53,12 +51,12 @@ class CreateAgent extends React.Component {
   }
 
   createAgent = async () => {
-    const { firebase, profile } = this.props;
-    const { x, y, model } = this.state;
+    const { firebase, profile, selectedPos } = this.props;
+    const { model } = this.state;
 
     var request = new CreateAgentRequest();
-    request.setX(x);
-    request.setY(y);
+    request.setX(selectedPos.x);
+    request.setY(selectedPos.y);
     request.setModelname(model);
     request.setApi(API_VERSION);
     var metadata = { "auth-secret": profile.secret };
@@ -89,7 +87,7 @@ class CreateAgent extends React.Component {
   };
 
   render() {
-    const { classes, remoteModels } = this.props;
+    const { classes, remoteModels, selectedPos } = this.props;
     return (
       <Grid item xs={12}>
         <Paper className={classes.paper}>
@@ -97,7 +95,13 @@ class CreateAgent extends React.Component {
             <b>Create Agent</b>
           </Typography>
           <form className={classes.root} autoComplete="off">
-            <TextField
+            <Typography>
+              <b>X: </b>
+              {selectedPos.x},<b>Y: </b>
+              {selectedPos.y}
+            </Typography>
+            <Typography />
+            {/* <TextField
               id="x"
               label="X Position"
               value={this.state.x}
@@ -120,7 +124,7 @@ class CreateAgent extends React.Component {
                 shrink: true
               }}
               margin="normal"
-            />
+            /> */}
             <FormControl className={classes.select}>
               <InputLabel htmlFor="model">Model</InputLabel>
               <Select

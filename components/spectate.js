@@ -273,7 +273,7 @@ class Spectate extends React.Component {
     const { onCellClick } = this.props;
     if (onCellClick) {
       const entity = this.getEntityByPos(pos);
-      onCellClick(entity);
+      onCellClick(pos, entity);
     }
   };
 

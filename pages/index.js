@@ -85,7 +85,7 @@ class Index extends React.Component {
           <Grid item xs={10} md={5}>
             <Typography variant="h4">Welcome to Olam AI</Typography>
             <Typography variant="subheading">
-              Compete for survival in a persistant online world
+              A persistant online environment for AI
             </Typography>
             <br />
             <Paper className={classes.paper}>
@@ -101,7 +101,7 @@ class Index extends React.Component {
               <br />
               <Typography variant="subtitle2">Step 3</Typography>
               <Typography variant="subtitle1">
-                Watch your agents fight for survival in real time
+                Watch your agents fight for survival live!
               </Typography>
             </Paper>
           </Grid>
@@ -186,7 +186,7 @@ class Index extends React.Component {
                     </Typography>
                     <br />
                     <Typography variant="subtitle1">
-                      From the website, you can create new agents that will use
+                      From our website, you can create new agents that will use
                       your model to make decisions. Watch them try to survive in
                       the world!
                     </Typography>

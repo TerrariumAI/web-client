@@ -10,7 +10,7 @@ const styles = theme => ({
   },
   logo: {
     cursor: "pointer",
-    width: 100,
+    width: 150,
     fontFamily: "Comfortaa",
     color: theme.palette.custom.logo
   },
@@ -26,7 +26,7 @@ const Logo = ({ classes, shouldGrow }) => (
     color="inherit"
     className={shouldGrow ? classes.grow : ""}
   >
-    <div className={classes.logo}>Olam AI</div>
+    <div className={classes.logo}>Neural Matrix</div>
   </Typography>
 );
 
