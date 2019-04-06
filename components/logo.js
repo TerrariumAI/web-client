@@ -26,7 +26,7 @@ const Logo = ({ classes, shouldGrow }) => (
     color="inherit"
     className={shouldGrow ? classes.grow : ""}
   >
-    <div className={classes.logo}>Neural Matrix</div>
+    <div className={classes.logo}>Terrarium AI</div>
   </Typography>
 );
 

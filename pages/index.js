@@ -83,7 +83,7 @@ class Index extends React.Component {
             />
           </Grid>
           <Grid item xs={10} md={5}>
-            <Typography variant="h4">Welcome to Olam AI</Typography>
+            <Typography variant="h4">Welcome to Terrarium AI</Typography>
             <Typography variant="subheading">
               A persistant online environment for AI
             </Typography>
@@ -109,9 +109,9 @@ class Index extends React.Component {
           <Grid item xs={10}>
             <Typography variant="h4">Getting started</Typography>
             <Typography variant="subheading">
-              Olam is easy to use and gives you ultimate freedom. You develop
-              your model and control your agents from your computer, giving you
-              complete freedom.
+              Terrarium AI is easy to use and gives you ultimate freedom. You
+              develop your model and control your agents from your computer,
+              giving you complete freedom.
             </Typography>
             <br />
 
