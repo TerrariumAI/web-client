@@ -79,7 +79,6 @@ class NavBar extends React.Component {
             <Logo shouldGrow />
             <ButtonsMenu smUp isSignedIn={isSignedIn} />
           </Hidden>
-
           {/* On small devices, show a hamburger menu and open a drawer */}
           <Hidden mdUp>
             {/* <IconButton
@@ -92,7 +91,6 @@ class NavBar extends React.Component {
             </IconButton> */}
             <Logo shouldGrow />
           </Hidden>
-
           <nav className={classes.drawer}>
             {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
             <Hidden implementation="css">
@@ -117,7 +115,6 @@ class NavBar extends React.Component {
               </Drawer>
             </Hidden>
           </nav>
-
           {<AuthMenu />}
         </Toolbar>
       </AppBar>

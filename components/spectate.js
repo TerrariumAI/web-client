@@ -18,7 +18,7 @@ import { Grid, Paper, Typography } from "@material-ui/core";
 import World from "./konva/world";
 
 const API_VERSION = "v1";
-
+console.log("CONNECTING TO: ", ServerAddress);
 const styles = theme => ({
   root: {
     display: "flex"

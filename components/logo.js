@@ -16,18 +16,34 @@ const styles = theme => ({
   },
   grow: {
     flexGrow: 1
+  },
+  logoImg: {
+    height: 40,
+    paddingRight: 10
   }
 });
 
 const Logo = ({ classes, shouldGrow }) => (
-  <Typography
-    onClick={() => Router.push("/")}
-    variant="h6"
-    color="inherit"
-    className={shouldGrow ? classes.grow : ""}
-  >
-    <div className={classes.logo}>Terrarium AI</div>
-  </Typography>
+  <div className={shouldGrow ? classes.grow : ""}>
+    <img
+      src="/static/logoV1.png"
+      className={classes.logoImg}
+      style={{ float: "left" }}
+    />
+    <Typography
+      onClick={() => Router.push("/")}
+      variant="h6"
+      color="inherit"
+      className={shouldGrow ? classes.grow : ""}
+      style={{ float: "left", paddingTop: 4 }}
+    >
+      <div className={classes.logo}>Terrarium.AI</div>
+    </Typography>
+  </div>
+
+  // <div>
+  //   <img src="/static/logoV1.png" className={classes.logoImg} />
+  // </div>
 );
 
 Logo.propTypes = {
