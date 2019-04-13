@@ -13,7 +13,13 @@ app
     const app = express();
 
     if (process.env.NODE_ENV === "production") {
-      app.use(enforce.HTTPS());
+      app.use((req, res, next) => {
+        if (req.header("x-forwarded-proto") !== "https") {
+          res.redirect("https://" + req.hostname + req.url);
+        } else {
+          next();
+        }
+      });
     }
 
     app.get("*", (req, res) => {
