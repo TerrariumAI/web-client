@@ -4,7 +4,6 @@ import uuidv1 from "uuid/v1";
 import { withStyles } from "@material-ui/core/styles";
 import { Stage, Layer, Rect, Text } from "react-konva";
 import EntityRect from "./konva/entityRect";
-import { ServerAddress } from "../lib/constants";
 import {
   CreateAgentRequest,
   CreateSpectatorRequest,
@@ -16,9 +15,12 @@ import {
 import { SimulationServiceClient } from "../pkg/api/v1/simulation-service_grpc_web_pb";
 import { Grid, Paper, Typography } from "@material-ui/core";
 import World from "./konva/world";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+const { serverAddr } = publicRuntimeConfig;
 
 const API_VERSION = "v1";
-console.log("CONNECTING TO: ", ServerAddress);
+
 const styles = theme => ({
   root: {
     display: "flex"
@@ -46,7 +48,7 @@ class Spectate extends React.Component {
     // TODO - Change this to the user id
     this.clientId = uuidv1();
     // Create client
-    var simService = new SimulationServiceClient(ServerAddress, null, null);
+    var simService = new SimulationServiceClient(serverAddr, null, null);
     this.simService = simService;
     // Create spectator
     var request = new CreateSpectatorRequest();

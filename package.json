@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development node server.js",
+    "dev": "NODE_ENV=development SERVER_ADDR=http://localhost:9091 node server.js",
+    "minikube-dev": "NODE_ENV=development SERVER_ADDR=http://192.168.99.100:31037 node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js -p $PORT"
+    "start": "NODE_ENV=production SERVER_ADDR=https://simulation.terrarium.ai node server.js -p $PORT"
   },
   "keywords": [],
   "author": "",
@@ -15,11 +16,13 @@
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
     "axios": "^0.18.0",
+    "child_process": "^1.0.2",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "firebase": "^5.8.5",
     "fs": "0.0.1-security",
     "google-protobuf": "^3.6.1",
+    "grpc": "^1.19.0",
     "grpc-web": "^1.0.3",
     "konva": "^2.6.0",
     "lodash": "^4.17.11",

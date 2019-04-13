@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { ServerAddress } from "../lib/constants";
 import {
   Grid,
   Typography,
@@ -16,6 +15,9 @@ import {
   MenuItem
 } from "@material-ui/core";
 import { withFirebase, firestoreConnect } from "react-redux-firebase";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+const { serverAddr } = publicRuntimeConfig;
 
 const {
   CreateAgentRequest,
@@ -47,7 +49,7 @@ class CreateAgent extends React.Component {
   };
 
   componentDidMount() {
-    this.simService = new SimulationServiceClient(ServerAddress, null, null);
+    this.simService = new SimulationServiceClient(serverAddr, null, null);
   }
 
   createAgent = async () => {
