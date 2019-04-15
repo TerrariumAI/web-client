@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development SERVER_ADDR=http://localhost:9091 node server.js",
     "minikube-dev": "NODE_ENV=development SERVER_ADDR=http://192.168.99.100:31037 node server.js",
+    "prod-dev": "NODE_ENV=development SERVER_ADDR=https://simulation.terrarium.ai node server.js",
     "build": "next build",
     "start": "NODE_ENV=production SERVER_ADDR=https://simulation.terrarium.ai node server.js -p $PORT"
   },
@@ -17,6 +18,7 @@
     "@material-ui/icons": "^3.0.2",
     "axios": "^0.18.0",
     "child_process": "^1.0.2",
+    "classnames": "^2.2.6",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "express-sslify": "^1.2.0",

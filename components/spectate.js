@@ -16,6 +16,7 @@ import { SimulationServiceClient } from "../pkg/api/v1/simulation-service_grpc_w
 import { Grid, Paper, Typography } from "@material-ui/core";
 import World from "./konva/world";
 import getConfig from "next/config";
+import SwitchComponent from "./switchComponent";
 const { publicRuntimeConfig } = getConfig();
 const { serverAddr } = publicRuntimeConfig;
 
@@ -28,17 +29,20 @@ const styles = theme => ({
   stagePaperContainer: {
     padding: 25
   },
+  errorPaper: {
+    width: 400,
+    backgroundColor: theme.palette.error.light,
+    padding: theme.spacing.unit
+  },
   errorText: {
-    color: "red"
+    color: theme.palette.error.contrastText
   }
 });
 
 class Spectate extends React.Component {
   state = {
     // Map from pos -> entity
-    posEntityMap: {},
-    // Any errors that come up
-    error: ""
+    posEntityMap: {}
   };
   // Keeps track of what regions we are subbed to
   // Not in state because we don't need to refresh the view when this changes
@@ -55,10 +59,16 @@ class Spectate extends React.Component {
     request.setApi(API_VERSION);
     request.setId(this.clientId);
     var metadata = {};
-    var stream = simService.createSpectator(request, metadata);
-    stream.on("data", this.onData);
-    stream.on("status", this.onStatus);
-    stream.on("end", this.onEnd);
+    try {
+      var stream = simService.createSpectator(request, metadata);
+      stream.on("data", this.onData);
+      stream.on("status", this.onStatus);
+      stream.on("end", this.onEnd);
+      stream.on("error", this.onError);
+    } catch (err) {
+      console.log("Create spectator stream error: ", err);
+    }
+
     // Subscribe to the initial regions manually
     this.onRegionChange({ x: 0, y: 0 });
   }
@@ -112,10 +122,9 @@ class Spectate extends React.Component {
 
   /**
    * unsubscribeToRegion - send a request to unsub to a region
-   * TODO
    */
   unsubscribeFromRegion = async (x, y) => {
-    const { simService, regionSubs } = this;
+    const { simService } = this;
     // Make sure x and y exist!
     if (x === null || y === null) {
       console.error("ubsubscribeFromRegion(): X or Y is null");
@@ -169,7 +178,7 @@ class Spectate extends React.Component {
   };
 
   // Initial regions to subscribe to
-  onRegionChange = region => {
+  onRegionChange = async region => {
     let newRegionSubs = this.getRegionsAroundInclusive(region);
     let regionsToUnsubFrom = this.regionSubs.filter(
       r => !_.find(newRegionSubs, r)
@@ -182,18 +191,6 @@ class Spectate extends React.Component {
       this.unsubscribeFromRegion(region.x, region.y);
     });
   };
-
-  // initSubs = () => {
-  //   this.subscribeToRegion(0, 0);
-  //   this.subscribeToRegion(-1, 0);
-  //   this.subscribeToRegion(0, -1);
-  //   this.subscribeToRegion(1, 0);
-  //   this.subscribeToRegion(0, 1);
-  //   this.subscribeToRegion(-1, -1);
-  //   this.subscribeToRegion(1, 1);
-  //   this.subscribeToRegion(1, -1);
-  //   this.subscribeToRegion(-1, 1);
-  // };
 
   // On stream status change
   onStatus = status => {
@@ -261,6 +258,13 @@ class Spectate extends React.Component {
     }
   };
 
+  // On the stream receiving an error
+  onError = err => {
+    this.setState({
+      error: err
+    });
+  };
+
   // On stream ended
   onEnd = end => {
     console.log("Stream ended!");
@@ -290,14 +294,21 @@ class Spectate extends React.Component {
     const { error } = this.state;
     return (
       <div>
-        <Typography className={classes.errorText} variant="subtitle1">
-          {error}
-        </Typography>
-        <World
-          onRegionChange={this.onRegionChange}
-          getEntityByPos={this.getEntityByPos}
-          onCellClick={this.onCellClick}
-        />
+        <SwitchComponent show={error}>
+          <Paper className={classes.errorPaper}>
+            <Typography className={classes.errorText} variant="subtitle1">
+              Something's wrong with the Terrarium! You were most likely
+              disconnected due to inactivity. Try reloading the page.
+            </Typography>
+          </Paper>
+        </SwitchComponent>
+        <SwitchComponent show={!error}>
+          <World
+            onRegionChange={this.onRegionChange}
+            getEntityByPos={this.getEntityByPos}
+            onCellClick={this.onCellClick}
+          />
+        </SwitchComponent>
       </div>
     );
   }
