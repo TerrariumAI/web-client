@@ -41,6 +41,7 @@
     "redux-firestore": "^0.7.0",
     "styled-jsx": "^3.2.1",
     "uid-generator": "^1.0.0",
+    "use-image": "^1.0.3",
     "uuid": "^3.3.2",
     "xmlhttprequest-ssl": "^1.5.5"
   },

@@ -415,6 +415,62 @@ proto.v1.SimulationServicePromiseClient.prototype.resetWorld =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
+ *   !proto.v1.StepWorldRequest,
+ *   !proto.v1.StepWorldResponse>}
+ */
+const methodInfo_SimulationService_StepWorld = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.v1.StepWorldResponse,
+  /** @param {!proto.v1.StepWorldRequest} request */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.v1.StepWorldResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.v1.StepWorldRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.Error, ?proto.v1.StepWorldResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.StepWorldResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.v1.SimulationServiceClient.prototype.stepWorld =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/v1.SimulationService/StepWorld',
+      request,
+      metadata,
+      methodInfo_SimulationService_StepWorld,
+      callback);
+};
+
+
+/**
+ * @param {!proto.v1.StepWorldRequest} request The
+ *     request proto
+ * @param {!Object<string, string>} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.v1.StepWorldResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.v1.SimulationServicePromiseClient.prototype.stepWorld =
+    function(request, metadata) {
+  return new Promise((resolve, reject) => {
+    this.delegateClient_.stepWorld(
+      request, metadata, (error, response) => {
+        error ? reject(error) : resolve(response);
+      });
+  });
+};
+
+
+/**
+ * @const
+ * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.v1.CreateSpectatorRequest,
  *   !proto.v1.SpectateResponse>}
  */

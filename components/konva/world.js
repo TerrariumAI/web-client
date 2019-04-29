@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Image } from "react-konva";
 import EntityRect from "./entityRect";
 var _ = require("lodash");
 
