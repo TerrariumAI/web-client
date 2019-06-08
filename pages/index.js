@@ -1,33 +1,31 @@
 import Layout from "../components/MyLayout.js";
 import Link from "next/link";
+import { EnvironmentClient } from "../api/environment_grpc_web_pb";
+import { GetEntityRequest, Entity } from "../api/environment_pb";
 // import fetch from "isomorphic-unfetch";
 
-function Index(props) {
-  return (
-    <Layout>
-      <h1>Batman TV Shows</h1>
-      <ul>
-        {props.shows.map(({ show }) => (
-          <li key={show.id}>
-            <Link as={`/p/${show.id}`} href={`/post?id=${show.id}`}>
-              <a>{show.name}</a>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </Layout>
-  );
+const addr = "localhost:9091";
+class Index extends React.Component {
+  componentDidMount() {
+    var service = new EnvironmentClient(addr, null, null);
+    var request = new GetEntityRequest();
+    request.setId("0");
+    var metadata = {};
+    service.getEntity(request, metadata, (err, resp) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(resp);
+    });
+  }
+
+  render() {
+    return (
+      <Layout>
+        <h1>Batman TV Shows</h1>
+      </Layout>
+    );
+  }
 }
-
-Index.getInitialProps = async function() {
-  // const res = await fetch('http://api.tvmaze.com/search/shows?q=batman')
-  // const data = await res.json()
-
-  // console.log(`Show data fetched. Count: ${data.length}`)
-
-  return {
-    shows: [{ show: { id: "asdf", name: "Ratman" } }]
-  };
-};
 
 export default Index;
