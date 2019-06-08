@@ -79,52 +79,52 @@ proto.v1.SimulationServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.CreateAgentRequest,
- *   !proto.v1.CreateAgentResponse>}
+ *   !proto.v1.CreateEntityRequest,
+ *   !proto.v1.CreateEntityResponse>}
  */
-const methodInfo_SimulationService_CreateAgent = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.CreateAgentResponse,
-  /** @param {!proto.v1.CreateAgentRequest} request */
+const methodInfo_SimulationService_CreateEntity = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.v1.CreateEntityResponse,
+  /** @param {!proto.v1.CreateEntityRequest} request */
   function(request) {
     return request.serializeBinary();
   },
-  proto.v1.CreateAgentResponse.deserializeBinary
+  proto.v1.CreateEntityResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.v1.CreateAgentRequest} request The
+ * @param {!proto.v1.CreateEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.CreateAgentResponse)}
+ * @param {function(?grpc.web.Error, ?proto.v1.CreateEntityResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.CreateAgentResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.CreateEntityResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServiceClient.prototype.createAgent =
+proto.v1.SimulationServiceClient.prototype.createEntity =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/CreateAgent',
+      '/v1.SimulationService/CreateEntity',
       request,
       metadata,
-      methodInfo_SimulationService_CreateAgent,
+      methodInfo_SimulationService_CreateEntity,
       callback);
 };
 
 
 /**
- * @param {!proto.v1.CreateAgentRequest} request The
+ * @param {!proto.v1.CreateEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.v1.CreateAgentResponse>}
+ * @return {!Promise<!proto.v1.CreateEntityResponse>}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServicePromiseClient.prototype.createAgent =
+proto.v1.SimulationServicePromiseClient.prototype.createEntity =
     function(request, metadata) {
   return new Promise((resolve, reject) => {
-    this.delegateClient_.createAgent(
+    this.delegateClient_.createEntity(
       request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
@@ -191,52 +191,52 @@ proto.v1.SimulationServicePromiseClient.prototype.getEntity =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.DeleteAgentRequest,
- *   !proto.v1.DeleteAgentResponse>}
+ *   !proto.v1.DeleteEntityRequest,
+ *   !proto.v1.DeleteEntityResponse>}
  */
-const methodInfo_SimulationService_DeleteAgent = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.DeleteAgentResponse,
-  /** @param {!proto.v1.DeleteAgentRequest} request */
+const methodInfo_SimulationService_DeleteEntity = new grpc.web.AbstractClientBase.MethodInfo(
+  proto.v1.DeleteEntityResponse,
+  /** @param {!proto.v1.DeleteEntityRequest} request */
   function(request) {
     return request.serializeBinary();
   },
-  proto.v1.DeleteAgentResponse.deserializeBinary
+  proto.v1.DeleteEntityResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.v1.DeleteAgentRequest} request The
+ * @param {!proto.v1.DeleteEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.DeleteAgentResponse)}
+ * @param {function(?grpc.web.Error, ?proto.v1.DeleteEntityResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.DeleteAgentResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.v1.DeleteEntityResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServiceClient.prototype.deleteAgent =
+proto.v1.SimulationServiceClient.prototype.deleteEntity =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/DeleteAgent',
+      '/v1.SimulationService/DeleteEntity',
       request,
       metadata,
-      methodInfo_SimulationService_DeleteAgent,
+      methodInfo_SimulationService_DeleteEntity,
       callback);
 };
 
 
 /**
- * @param {!proto.v1.DeleteAgentRequest} request The
+ * @param {!proto.v1.DeleteEntityRequest} request The
  *     request proto
  * @param {!Object<string, string>} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.v1.DeleteAgentResponse>}
+ * @return {!Promise<!proto.v1.DeleteEntityResponse>}
  *     The XHR Node Readable Stream
  */
-proto.v1.SimulationServicePromiseClient.prototype.deleteAgent =
+proto.v1.SimulationServicePromiseClient.prototype.deleteEntity =
     function(request, metadata) {
   return new Promise((resolve, reject) => {
-    this.delegateClient_.deleteAgent(
+    this.delegateClient_.deleteEntity(
       request, metadata, (error, response) => {
         error ? reject(error) : resolve(response);
       });
@@ -303,62 +303,6 @@ proto.v1.SimulationServicePromiseClient.prototype.executeAgentAction =
 /**
  * @const
  * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.GetAgentObservationRequest,
- *   !proto.v1.GetAgentObservationResponse>}
- */
-const methodInfo_SimulationService_GetAgentObservation = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.GetAgentObservationResponse,
-  /** @param {!proto.v1.GetAgentObservationRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.GetAgentObservationResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.GetAgentObservationRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.GetAgentObservationResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.GetAgentObservationResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.getAgentObservation =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/GetAgentObservation',
-      request,
-      metadata,
-      methodInfo_SimulationService_GetAgentObservation,
-      callback);
-};
-
-
-/**
- * @param {!proto.v1.GetAgentObservationRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.v1.GetAgentObservationResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.getAgentObservation =
-    function(request, metadata) {
-  return new Promise((resolve, reject) => {
-    this.delegateClient_.getAgentObservation(
-      request, metadata, (error, response) => {
-        error ? reject(error) : resolve(response);
-      });
-  });
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
  *   !proto.v1.ResetWorldRequest,
  *   !proto.v1.ResetWorldResponse>}
  */
@@ -409,274 +353,6 @@ proto.v1.SimulationServicePromiseClient.prototype.resetWorld =
         error ? reject(error) : resolve(response);
       });
   });
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.StepWorldRequest,
- *   !proto.v1.StepWorldResponse>}
- */
-const methodInfo_SimulationService_StepWorld = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.StepWorldResponse,
-  /** @param {!proto.v1.StepWorldRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.StepWorldResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.StepWorldRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.StepWorldResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.StepWorldResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.stepWorld =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/StepWorld',
-      request,
-      metadata,
-      methodInfo_SimulationService_StepWorld,
-      callback);
-};
-
-
-/**
- * @param {!proto.v1.StepWorldRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.v1.StepWorldResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.stepWorld =
-    function(request, metadata) {
-  return new Promise((resolve, reject) => {
-    this.delegateClient_.stepWorld(
-      request, metadata, (error, response) => {
-        error ? reject(error) : resolve(response);
-      });
-  });
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.CreateSpectatorRequest,
- *   !proto.v1.SpectateResponse>}
- */
-const methodInfo_SimulationService_CreateSpectator = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.SpectateResponse,
-  /** @param {!proto.v1.CreateSpectatorRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.SpectateResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.CreateSpectatorRequest} request The request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.SpectateResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.createSpectator =
-    function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
-      '/v1.SimulationService/CreateSpectator',
-      request,
-      metadata,
-      methodInfo_SimulationService_CreateSpectator);
-};
-
-
-/**
- * @param {!proto.v1.CreateSpectatorRequest} request The request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.SpectateResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.createSpectator =
-    function(request, metadata) {
-  return this.delegateClient_.client_.serverStreaming(this.delegateClient_.hostname_ +
-      '/v1.SimulationService/CreateSpectator',
-      request,
-      metadata,
-      methodInfo_SimulationService_CreateSpectator);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.SubscribeSpectatorToRegionRequest,
- *   !proto.v1.SubscribeSpectatorToRegionResponse>}
- */
-const methodInfo_SimulationService_SubscribeSpectatorToRegion = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.SubscribeSpectatorToRegionResponse,
-  /** @param {!proto.v1.SubscribeSpectatorToRegionRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.SubscribeSpectatorToRegionResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.SubscribeSpectatorToRegionRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.SubscribeSpectatorToRegionResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.SubscribeSpectatorToRegionResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.subscribeSpectatorToRegion =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/SubscribeSpectatorToRegion',
-      request,
-      metadata,
-      methodInfo_SimulationService_SubscribeSpectatorToRegion,
-      callback);
-};
-
-
-/**
- * @param {!proto.v1.SubscribeSpectatorToRegionRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.v1.SubscribeSpectatorToRegionResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.subscribeSpectatorToRegion =
-    function(request, metadata) {
-  return new Promise((resolve, reject) => {
-    this.delegateClient_.subscribeSpectatorToRegion(
-      request, metadata, (error, response) => {
-        error ? reject(error) : resolve(response);
-      });
-  });
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.UnsubscribeSpectatorFromRegionRequest,
- *   !proto.v1.UnsubscribeSpectatorFromRegionResponse>}
- */
-const methodInfo_SimulationService_UnsubscribeSpectatorFromRegion = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.UnsubscribeSpectatorFromRegionResponse,
-  /** @param {!proto.v1.UnsubscribeSpectatorFromRegionRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.UnsubscribeSpectatorFromRegionResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.UnsubscribeSpectatorFromRegionRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.Error, ?proto.v1.UnsubscribeSpectatorFromRegionResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.v1.UnsubscribeSpectatorFromRegionResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.unsubscribeSpectatorFromRegion =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/v1.SimulationService/UnsubscribeSpectatorFromRegion',
-      request,
-      metadata,
-      methodInfo_SimulationService_UnsubscribeSpectatorFromRegion,
-      callback);
-};
-
-
-/**
- * @param {!proto.v1.UnsubscribeSpectatorFromRegionRequest} request The
- *     request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.v1.UnsubscribeSpectatorFromRegionResponse>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.unsubscribeSpectatorFromRegion =
-    function(request, metadata) {
-  return new Promise((resolve, reject) => {
-    this.delegateClient_.unsubscribeSpectatorFromRegion(
-      request, metadata, (error, response) => {
-        error ? reject(error) : resolve(response);
-      });
-  });
-};
-
-
-/**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.v1.CreateRemoteModelRequest,
- *   !proto.v1.Observation>}
- */
-const methodInfo_SimulationService_CreateRemoteModel = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.v1.Observation,
-  /** @param {!proto.v1.CreateRemoteModelRequest} request */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.v1.Observation.deserializeBinary
-);
-
-
-/**
- * @param {!proto.v1.CreateRemoteModelRequest} request The request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.Observation>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServiceClient.prototype.createRemoteModel =
-    function(request, metadata) {
-  return this.client_.serverStreaming(this.hostname_ +
-      '/v1.SimulationService/CreateRemoteModel',
-      request,
-      metadata,
-      methodInfo_SimulationService_CreateRemoteModel);
-};
-
-
-/**
- * @param {!proto.v1.CreateRemoteModelRequest} request The request proto
- * @param {!Object<string, string>} metadata User defined
- *     call metadata
- * @return {!grpc.web.ClientReadableStream<!proto.v1.Observation>}
- *     The XHR Node Readable Stream
- */
-proto.v1.SimulationServicePromiseClient.prototype.createRemoteModel =
-    function(request, metadata) {
-  return this.delegateClient_.client_.serverStreaming(this.delegateClient_.hostname_ +
-      '/v1.SimulationService/CreateRemoteModel',
-      request,
-      metadata,
-      methodInfo_SimulationService_CreateRemoteModel);
 };
 
 
