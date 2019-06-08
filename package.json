@@ -1,53 +1,27 @@
 {
-  "name": "client",
+  "name": "web-client",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development SERVER_ADDR=http://localhost:9091 node server.js",
-    "minikube-dev": "NODE_ENV=development SERVER_ADDR=http://192.168.99.100:31037 node server.js",
-    "prod-dev": "NODE_ENV=development SERVER_ADDR=https://simulation.terrarium.ai node server.js",
+    "dev": "next",
     "build": "next build",
-    "start": "NODE_ENV=production SERVER_ADDR=https://simulation.terrarium.ai node server.js -p $PORT"
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OlamAI/client.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@material-ui/core": "^3.9.2",
-    "@material-ui/icons": "^3.0.2",
-    "axios": "^0.18.0",
-    "child_process": "^1.0.2",
-    "classnames": "^2.2.6",
-    "dotenv": "^7.0.0",
-    "express": "^4.16.4",
-    "express-sslify": "^1.2.0",
-    "firebase": "^5.8.5",
-    "fs": "0.0.1-security",
-    "google-protobuf": "^3.6.1",
-    "grpc": "^1.19.0",
-    "grpc-web": "^1.0.3",
-    "konva": "^2.6.0",
-    "lodash": "^4.17.11",
-    "next": "^7.0.2",
-    "prop-types": "15.6.2",
-    "react": "16.7.0",
-    "react-dom": "16.7.0",
-    "react-jss": "^8.6.1",
-    "react-konva": "^16.7.1",
-    "react-redux": "5.1.1",
-    "react-redux-firebase": "^2.2.6",
-    "redux": "^4.0.1",
-    "redux-firestore": "^0.7.0",
-    "styled-jsx": "^3.2.1",
-    "uid-generator": "^1.0.0",
-    "use-image": "^1.0.3",
-    "uuid": "^3.3.2",
-    "xmlhttprequest-ssl": "^1.5.5"
+  "bugs": {
+    "url": "https://github.com/OlamAI/client/issues"
   },
-  "devDependencies": {
-    "browserify": "^16.2.2",
-    "webpack": "^4.16.5",
-    "webpack-cli": "^3.1.0"
+  "homepage": "https://github.com/OlamAI/client#readme",
+  "dependencies": {
+    "next": "^8.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
   }
 }
