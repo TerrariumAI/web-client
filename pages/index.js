@@ -5,7 +5,7 @@ import { EnvironmentClient } from "../api/environment_grpc_web_pb";
 import { GetEntityRequest, Entity } from "../api/environment_pb";
 import { withFirebase, firestoreConnect } from "react-redux-firebase";
 import { Typography, Container } from "@material-ui/core";
-import withNavbar from "../lib/withNavbar";
+import withNavbar from "../src/withNavbar";
 
 const addr = "localhost:9091";
 

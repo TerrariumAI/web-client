@@ -1,12 +1,12 @@
 import App, { Container } from "next/app";
 import Head from "next/head";
 import React from "react";
-import withReduxStore from "../lib/with-redux-store";
+import withReduxStore from "../src/with-redux-store";
 import { Provider } from "react-redux";
 // Material ui
 import { ThemeProvider } from "@material-ui/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import theme from "../lib/theme";
+import theme from "../src/theme";
 
 class MyApp extends App {
   render() {
