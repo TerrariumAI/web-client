@@ -32,8 +32,25 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function SignIn() {
+export default function SignIn(props) {
   const classes = useStyles();
+
+  const [values, setValues] = React.useState({
+    email: "",
+    password: ""
+  });
+
+  const handleChange = name => event => {
+    setValues({ ...values, [name]: event.target.value });
+  };
+
+  const onSubmit = e => {
+    e.preventDefault();
+
+    if (props.onSubmit) {
+      props.onSubmit(values.email, values.password);
+    }
+  };
 
   return (
     <div className={classes.paper}>
@@ -45,6 +62,7 @@ export default function SignIn() {
       </Typography>
       <form className={classes.form} noValidate>
         <TextField
+          onChange={handleChange("email")}
           variant="outlined"
           margin="normal"
           required
@@ -56,6 +74,7 @@ export default function SignIn() {
           autoFocus
         />
         <TextField
+          onChange={handleChange("password")}
           variant="outlined"
           margin="normal"
           required
@@ -71,6 +90,7 @@ export default function SignIn() {
           label="Remember me"
         />
         <Button
+          onClick={onSubmit}
           type="submit"
           fullWidth
           variant="contained"
