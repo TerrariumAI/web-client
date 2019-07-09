@@ -31,9 +31,9 @@ let Navbar = props => {
           </Grid>
 
           <Grid item>
-            <div>
+            <Link href="/auth">
               <Button color="inherit">Login</Button>
-            </div>
+            </Link>
           </Grid>
         </Grid>
       </Toolbar>
