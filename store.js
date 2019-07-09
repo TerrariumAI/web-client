@@ -10,13 +10,13 @@ import "firebase/firestore"; // <- needed if using firestore
 // import 'firebase/functions' // <- needed if using httpsCallable
 
 var firebaseConfig = {
-  apiKey: "AIzaSyDpQXU2exKpLVi30gpsBK2ekX79wQU5Np0",
-  authDomain: "olamai-d64a7.firebaseapp.com",
-  databaseURL: "https://olamai-d64a7.firebaseio.com",
-  projectId: "olamai-d64a7",
-  storageBucket: "olamai-d64a7.appspot.com",
-  messagingSenderId: "1045534123345",
-  appId: "1:1045534123345:web:a319fd1bf081157e"
+  apiKey: process.env.API_KEY,
+  authDomain: process.env.AUTH_DOMAIN,
+  databaseURL: process.env.DATABASE_URL,
+  projectId: process.env.PROJECT_ID,
+  storageBucket: process.env.STORAGE_BUCKET,
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,
+  appId: process.env.APP_ID
 };
 
 // react-redux-firebase config
