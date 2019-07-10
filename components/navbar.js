@@ -1,3 +1,5 @@
+import { compose } from "redux";
+import { connect } from "react-redux";
 import Link from "next/link";
 import {
   AppBar,
@@ -5,40 +7,52 @@ import {
   IconButton,
   Typography,
   Button,
-  withStyles,
-  Grid
+  Grid,
+  Container
 } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
+import { makeStyles } from "@material-ui/core/styles";
+import ProfileNavbarMenu from "./profileNavbarMenu";
+import { isLoaded, isEmpty, withFirebase } from "react-redux-firebase";
 
-const styles = {
-  marginRight: 15
-};
+const useStyles = makeStyles(theme => ({
+  spacer: {
+    flexGrow: 1
+  }
+}));
 
-let Navbar = props => {
-  const { classes } = props;
+let Navbar = ({ firebase, auth }) => {
+  const classes = useStyles();
+
+  console.log("Auth: ", auth);
+
+  // AuthBtns decides which buttons to render depending on the auth status
+  let AuthBtns = () => {
+    // If loading or unauthorized, show the entry auth buttons
+    if (!isLoaded(auth) || isEmpty(auth)) {
+      return (
+        <Link href="/auth">
+          <Button color="inherit">Login</Button>
+        </Link>
+      );
+    }
+    // If the user is signed in, show a profile menu
+    return <ProfileNavbarMenu />;
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
-        <Grid
-          justify="space-between" // Add it here :)
-          container
-          spacing={24}
-        >
-          <Grid item>
-            <Typography variant="h6" className={classes.title}>
-              Terrarium.ai
-            </Typography>
-          </Grid>
+        <Typography variant="h6">Terrarium.ai</Typography>
 
-          <Grid item>
-            <Link href="/auth">
-              <Button color="inherit">Login</Button>
-            </Link>
-          </Grid>
-        </Grid>
+        <div className={classes.spacer} />
+
+        <AuthBtns />
       </Toolbar>
     </AppBar>
   );
 };
 
-export default withStyles(styles)(Navbar);
+export default compose(
+  withFirebase,
+  connect(({ firebase: { auth } }) => ({ auth }))
+)(Navbar);
