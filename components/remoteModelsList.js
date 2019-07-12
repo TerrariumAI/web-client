@@ -1,6 +1,11 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, CircularProgress, Typography } from "@material-ui/core";
-import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import {
+  firestoreConnect,
+  isLoaded,
+  isEmpty,
+  withFirestore
+} from "react-redux-firebase";
 import {
   Table,
   TableBody,
@@ -13,6 +18,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withFirebase } from "react-redux-firebase";
 import LocalFlorist from "@material-ui/icons/LocalFlorist";
+import Steps from "../components/steps";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,17 +55,19 @@ let RemoteModelsList = ({ remoteModels }) => {
       <Paper className={classes.root}>
         <Container className={classes.emptyContainer}>
           <Typography variant="h5">
-            <LocalFlorist />
             You don't have any Remote Models!
           </Typography>
-          <Typography variant="h6" color="textSecondary">
-            This is the first step towards using the Terrarium. <br />
-            Click the "Create Remote Model" button to get started!
+          <Typography variant="h6" color="textSecondary" gutterBottom>
+            This is the first step towards using Terrarium! Here's a reminder of
+            what the steps are.
           </Typography>
+          <Steps />
         </Container>
       </Paper>
     );
   }
+
+  console.log(remoteModels);
 
   // LIST
   return (
@@ -73,15 +81,18 @@ let RemoteModelsList = ({ remoteModels }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {remoteModels.map(row => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.secretKey}</TableCell>
-              <TableCell align="right">{row.status}</TableCell>
-            </TableRow>
-          ))}
+          {Object.keys(remoteModels).map(key => {
+            const remoteModel = remoteModels[key];
+            return (
+              <TableRow key={remoteModel.name}>
+                <TableCell component="th" scope="row">
+                  {remoteModel.name}
+                </TableCell>
+                <TableCell align="right">{remoteModel.secretKey}</TableCell>
+                <TableCell align="right">{remoteModel.status}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Paper>
@@ -90,14 +101,16 @@ let RemoteModelsList = ({ remoteModels }) => {
 
 export default compose(
   withFirebase,
-  firestoreConnect(({ firebase }) => [
+  withFirestore,
+  connect(({ firestore, firebase: { auth } }, props) => ({
+    remoteModels: firestore.data.myRemoteModels,
+    auth
+  })),
+  firestoreConnect(({ firebase, auth }) => [
     {
       collection: "remoteModels",
-      where: [["ownerUID", "==", firebase.auth.uid || ""]],
+      where: [["ownerUID", "==", auth.uid || ""]],
       storeAs: "myRemoteModels"
     }
-  ]),
-  connect((state, props) => ({
-    remoteModels: state.firestore.ordered.myRemoteModels
-  }))
+  ])
 )(RemoteModelsList);
