@@ -39,13 +39,25 @@ let Navbar = ({ firebase, auth }) => {
     return <ProfileNavbarMenu />;
   };
 
+  let MenuItems = () => {
+    if (!isLoaded(auth) || isEmpty(auth)) {
+      return null;
+    }
+
+    return (
+      <Link href="/dashboard">
+        <Button color="inherit">Dashboard</Button>
+      </Link>
+    );
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6">Terrarium.ai</Typography>
 
         <div className={classes.spacer} />
-
+        <MenuItems />
         <AuthBtns />
       </Toolbar>
     </AppBar>

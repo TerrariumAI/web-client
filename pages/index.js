@@ -1,12 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { EnvironmentClient } from "../api/environment_grpc_web_pb";
-import {
-  GetEntityRequest,
-  CreateEntityRequest,
-  Entity
-} from "../api/environment_pb";
 import { withFirebase, firestoreConnect } from "react-redux-firebase";
 import {
   Typography,
