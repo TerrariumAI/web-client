@@ -66,7 +66,8 @@ let NewRemoteModelDialog = props => {
         name,
         description,
         secretKey: uuidv4(),
-        ownerUID: firebase.auth().currentUser.uid
+        ownerUID: firebase.auth().currentUser.uid,
+        connectCount: 0
       });
       onClose();
     }

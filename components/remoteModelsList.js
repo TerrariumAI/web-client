@@ -17,7 +17,7 @@ import {
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { withFirebase } from "react-redux-firebase";
-import LocalFlorist from "@material-ui/icons/LocalFlorist";
+import Delete from "@material-ui/icons/Delete";
 import Steps from "../components/steps";
 
 const useStyles = makeStyles(theme => ({
@@ -76,8 +76,9 @@ let RemoteModelsList = ({ remoteModels }) => {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="right">Secret Key</TableCell>
-            <TableCell align="right">Status</TableCell>
+            <TableCell align="left">Secret Key</TableCell>
+            <TableCell align="left">Status</TableCell>
+            <TableCell align="left" />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -88,8 +89,13 @@ let RemoteModelsList = ({ remoteModels }) => {
                 <TableCell component="th" scope="row">
                   {remoteModel.name}
                 </TableCell>
-                <TableCell align="right">{remoteModel.secretKey}</TableCell>
-                <TableCell align="right">{remoteModel.status}</TableCell>
+                <TableCell align="left">{remoteModel.secretKey}</TableCell>
+                <TableCell align="left">
+                  {remoteModel.connectCount > 0 ? "Connected" : "Disconnected"}
+                </TableCell>
+                <TableCell align="right">
+                  <Delete />
+                </TableCell>
               </TableRow>
             );
           })}
