@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Button } from "@material-ui/core";
 import { withFirebase } from "react-redux-firebase";
-
+import axios from "axios";
 import { EnvironmentClient } from "../api/environment_grpc_web_pb";
 import {
   GetEntityRequest,
@@ -13,8 +13,6 @@ const useStyles = makeStyles(theme => ({
   marginRight: 15
 }));
 
-const addr = "http://104.198.204.211";
-
 let Testing = ({ firebase }) => {
   const classes = useStyles();
 
@@ -25,18 +23,52 @@ let Testing = ({ firebase }) => {
       .auth()
       .currentUser.getIdToken(/* forceRefresh */ true)
       .then(function(idToken) {
-        var service = new EnvironmentClient(addr, null, null);
-        var request = new CreateEntityRequest();
-        var metadata = {
-          authorization: `Bearer ${idToken}`
-        };
-        console.log(idToken);
-        service.createEntity(request, metadata, (err, resp) => {
-          if (err) {
-            console.log("Got error: ", err);
-          }
-          console.log("Resp: ", resp);
+        const instance = axios.create({
+          baseURL:
+            "http://34.67.243.23/endpoints.terrariumai.environment.Environment",
+          timeout: 1000,
+          headers: { authorization: `Bearer ${idToken}` }
         });
+
+        instance
+          .post("/CreateEntity", {
+            entity: {
+              x: 0,
+              y: 0
+            }
+          })
+          .then(function(response) {
+            // handle success
+            console.log(response);
+          })
+          .catch(function(error) {
+            // handle error
+            console.log(error);
+          })
+          .finally(function() {
+            // always executed
+          });
+        // var service = new EnvironmentClient(addr, null, null);
+        // var entity = new Entity();
+        // entity.setX(0);
+        // entity.setY(0);
+        // var request = new CreateEntityRequest();
+        // request.setEntity(entity);
+        // var metadata = {
+        //   authorization: `Bearer ${idToken}`
+        // };
+        // console.log(idToken);
+        // let call = service.createEntity(request, metadata, (err, resp) => {
+        //   if (err) {
+        //     console.log("Got error: ", err);
+        //   }
+        //   console.log("Resp: ", resp);
+        // });
+        // call.on("status", function(status) {
+        //   console.log("Status: ", status.code);
+        //   console.log("Details: ", status.details);
+        //   console.log("Meta: ", status.metadata);
+        // });
       })
       .catch(function(error) {
         // Handle error
