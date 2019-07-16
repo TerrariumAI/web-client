@@ -6,6 +6,7 @@ import { EnvironmentClient } from "../api/environment_grpc_web_pb";
 import {
   GetEntityRequest,
   CreateEntityRequest,
+  GetEntitiesInRegionRequest,
   Entity
 } from "../api/environment_pb";
 
@@ -25,17 +26,19 @@ let Testing = ({ firebase }) => {
       .then(function(idToken) {
         const instance = axios.create({
           baseURL:
-            "http://34.67.243.23/endpoints.terrariumai.environment.Environment",
+            "http://34.67.238.242/endpoints.terrariumai.environment.Environment",
           timeout: 1000,
           headers: { authorization: `Bearer ${idToken}` }
         });
 
         instance
-          .post("/CreateEntity", {
-            entity: {
-              x: 0,
-              y: 0
-            }
+          .post("/GetEntitiesInRegion", {
+            // entity: {
+            //   x: 3,
+            //   y: 0
+            // }
+            x: 0,
+            y: 0
           })
           .then(function(response) {
             // handle success
@@ -48,22 +51,28 @@ let Testing = ({ firebase }) => {
           .finally(function() {
             // always executed
           });
-        // var service = new EnvironmentClient(addr, null, null);
+
+        // var service = new EnvironmentClient("http://34.67.238.242", null, null);
         // var entity = new Entity();
         // entity.setX(0);
         // entity.setY(0);
-        // var request = new CreateEntityRequest();
-        // request.setEntity(entity);
+        // var request = new GetEntitiesInRegionRequest();
+        // request.setX(0);
+        // request.setY(0);
         // var metadata = {
         //   authorization: `Bearer ${idToken}`
         // };
         // console.log(idToken);
-        // let call = service.createEntity(request, metadata, (err, resp) => {
-        //   if (err) {
-        //     console.log("Got error: ", err);
+        // let call = service.getEntitiesInRegion(
+        //   request,
+        //   metadata,
+        //   (err, resp) => {
+        //     if (err) {
+        //       console.log("Got error: ", err);
+        //     }
+        //     console.log("Resp: ", resp);
         //   }
-        //   console.log("Resp: ", resp);
-        // });
+        // );
         // call.on("status", function(status) {
         //   console.log("Status: ", status.code);
         //   console.log("Details: ", status.details);
