@@ -26,19 +26,19 @@ let Testing = ({ firebase }) => {
       .then(function(idToken) {
         const instance = axios.create({
           baseURL:
-            "http://34.67.238.242/endpoints.terrariumai.environment.Environment",
+            "http://35.244.188.173/endpoints.terrariumai.environment.Environment",
           timeout: 1000,
           headers: { authorization: `Bearer ${idToken}` }
         });
 
         instance
-          .post("/GetEntitiesInRegion", {
-            // entity: {
-            //   x: 3,
-            //   y: 0
-            // }
-            x: 0,
-            y: 0
+          .post("/CreateEntity", {
+            entity: {
+              x: 5,
+              y: 0
+            }
+            // x: 0,
+            // y: 0
           })
           .then(function(response) {
             // handle success
