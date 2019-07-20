@@ -24,12 +24,14 @@ const pubnub = new PubNub({
   subscribeKey : 'sub-c-b4ba4e28-a647-11e9-ad2c-6ad2737329fc'
 })
 
-let SimpleEnvObs = ({ firebase }) => {
+let authToken = "";
+
+let SimpleEnvObs = (props) => {
   const classes = useStyles();
 
   const [posEntityMap, setPosEntityMap] = useState({});
   const [regionSubs, setRegionSubs] = useState([]);
-  let authToken = "";
+  
 
   function onMessage({message: {eventName, entityData}}) {
     var e = JSON.parse(entityData)
@@ -51,7 +53,7 @@ let SimpleEnvObs = ({ firebase }) => {
 
   // componentDidMount and componentDidUpdate:
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(function(user) {
+    props.firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         user.getIdToken().then(function(idToken) {
           authToken = idToken
@@ -151,7 +153,9 @@ let SimpleEnvObs = ({ firebase }) => {
   };
 
   let onCellClick = (position) => {
-    console.log("cell click", position);
+    if (props.onCellClick) {
+      props.onCellClick(position)
+    }
   };
 
   return (
