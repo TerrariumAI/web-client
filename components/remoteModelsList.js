@@ -105,18 +105,4 @@ let RemoteModelsList = ({ remoteModels }) => {
   );
 };
 
-export default compose(
-  withFirebase,
-  withFirestore,
-  connect(({ firestore, firebase: { auth } }, props) => ({
-    remoteModels: firestore.data.myRemoteModels,
-    auth
-  })),
-  firestoreConnect(({ firebase, auth }) => [
-    {
-      collection: "remoteModels",
-      where: [["ownerUID", "==", auth.uid || ""]],
-      storeAs: "myRemoteModels"
-    }
-  ])
-)(RemoteModelsList);
+export default RemoteModelsList;

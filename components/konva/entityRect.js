@@ -23,6 +23,8 @@ class EntityRect extends React.Component {
     let fill = "white";
     if (!entity || entity.class === "EMPTY") {
       fill = "#32ff7e";
+    } else if (entity.class === "ROCK") {
+      fill = "#000000";
     } else if (entity.class === "AGENT") {
       fill = "#18dcff";
     } else if (entity.class === "FOOD") {

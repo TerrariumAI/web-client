@@ -28,20 +28,23 @@ let authToken = "";
 
 let SimpleEnvObs = (props) => {
   const classes = useStyles();
+  let listening = false
 
   const [posEntityMap, setPosEntityMap] = useState({});
   const [regionSubs, setRegionSubs] = useState([]);
   
 
-  function onMessage({message: {eventName, entityData}}) {
+  function onMessage({message: {eventName, entityData}, channel}) {
     var e = JSON.parse(entityData)
+    console.log(channel, e)
     e.x = e.x || 0
     e.y = e.y || 0
-    if (eventName == "createEntity") {
+    if (eventName == "createEntity" || "updateEntity") {
       setPosEntityMap({...posEntityMap, [`${e.x}.${e.y}`]: e })
+    } else if (eventName == "deleteEntity") {
+      setPosEntityMap({...posEntityMap, [`${e.x}.${e.y}`]: null })
     }
   }
-
   const listener = {
     message: onMessage,
     presence: function(presenceEvent) {
@@ -49,10 +52,14 @@ let SimpleEnvObs = (props) => {
     }
   }
 
-  pubnub.addListener(listener)
-
   // componentDidMount and componentDidUpdate:
   useEffect(() => {
+    if (!listening) {
+      console.log("add listener")
+      pubnub.addListener(listener)
+      listening = true
+    }
+    
     props.firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         user.getIdToken().then(function(idToken) {
@@ -85,8 +92,8 @@ let SimpleEnvObs = (props) => {
   // Subscribe to a region
   let subscribeToRegion = async ({x, y}) => {
     // Make sure x and y exist!
-    if (x === null || y === null) {
-      console.error("subscribeToRegion(): X or Y is null");
+    if (x === null || y === null || x < 0 || y < 0) {
+      console.error("subscribeToRegion(): X or Y is null or negative");
       return;
     }
     // Check if we are already subbed to this region, exit if so
@@ -124,16 +131,19 @@ let SimpleEnvObs = (props) => {
       return;
     }
     // Remove this region from the region subs array
-    regionSubsTemp = regionSubs.filter(r => !_.isEqual(r, { x, y }));
+    let regionSubsTemp = regionSubs.filter(r => !_.isEqual(r, { x, y }));
     setRegionSubs(regionSubsTemp)
     // Unsubscribe from the region
-    pubnub.subscribe({
+    pubnub.unsubscribe({
       channels: [`${x}.${y}`] 
     });
   }
 
   // Return entity at given position
   let getEntityByPos = ({x, y}) => {
+    if (x < 1 || y < 1) {
+      return {class: "ROCK"}
+    }
     let e = posEntityMap[`${x}.${y}`]
     return e;
   };
