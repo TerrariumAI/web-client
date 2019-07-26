@@ -24,25 +24,31 @@ const pubnub = new PubNub({
   subscribeKey : 'sub-c-b4ba4e28-a647-11e9-ad2c-6ad2737329fc'
 })
 
-let authToken = "";
+let idToken = "";
+let listening = false
 
 let SimpleEnvObs = (props) => {
   const classes = useStyles();
-  let listening = false
 
   const [posEntityMap, setPosEntityMap] = useState({});
+  const [idPosMap, setIdPosMap] = useState({});
   const [regionSubs, setRegionSubs] = useState([]);
   
-
   function onMessage({message: {eventName, entityData}, channel}) {
     var e = JSON.parse(entityData)
-    console.log(channel, e)
     e.x = e.x || 0
     e.y = e.y || 0
-    if (eventName == "createEntity" || "updateEntity") {
+    if (eventName == "createEntity") {
+      setIdPosMap({...idPosMap, [e.id]: `${e.x}.${e.y}` })
       setPosEntityMap({...posEntityMap, [`${e.x}.${e.y}`]: e })
+    } else if (eventName == "updateEntity") {
+      const lastPos = idPosMap[e.id]
+      setIdPosMap({...idPosMap, [e.id]: `${e.x}.${e.y}` })
+      setPosEntityMap({...posEntityMap, [lastPos]: undefined, [`${e.x}.${e.y}`]: e })
     } else if (eventName == "deleteEntity") {
-      setPosEntityMap({...posEntityMap, [`${e.x}.${e.y}`]: null })
+      const lastPos = idPosMap[e.id]
+      setIdPosMap({...idPosMap, [e.id]: undefined })
+      setPosEntityMap({...posEntityMap, [lastPos]: undefined})
     }
   }
   const listener = {
@@ -55,24 +61,32 @@ let SimpleEnvObs = (props) => {
   // componentDidMount and componentDidUpdate:
   useEffect(() => {
     if (!listening) {
-      console.log("add listener")
+      console.log("INFO: adding listener")
       pubnub.addListener(listener)
       listening = true
     }
     
-    props.firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        user.getIdToken().then(function(idToken) {
-          authToken = idToken
-          onRegionChange({x: 0, y: 0});
-        });
-      }
-    });
+    if (!idToken) {
+      props.firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          user.getIdToken().then(function(_idToken) {
+            idToken = _idToken
+            onRegionChange({x: 0, y: 0});
+          });
+        }
+      });
+    }
+
+    return () => {
+      pubnub.removeListener(listener) 
+      console.log("INFO: removing listener")
+    }
   }, []);
 
   // When regionState is received from api, put it into the map
   let onReceiveRegionState = ({data: {entities}}) => {
-    let newEntitiesTemp = {}
+    let entityPosMapTemp = {}
+    let idPosMapTemp = {}
     // Empty region
     if (!entities) {
       return
@@ -84,9 +98,11 @@ let SimpleEnvObs = (props) => {
       e.x = e.x || 0
       e.y = e.y || 0
       // add to the temp object
-      newEntitiesTemp[`${e.x}.${e.y}`] = e
+      entityPosMapTemp[`${e.x}.${e.y}`] = e
+      idPosMapTemp[e.id] = `${e.x}.${e.y}`
     }
-    setPosEntityMap({ ...posEntityMap, ...newEntitiesTemp });
+    setIdPosMap({...idPosMap, ...idPosMapTemp })
+    setPosEntityMap({...posEntityMap, ...entityPosMapTemp })
   };
 
   // Subscribe to a region
@@ -104,7 +120,7 @@ let SimpleEnvObs = (props) => {
 
     // Get the initial data for the region
     try {
-      const regionState = await GetEntitiesInRegion(authToken, x, y);
+      const regionState = await GetEntitiesInRegion(idToken, x, y);
       onReceiveRegionState(regionState)
     }
     catch (error) {
@@ -162,9 +178,9 @@ let SimpleEnvObs = (props) => {
     });
   };
 
-  let onCellClick = (position) => {
+  let onCellClick = (position, entity) => {
     if (props.onCellClick) {
-      props.onCellClick(position)
+      props.onCellClick(position, entity)
     }
   };
 

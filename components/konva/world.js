@@ -117,13 +117,13 @@ class World extends React.Component {
   }
 
   // When a cell is clicked
-  onCellClick = worldPos => {
+  onCellClick = (worldPos, entity) => {
     const { onCellClick } = this.props;
     this.setState({
       selectedPos: worldPos
     });
     if (onCellClick) {
-      onCellClick(worldPos);
+      onCellClick(worldPos, entity);
     }
   };
 

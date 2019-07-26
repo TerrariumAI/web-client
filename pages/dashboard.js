@@ -1,10 +1,11 @@
+import {useEffect} from 'react';
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Typography, Button, Grid, FormControl, InputLabel, Select, CircularProgress } from "@material-ui/core";
 import withNavbar from "../src/withNavbar";
 import { compose } from "redux";
 import RemoteModelsList from "../components/remoteModelsList";
 import NewRemoteModelDialog from "../components/newRemoteModelDialog";
-import { CreateEntity } from "../lib/environmentApi";
+import { CreateEntity, DeleteEntity } from "../lib/environmentApi";
 import SimpleEnvObs from "../components/simpleEnvObs";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
@@ -12,7 +13,9 @@ const useStyles = makeStyles(theme => ({
   marginRight: 15
 }));
 
+let idToken = "";
 let selectedCell = null
+let selectedEntity = null
 
 let Dashboard = props => {
   const classes = useStyles();
@@ -20,6 +23,19 @@ let Dashboard = props => {
   const [values, setValues] = React.useState({});
   const [selectedRMId, setSelectedRMId] = React.useState("");
   const [open, setOpen] = React.useState(false);
+
+  // componentDidMount and componentDidUpdate:
+  useEffect(() => {
+    if (!idToken) {
+      props.firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          user.getIdToken().then(function(_idToken) {
+            idToken = _idToken
+          });
+        }
+      });
+    }
+  }, []);
 
   function handleClickOpen() {
     setOpen(true);
@@ -29,9 +45,16 @@ let Dashboard = props => {
     setOpen(false);
   };
 
+  const handleDeleteEntity = () => {
+    if (selectedEntity) {
+      DeleteEntity(idToken, selectedEntity.id)
+    }
+  }
+
   // When a cell is clicked, set its position to the selected position
-  function onCellClick(position) {
+  function onCellClick(position, entity) {
     selectedCell = position
+    selectedEntity = entity
   }
 
   function spawnEntity() {
@@ -39,25 +62,16 @@ let Dashboard = props => {
       console.log("ERROR: Invalid remote model id")
       return
     }
-    console.log("Spawning entity with rm id:", selectedRMId)
 
     if (!selectedCell) {
       console.log("ERROR: Invalid selected position")
       return
     }
-    console.log("POsition: ", selectedCell.x, selectedCell.y)
     
-    props.firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        user.getIdToken().then(function(idToken) {
-          CreateEntity(idToken, selectedRMId, selectedCell.x, selectedCell.y)
-        });
-      }
-    });
+    CreateEntity(idToken, selectedRMId, selectedCell.x, selectedCell.y)
   }
 
   function handleRMChange(event) {
-    console.log(event)
     setSelectedRMId(event.target.value)
   };
 
@@ -110,12 +124,16 @@ let Dashboard = props => {
           Create New Remote Model
         </Button>
 
+
         <NewRemoteModelDialog open={open} onClose={handleClose} />
       </Container>
       <Grid container>
         <SimpleEnvObs onCellClick={onCellClick} />
         <Grid item>
           <SpawnEntity />
+          <Button variant="contained" onClick={handleDeleteEntity}>
+            Delete Entity
+          </Button>
         </Grid>
         
       </Grid>

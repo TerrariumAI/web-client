@@ -38,7 +38,7 @@ class EntityRect extends React.Component {
         height={height}
         fill={fill}
         shadowBlur={selected ? 5 : 0}
-        onClick={() => onClick(worldPos)}
+        onClick={() => onClick(worldPos, entity)}
       />
     );
   }

@@ -67,8 +67,6 @@ let RemoteModelsList = ({ remoteModels }) => {
     );
   }
 
-  console.log(remoteModels);
-
   // LIST
   return (
     <Paper className={classes.root}>
