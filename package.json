@@ -27,6 +27,7 @@
     "firebase": "^6.2.4",
     "google-protobuf": "^3.8.0",
     "grpc-web": "^1.0.4",
+    "immutability-helper": "^3.0.1",
     "konva": "^3.4.0",
     "lodash": "^4.17.14",
     "next": "^8.1.0",

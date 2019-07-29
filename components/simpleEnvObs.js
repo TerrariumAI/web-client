@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Typography, Grid } from "@material-ui/core";
 import World from "./konva/world";
 import { GetEntitiesInRegion } from "../lib/environmentApi";
 import { withFirebase, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
+import update from 'immutability-helper';
 import { compose } from "redux";
 import PubNub from "pubnub";
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   obsPanel: {
     width: 600,
     height: 600,
@@ -17,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   comingSoonContainer: {
     height: "100%"
   }
-}));
+});
 
 const pubnub = new PubNub({
   publishKey : 'pub-c-83ed11c2-81e1-4d7f-8e94-0abff2b85825',
@@ -27,64 +28,106 @@ const pubnub = new PubNub({
 let idToken = "";
 let listening = false
 
-let SimpleEnvObs = (props) => {
-  const classes = useStyles();
+class EnvObservation extends React.Component {
 
-  const [posEntityMap, setPosEntityMap] = useState({});
-  const [idPosMap, setIdPosMap] = useState({});
-  const [regionSubs, setRegionSubs] = useState([]);
-  
-  function onMessage({message: {eventName, entityData}, channel}) {
+  constructor(props) {
+      super(props);
+      this.state = {
+          posEntityMap: {},
+          idPosMap: {},
+          regionSubs: []
+      };
+  }
+
+  onMessage = ({message: {eventName, entityData}, channel}) => {
+    const {idPosMap, posEntityMap} = this.state
     var e = JSON.parse(entityData)
     e.x = e.x || 0
     e.y = e.y || 0
     if (eventName == "createEntity") {
-      setIdPosMap({...idPosMap, [e.id]: `${e.x}.${e.y}` })
-      setPosEntityMap({...posEntityMap, [`${e.x}.${e.y}`]: e })
+      const newState = update(this.state, {
+          idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
+          posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
+      });
+      this.setState(newState);
     } else if (eventName == "updateEntity") {
+      let newState
       const lastPos = idPosMap[e.id]
-      setIdPosMap({...idPosMap, [e.id]: `${e.x}.${e.y}` })
-      setPosEntityMap({...posEntityMap, [lastPos]: undefined, [`${e.x}.${e.y}`]: e })
+      const curPos = `${e.x}.${e.y}`;
+      if (lastPos == curPos) { // If the entity didn't move
+        // Update the state, but don't worry about his last position
+        const newState = update(this.state, {
+          posEntityMap: {[curPos]: {$set: e} }
+        });
+        // Update the state
+        this.setState(newState);
+      } else { // If the entity did move
+        // Update the state AND delete the data for the entities last position
+        const newState = update(this.state, {
+          idPosMap: {[e.id]: {$set: curPos}},
+          posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
+        });
+        // Update the state
+        this.setState(newState);
+      }
     } else if (eventName == "deleteEntity") {
       const lastPos = idPosMap[e.id]
-      setIdPosMap({...idPosMap, [e.id]: undefined })
-      setPosEntityMap({...posEntityMap, [lastPos]: undefined})
+      const newState = update(this.state, {
+        idPosMap: {[e.id]: {$set: undefined}},
+        posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+      });
+      this.setState(newState);
     }
   }
-  const listener = {
-    message: onMessage,
+
+  listener = {
+    message: this.onMessage,
     presence: function(presenceEvent) {
         // handle presence
     }
   }
 
-  // componentDidMount and componentDidUpdate:
-  useEffect(() => {
+  onRegionChange = (region) => {
+    const {regionSubs} = this.state
+    let newRegionSubs = getRegionsAroundInclusive(region);
+    let regionsToUnsubFrom = regionSubs.filter(
+      r => !_.find(newRegionSubs, r)
+    );
+    let regionsToSubTo = newRegionSubs.filter(r => !_.find(regionSubs, r));
+    regionsToSubTo.forEach(region => {
+      this.subscribeToRegion(region);
+    });
+    regionsToUnsubFrom.forEach(region => {
+      this.unsubscribeFromRegion(region.x, region.y);
+    });
+  };
+  
+  componentWillMount() {
     if (!listening) {
       console.log("INFO: adding listener")
-      pubnub.addListener(listener)
+      pubnub.addListener(this.listener)
       listening = true
     }
     
     if (!idToken) {
-      props.firebase.auth().onAuthStateChanged(function(user) {
+      this.props.firebase.auth().onAuthStateChanged(user => {
         if (user) {
-          user.getIdToken().then(function(_idToken) {
+          user.getIdToken().then(_idToken => {
             idToken = _idToken
-            onRegionChange({x: 0, y: 0});
+            this.onRegionChange({x: 0, y: 0});
           });
         }
       });
     }
+  }
 
-    return () => {
-      pubnub.removeListener(listener) 
-      console.log("INFO: removing listener")
-    }
-  }, []);
+  componentWillUnmount() {
+    pubnub.removeListener(this.listener) 
+    console.log("INFO: removing listener")
+  }
 
   // When regionState is received from api, put it into the map
-  let onReceiveRegionState = ({data: {entities}}) => {
+  onReceiveRegionState = ({data: {entities}}) => {
     let entityPosMapTemp = {}
     let idPosMapTemp = {}
     // Empty region
@@ -98,15 +141,17 @@ let SimpleEnvObs = (props) => {
       e.x = e.x || 0
       e.y = e.y || 0
       // add to the temp object
-      entityPosMapTemp[`${e.x}.${e.y}`] = e
-      idPosMapTemp[e.id] = `${e.x}.${e.y}`
+      const newState = update(this.state, {
+        idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
+        posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
+      });
+      this.setState(newState);
     }
-    setIdPosMap({...idPosMap, ...idPosMapTemp })
-    setPosEntityMap({...posEntityMap, ...entityPosMapTemp })
   };
 
   // Subscribe to a region
-  let subscribeToRegion = async ({x, y}) => {
+  subscribeToRegion = async ({x, y}) => {
+    const {regionSubs} = this.state
     // Make sure x and y exist!
     if (x === null || y === null || x < 0 || y < 0) {
       console.error("subscribeToRegion(): X or Y is null or negative");
@@ -121,17 +166,17 @@ let SimpleEnvObs = (props) => {
     // Get the initial data for the region
     try {
       const regionState = await GetEntitiesInRegion(idToken, x, y);
-      onReceiveRegionState(regionState)
+      this.onReceiveRegionState(regionState)
     }
     catch (error) {
       console.log("Error fetching entities in region: ", error)
     }
 
     // Add this region to the regionsubs list
-    setRegionSubs([
-      ...regionSubs,
-      {x, y}
-    ]);
+    const newState = update(this.state, {
+      regionSubs: {$push: [{x, y}] },
+    });
+    this.setState(newState);
 
     // Subscribe to the region
     pubnub.subscribe({
@@ -140,7 +185,8 @@ let SimpleEnvObs = (props) => {
   }
 
   // Unsub from a region
-  let unsubscribeFromRegion = ({x, y}) => {
+  unsubscribeFromRegion = ({x, y}) => {
+    const {regionSubs} = this.state
     // Make sure x and y exist!
     if (x === null || y === null) {
       console.error("ubsubscribeFromRegion(): X or Y is null");
@@ -148,7 +194,10 @@ let SimpleEnvObs = (props) => {
     }
     // Remove this region from the region subs array
     let regionSubsTemp = regionSubs.filter(r => !_.isEqual(r, { x, y }));
-    setRegionSubs(regionSubsTemp)
+    const newState = update(this.state, {
+      regionSubs: {$set: regionSubsTemp},
+    });
+    this.setState(newState);
     // Unsubscribe from the region
     pubnub.unsubscribe({
       channels: [`${x}.${y}`] 
@@ -156,60 +205,50 @@ let SimpleEnvObs = (props) => {
   }
 
   // Return entity at given position
-  let getEntityByPos = ({x, y}) => {
+  getEntityByPos = ({x, y}) => {
     if (x < 1 || y < 1) {
       return {class: "ROCK"}
     }
-    let e = posEntityMap[`${x}.${y}`]
+    let e = this.state.posEntityMap[`${x}.${y}`]
     return e;
   };
 
-  let onRegionChange = (region) => {
-    let newRegionSubs = getRegionsAroundInclusive(region);
-    let regionsToUnsubFrom = regionSubs.filter(
-      r => !_.find(newRegionSubs, r)
-    );
-    let regionsToSubTo = newRegionSubs.filter(r => !_.find(regionSubs, r));
-    regionsToSubTo.forEach(region => {
-      subscribeToRegion(region);
-    });
-    regionsToUnsubFrom.forEach(region => {
-      unsubscribeFromRegion(region.x, region.y);
-    });
-  };
-
-  let onCellClick = (position, entity) => {
-    if (props.onCellClick) {
-      props.onCellClick(position, entity)
+  onCellClick = (position, entity) => {
+    if (this.props.onCellClick) {
+      this.props.onCellClick(position, entity)
     }
   };
+    
+  render() {
+    const { classes } = this.props;
 
-  return (
-    <div className={classes.obsPanel}>
-      <Grid
-        container
-        spacing={0}
-        align="center"
-        justify="center"
-        direction="column"
-        className={classes.comingSoonContainer}
-      >
-        <Grid item>
-          <Typography variant="h3" color="textSecondary">
-            Coming soon!
-          </Typography>
+    return (
+      <div className={classes.obsPanel}>
+        <Grid
+          container
+          spacing={0}
+          align="center"
+          justify="center"
+          direction="column"
+          className={classes.comingSoonContainer}
+        >
+          <Grid item>
+            <Typography variant="h3" color="textSecondary">
+              Coming soon!
+            </Typography>
+          </Grid>
+          <Grid item>
+            <World
+              onRegionChange={this.onRegionChange}
+              getEntityByPos={this.getEntityByPos}
+              onCellClick={this.onCellClick}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-          <World
-            onRegionChange={onRegionChange}
-            getEntityByPos={getEntityByPos}
-            onCellClick={onCellClick}
-          />
-        </Grid>
-      </Grid>
-    </div>
-  );
-};
+      </div>
+    );
+  }
+}
 
 /**
  * getRegionsAroundInclusive - return the regions around another region
@@ -225,10 +264,4 @@ const getRegionsAroundInclusive = region => {
   return regions;
 };
 
-function mapStateToProps(state) {
-  return {
-    auth: state.firebase.auth
-  };
-}
-
-export default compose(withFirebase)(SimpleEnvObs);
+export default compose(withFirebase, withStyles(styles))(EnvObservation);
