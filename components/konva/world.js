@@ -80,6 +80,10 @@ class World extends React.Component {
    *   change the region if needed.
    */
   changeCenterPos = newCenterPos => {
+    if (newCenterPos.x < 0 || newCenterPos.y < 0) { // If negative
+      // Don't change
+      return
+    }
     const { region } = this.state;
     const { onRegionChange } = this.props;
     const newRegion = this.getRegionForPos(newCenterPos);
@@ -98,21 +102,9 @@ class World extends React.Component {
   getRegionForPos(p) {
     let x = p.x;
     let y = p.y;
-    if (x < 0) {
-      x -= CELLS_IN_REGION;
-    }
-    if (y < 0) {
-      y -= CELLS_IN_REGION;
-    }
     return {
-      x:
-        x <= 0
-          ? Math.ceil(x / CELLS_IN_REGION)
-          : Math.floor(x / CELLS_IN_REGION),
-      y:
-        y <= 0
-          ? Math.ceil(y / CELLS_IN_REGION)
-          : Math.floor(y / CELLS_IN_REGION)
+      x: Math.floor(x / CELLS_IN_REGION),
+      y: Math.floor(y / CELLS_IN_REGION)
     };
   }
 
