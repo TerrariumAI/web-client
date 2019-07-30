@@ -5,9 +5,7 @@ import { Stage, Layer, Rect, Image } from "react-konva";
 import EntityRect from "./entityRect";
 var _ = require("lodash");
 
-const CANVAS_SIZE = 400;
-const CELLS_IN_REGION = 16;
-const CELL_SIZE = CANVAS_SIZE / CELLS_IN_REGION; // 3 because the user looks at center with 2 each side, 3 regions
+const CELLS_IN_REGION = 15;
 
 const LEFT_KEY_CODE = 37;
 const RIGHT_KEY_CODE = 39;
@@ -22,12 +20,14 @@ const styles = theme => ({
 
 class World extends React.Component {
   state = {
+    // Width of stage
+    stageWidth: 400,
     // Currently selected cell
     selectedPos: null,
     // What cell we are centered on
     centerPos: {
-      x: 0,
-      y: 0
+      x: 9,
+      y: 9
     },
     region: this.getRegionForPos({ x: 0, y: 0 }),
     // Any errors that come up
@@ -37,6 +37,16 @@ class World extends React.Component {
   componentDidMount() {
     // Add key event listener
     document.addEventListener("keydown", this._handleKeyDown);
+    // Get the size of the container and set the canvas size
+    this.checkSize();
+    // TODO: here we should add listener for "container" resize
+    // take a look here https://developers.google.com/web/updates/2016/10/resizeobserver
+    // for simplicity I will just listen window resize
+    window.addEventListener("resize", this.checkSize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.checkSize);
   }
 
   /**
@@ -120,14 +130,15 @@ class World extends React.Component {
   };
 
   renderCells = () => {
-    const { selectedPos, centerPos } = this.state;
+    const { selectedPos, centerPos, stageWidth } = this.state;
     const { getEntityByPos } = this.props;
+    const cellSize = stageWidth / CELLS_IN_REGION
     let cells = [];
     for (let x = 0; x < CELLS_IN_REGION; x++) {
       for (let y = 0; y < CELLS_IN_REGION; y++) {
         let screenPos = {
-          x: x * CELL_SIZE,
-          y: y * CELL_SIZE
+          x: x * cellSize,
+          y: y * cellSize
         };
         let worldPos = {
           x: x - CELLS_IN_REGION / 2 + centerPos.x,
@@ -139,8 +150,8 @@ class World extends React.Component {
             entity={getEntityByPos(worldPos)}
             screenPos={screenPos}
             worldPos={worldPos}
-            width={CELL_SIZE}
-            height={CELL_SIZE}
+            width={cellSize}
+            height={cellSize}
             selected={
               selectedPos &&
               selectedPos.x === worldPos.x &&
@@ -154,17 +165,30 @@ class World extends React.Component {
     return cells;
   };
 
+  checkSize = () => {
+    const width = this.container.offsetWidth;
+    this.setState({
+      stageWidth: width
+    });
+  };
+
   render() {
     const { classes } = this.props;
+    const {stageWidth} = this.state;
     return (
-      <div className={classes.root}>
-        <Stage width={CANVAS_SIZE} height={CANVAS_SIZE}>
+      <div 
+        className={classes.root} 
+        ref={node => {
+          this.container = node;
+        }}
+      >
+        <Stage width={stageWidth} height={stageWidth}>
           <Layer ref={ref => (this.layer = ref)}>
             <Rect
               x={0}
               y={0}
-              width={CANVAS_SIZE}
-              height={CANVAS_SIZE}
+              width={stageWidth}
+              height={stageWidth}
               fill={"#32ff7e"}
             />
             {this.renderCells()}

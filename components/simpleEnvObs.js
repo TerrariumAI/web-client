@@ -17,6 +17,9 @@ const styles = theme => ({
   },
   comingSoonContainer: {
     height: "100%"
+  },
+  worldContainer: {
+    width: "100%"
   }
 });
 
@@ -232,12 +235,7 @@ class EnvObservation extends React.Component {
           direction="column"
           className={classes.comingSoonContainer}
         >
-          <Grid item>
-            <Typography variant="h3" color="textSecondary">
-              Coming soon!
-            </Typography>
-          </Grid>
-          <Grid item>
+          <Grid item className={classes.worldContainer}>
             <World
               onRegionChange={this.onRegionChange}
               getEntityByPos={this.getEntityByPos}

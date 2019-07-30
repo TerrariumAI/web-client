@@ -135,6 +135,13 @@ let Dashboard = props => {
     return (
       <Paper className={classes.paper}>
         <Typography variant="h5">Entity Inspector</Typography>
+        {Object.keys(selectedCell.entity).map(key => {
+          return (
+            <div key={selectedCell.entity.id + key}>
+              <Typography><b>{key}</b>: {selectedCell.entity[key]}</Typography>
+            </div>
+          )
+        })}
         <Button variant="contained" onClick={handleDeleteEntity}>
           Delete
         </Button>
