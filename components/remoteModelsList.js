@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, CircularProgress, Typography, Link } from "@material-ui/core";
+import { Container, CircularProgress, Typography, Link, Button } from "@material-ui/core";
 import {
   firestoreConnect,
   isLoaded,
@@ -16,6 +16,7 @@ import {
   IconButton
 } from "@material-ui/core";
 import { compose } from "redux";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { connect } from "react-redux";
 import { withFirebase } from "react-redux-firebase";
 import Delete from "@material-ui/icons/Delete";
@@ -96,7 +97,11 @@ let RemoteModelsList = ({ remoteModels, firestore }) => {
                 <TableCell component="th" scope="row">
                   {remoteModel.name}
                 </TableCell>
-                <TableCell align="left">{remoteModel.secretKey}</TableCell>
+                <TableCell align="left">
+                  <CopyToClipboard text={remoteModel.secretKey}>
+                  <Button>Copy</Button>
+                  </CopyToClipboard>
+                </TableCell>
                 <TableCell align="left">
                   {remoteModel.connectCount > 0 ? "Connected" : "Disconnected"}
                 </TableCell>

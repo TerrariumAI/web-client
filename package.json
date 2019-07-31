@@ -33,6 +33,7 @@
     "next": "^8.1.0",
     "pubnub": "^4.24.3",
     "react": "^16.8.6",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6",
     "react-konva": "^16.8.7-3",
     "react-redux": "^5.1.1",
