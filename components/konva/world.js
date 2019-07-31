@@ -5,7 +5,7 @@ import { Stage, Layer, Rect, Image } from "react-konva";
 import EntityRect from "./entityRect";
 var _ = require("lodash");
 
-const CELLS_IN_REGION = 15;
+const CELLS_IN_REGION = 16;
 
 const LEFT_KEY_CODE = 37;
 const RIGHT_KEY_CODE = 39;

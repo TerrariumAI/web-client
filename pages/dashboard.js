@@ -5,7 +5,7 @@ import withNavbar from "../src/withNavbar";
 import { compose } from "redux";
 import RemoteModelsList from "../components/remoteModelsList";
 import NewRemoteModelDialog from "../components/newRemoteModelDialog";
-import { CreateEntity, DeleteEntity } from "../lib/environmentApi";
+import { CreateEntity, DeleteEntity, SpawnFood } from "../lib/environmentApi";
 import SimpleEnvObs from "../components/simpleEnvObs";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
@@ -149,6 +149,17 @@ let Dashboard = props => {
     )
   }
 
+  function AdminControls() {
+    const {profile} = props;
+    if (isLoaded(profile) && profile.isAdmin) {
+      return (
+        <Button onClick={() => SpawnFood(idToken)}>Spawn Food</Button>
+      )
+    } else {
+      return null
+    }
+  }
+
   return (
     <div>
       <Container>
@@ -182,6 +193,7 @@ let Dashboard = props => {
           </Grid>
         </Grid>
 
+        <AdminControls />
       </Container>
 
       
@@ -194,9 +206,10 @@ export default compose(
   withNavbar(), 
   withFirebase,
   withFirestore,
-  connect(({ firestore, firebase: { auth } }, props) => ({
+  connect(({ firestore, firebase: { auth, profile } }, props) => ({
     remoteModels: firestore.data.myRemoteModels,
-    auth
+    auth,
+    profile
   })),
   firestoreConnect(({ firebase, auth }) => [
     {

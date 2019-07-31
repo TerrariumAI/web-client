@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { Container, CircularProgress, Typography } from "@material-ui/core";
+import { Container, CircularProgress, Typography, Link } from "@material-ui/core";
 import {
   firestoreConnect,
   isLoaded,
@@ -12,7 +12,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  IconButton
 } from "@material-ui/core";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -32,13 +33,21 @@ const useStyles = makeStyles(theme => ({
   emptyContainer: {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3)
-  }
+  },
+  margin: {
+    margin: theme.spacing(0),
+  },
 }));
 
-let RemoteModelsList = ({ remoteModels }) => {
+let RemoteModelsList = ({ remoteModels, firestore }) => {
   const classes = useStyles();
 
   const [values, setValues] = React.useState({});
+
+  // Delete an RM when this button is clicked
+  let onDelete = (key) => {
+    firestore.delete({ collection: 'remoteModels', doc: key })
+  }
 
   // LOADING
   if (!isLoaded(remoteModels)) {
@@ -54,14 +63,14 @@ let RemoteModelsList = ({ remoteModels }) => {
     return (
       <Paper className={classes.root}>
         <Container className={classes.emptyContainer}>
-          <Typography variant="h5">
-            You don't have any Remote Models!
+          <Typography variant="h6" color="textSecondary">
+            You don't have any Remote Models! :(
           </Typography>
           <Typography variant="h6" color="textSecondary" gutterBottom>
-            This is the first step towards using Terrarium! Here's a reminder of
-            what the steps are.
+            This is your first step to using Terrarium! Click the green button below to create your first RM.
+            <br />
+            <Link href={"https://docs.terrarium.ai/training-models/creating-a-remote-model"}>Lost? Here's our getting started guide and documentation!</Link> 
           </Typography>
-          <Steps />
         </Container>
       </Paper>
     );
@@ -92,7 +101,9 @@ let RemoteModelsList = ({ remoteModels }) => {
                   {remoteModel.connectCount > 0 ? "Connected" : "Disconnected"}
                 </TableCell>
                 <TableCell align="right">
-                  <Delete />
+                  <IconButton onClick={() => onDelete(key)} aria-label="delete" className={classes.margin}>
+                    <Delete fontSize="medium" />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             );
@@ -103,4 +114,6 @@ let RemoteModelsList = ({ remoteModels }) => {
   );
 };
 
-export default RemoteModelsList;
+export default compose(
+  withFirestore,
+)(RemoteModelsList);
