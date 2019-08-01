@@ -122,6 +122,16 @@ let Dashboard = props => {
   }
 
   function EntityInspector() {
+    let classToString = classId => {
+      switch (classId) {
+        case 1:
+          return "Agent"
+        case 2:
+          return "Rock"
+        case 3:
+          return "Food"
+      }
+    }
     // If no entity is selected, display info on how to select an entity
     if (!selectedCell.entity) {
       return (
@@ -136,6 +146,13 @@ let Dashboard = props => {
       <Paper className={classes.paper}>
         <Typography variant="h5">Entity Inspector</Typography>
         {Object.keys(selectedCell.entity).map(key => {
+          if (key == "class") {
+            return (
+              <div key={selectedCell.entity.id + key}>
+                <Typography><b>{key}</b>: {classToString(selectedCell.entity[key])}</Typography>
+              </div>
+            )
+          }
           return (
             <div key={selectedCell.entity.id + key}>
               <Typography><b>{key}</b>: {selectedCell.entity[key]}</Typography>

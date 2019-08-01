@@ -1568,7 +1568,8 @@ proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.prototype.toO
  */
 proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
-    wassuccessful: jspb.Message.getFieldWithDefault(msg, 1, false)
+    wassuccessful: jspb.Message.getFieldWithDefault(msg, 1, false),
+    isalive: jspb.Message.getFieldWithDefault(msg, 2, false)
   };
 
   if (includeInstance) {
@@ -1609,6 +1610,10 @@ proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.deserializeBi
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setWassuccessful(value);
       break;
+    case 2:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsalive(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1645,6 +1650,13 @@ proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.serializeBina
       f
     );
   }
+  f = message.getIsalive();
+  if (f) {
+    writer.writeBool(
+      2,
+      f
+    );
+  }
 };
 
 
@@ -1662,6 +1674,23 @@ proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.prototype.get
 /** @param {boolean} value */
 proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.prototype.setWassuccessful = function(value) {
   jspb.Message.setProto3BooleanField(this, 1, value);
+};
+
+
+/**
+ * optional bool isAlive = 2;
+ * Note that Boolean fields may be set to 0/1 when serialized from a Java server.
+ * You should avoid comparisons like {@code val === true/false} in those cases.
+ * @return {boolean}
+ */
+proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.prototype.getIsalive = function() {
+  return /** @type {boolean} */ (jspb.Message.getFieldWithDefault(this, 2, false));
+};
+
+
+/** @param {boolean} value */
+proto.endpoints.terrariumai.environment.ExecuteAgentActionResponse.prototype.setIsalive = function(value) {
+  jspb.Message.setProto3BooleanField(this, 2, value);
 };
 
 

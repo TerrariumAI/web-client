@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   watchNow: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(6),
-    backgroundColor: "#fafafa"
+    backgroundColor: "white"
   },
   infoCardGrid: {
     paddingTop: theme.spacing(8),

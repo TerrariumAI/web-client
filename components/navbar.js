@@ -55,9 +55,7 @@ let Navbar = ({ firebase, auth }) => {
         <Typography variant="h6">Terrarium.ai</Typography>
 
         <div className={classes.spacer} />
-        <Link href="/help">
-          <Button color="inherit">Help</Button>
-        </Link>
+        <Button href="https://docs.terrarium.ai/" color="inherit">Help</Button>
         <MenuItems />
         <AuthBtns />
       </Toolbar>
