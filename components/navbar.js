@@ -28,9 +28,15 @@ let Navbar = ({ firebase, auth }) => {
     // If loading or unauthorized, show the entry auth buttons
     if (!isLoaded(auth) || isEmpty(auth)) {
       return (
-        <Link href="/auth">
-          <Button color="inherit">Login</Button>
-        </Link>
+        <div>
+          <Link href="/login">
+            <Button color="inherit">Login</Button>
+          </Link>
+          <Link href="/signup">
+            <Button color="inherit">Signup</Button>
+          </Link>
+        </div>
+
       );
     }
     // If the user is signed in, show a profile menu

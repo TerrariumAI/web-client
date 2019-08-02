@@ -114,6 +114,10 @@ class EnvObservation extends React.Component {
             idToken = _idToken
             this.onRegionChange({x: 0, y: 0});
           });
+        } else {
+          this.props.firebase.auth().signInAnonymously().catch(function(error) {
+            console.error("ERROR ANON SIGNIN: ", error);
+          });
         }
       });
     }

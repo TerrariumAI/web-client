@@ -4,7 +4,8 @@ import { withRouter } from "next/router";
 import PropTypes from "prop-types";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import { Grid, Container } from "@material-ui/core";
-import SignIn from "../components/signin";
+import LoginForm from "../components/loginForm";
+import SignupForm from "../components/signupForm";
 import withNavbar from "../src/withNavbar";
 import { withFirebase } from "react-redux-firebase";
 
@@ -14,16 +15,23 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-let Auth = ({ firebase, router }) => {
+let Signup = ({ firebase, router }) => {
   const classes = useStyles();
 
   const [values, setValues] = React.useState({
     error: ""
   });
 
-  let loginWithEmailAndPassword = async (email, password) => {
+  let signupWithEmailAndPassword = async (firstName, lastName, phone, email, password) => {
     // Attempt to login
     try {
+      // Attempt to create, throws error if unsuccesful
+      await firebase.createUser({
+        email,
+        password
+      },
+      {firstName, lastName, phone, email});
+
       // Attempt to login, throws error if unsuccesful
       await firebase.login({
         email,
@@ -45,13 +53,13 @@ let Auth = ({ firebase, router }) => {
   return (
     <Grid container>
       <Container component="main" maxWidth="xs">
-        <SignIn onSubmit={loginWithEmailAndPassword} />
+        <SignupForm onSubmit={signupWithEmailAndPassword} />
       </Container>
     </Grid>
   );
 };
 
-Auth.propTypes = {
+Signup.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
@@ -59,4 +67,4 @@ export default compose(
   withNavbar(),
   withRouter,
   withFirebase
-)(Auth);
+)(Signup);
