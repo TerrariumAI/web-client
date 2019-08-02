@@ -42,45 +42,40 @@ class EnvObservation extends React.Component {
       };
   }
 
-  onMessage = ({message: {eventName, entityData}, channel}) => {
-    const {idPosMap, posEntityMap} = this.state
-    var e = JSON.parse(entityData)
-    e.x = e.x || 0
-    e.y = e.y || 0
-    if (eventName == "createEntity") {
-      const newState = update(this.state, {
-          idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
-          posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
-      });
-      this.setState(newState);
-    } else if (eventName == "updateEntity") {
-      let newState
-      const lastPos = idPosMap[e.id]
-      const curPos = `${e.x}.${e.y}`;
-      if (lastPos == curPos) { // If the entity didn't move
-        // Update the state, but don't worry about his last position
-        const newState = update(this.state, {
-          posEntityMap: {[curPos]: {$set: e} }
+  onMessage = ({message: {Events}, channel}) => {
+    let newState = this.state
+    Events.forEach(({eventName,entityData}) => {
+      var e = JSON.parse(entityData)
+      e.x = e.x || 0
+      e.y = e.y || 0
+      if (eventName == "createEntity") {
+        newState = update(newState, {
+            idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
+            posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
         });
-        // Update the state
-        this.setState(newState);
-      } else { // If the entity did move
-        // Update the state AND delete the data for the entities last position
-        const newState = update(this.state, {
-          idPosMap: {[e.id]: {$set: curPos}},
-          posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
+      } else if (eventName == "updateEntity") {
+        const lastPos = newState.idPosMap[e.id]
+        const curPos = `${e.x}.${e.y}`;
+        if (lastPos == curPos) { // If the entity didn't move
+          // Update the state, but don't worry about his last position
+          newState = update(newState, {
+            posEntityMap: {[curPos]: {$set: e} }
+          });
+        } else { // If the entity did move
+          // Update the state AND delete the data for the entities last position
+          newState = update(newState, {
+            idPosMap: {[e.id]: {$set: curPos}},
+            posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
+          });
+        }
+      } else if (eventName == "deleteEntity") {
+        newState = update(this.state, {
+          idPosMap: {[e.id]: {$set: undefined}},
+          posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
         });
-        // Update the state
-        this.setState(newState);
       }
-    } else if (eventName == "deleteEntity") {
-      const lastPos = idPosMap[e.id]
-      const newState = update(this.state, {
-        idPosMap: {[e.id]: {$set: undefined}},
-        posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
-      });
-      this.setState(newState);
-    }
+    })
+    this.setState(newState);
   }
 
   listener = {
