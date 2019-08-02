@@ -26,7 +26,7 @@ let Navbar = ({ firebase, auth }) => {
   // AuthBtns decides which buttons to render depending on the auth status
   let AuthBtns = () => {
     // If loading or unauthorized, show the entry auth buttons
-    if (!isLoaded(auth) || isEmpty(auth)) {
+    if (!isLoaded(auth) || isEmpty(auth) || auth.isAnonymous) {
       return (
         <div>
           <Link href="/login">
@@ -44,7 +44,7 @@ let Navbar = ({ firebase, auth }) => {
   };
 
   let MenuItems = () => {
-    if (!isLoaded(auth) || isEmpty(auth)) {
+    if (!isLoaded(auth) || isEmpty(auth) || auth.isAnonymous) {
       return null;
     }
 

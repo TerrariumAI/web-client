@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import Link from "next/link";
 import { withFirebase, firestoreConnect } from "react-redux-firebase";
 import {
   Typography,
@@ -53,9 +54,11 @@ const Index = ({ users }) => {
 
         <Grid container spacing={2} justify="center">
           <Grid item>
-            <Button variant="contained" color="primary">
-              Start Now
-            </Button>
+            <Link href="/signup">
+              <Button variant="contained" color="primary">
+                Get started
+              </Button>
+            </Link>
           </Grid>
           <Grid item>
             <Button variant="outlined" color="primary">

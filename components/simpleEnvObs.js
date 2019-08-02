@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import update from 'immutability-helper';
 import { compose } from "redux";
 import PubNub from "pubnub";
+var _ = require("lodash");
 
 const styles = theme => ({
   obsPanel: {
@@ -120,11 +121,14 @@ class EnvObservation extends React.Component {
           });
         }
       });
+    } else {
+      this.onRegionChange({x: 0, y: 0});
     }
   }
 
   componentWillUnmount() {
     pubnub.removeListener(this.listener) 
+    listening = false;
     console.log("INFO: removing listener")
   }
 
