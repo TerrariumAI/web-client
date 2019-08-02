@@ -1,4 +1,4 @@
-// withNavBar.js - HOC
+// withNavbar.js - HOC
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import NavBar from "../components/navBar";

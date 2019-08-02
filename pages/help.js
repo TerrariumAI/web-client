@@ -1,7 +1,7 @@
 import { makeStyles } from "@material-ui/core/styles";
 import { Container, Typography, Link } from "@material-ui/core";
 import { compose } from "redux";
-import withNavBar from "../src/withNavBar";
+import withNavbar from "../src/withNavbar";
 import Steps from "../components/steps";
 
 const useStyles = makeStyles(theme => ({
@@ -35,4 +35,4 @@ let Help = props => {
   );
 };
 
-export default compose(withNavBar())(Help);
+export default compose(withNavbar())(Help);
