@@ -67,8 +67,12 @@ let Navbar = ({ firebase, auth }) => {
         </Link>
         <div className={classes.spacer}  />
 
+        <Link href="/about">
+          <Button color="inherit">About</Button>
+        </Link>
+
         <Link href="/contact">
-          <Button href="https://docs.terrarium.ai/" color="inherit">Contact</Button>
+          <Button color="inherit">Contact</Button>
         </Link>
 
         <Button href="https://docs.terrarium.ai/" color="inherit">Help</Button>

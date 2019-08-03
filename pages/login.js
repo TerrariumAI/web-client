@@ -2,7 +2,7 @@ import React from "react";
 import { compose } from "redux";
 import { withRouter } from "next/router";
 import PropTypes from "prop-types";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Container } from "@material-ui/core";
 import LoginForm from "../components/loginForm";
 import withNavbar from "../src/withNavbar";
