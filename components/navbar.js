@@ -8,7 +8,8 @@ import {
   Typography,
   Button,
   Grid,
-  Container
+  Container,
+  Divider
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ProfileNavbarMenu from "./profileNavbarMenu";
@@ -17,6 +18,9 @@ import { isLoaded, isEmpty, withFirebase } from "react-redux-firebase";
 const useStyles = makeStyles(theme => ({
   spacer: {
     flexGrow: 1
+  },
+  divider: {
+    borderLeft: '0.1em solid white', padding: '0.5em'
   }
 }));
 
@@ -61,9 +65,15 @@ let Navbar = ({ firebase, auth }) => {
         <Link href="/">
           <Button color="inherit"><Typography variant="h6">Terrarium.ai</Typography></Button>
         </Link>
+        <div className={classes.spacer}  />
 
-        <div className={classes.spacer} />
+        <Link href="/contact">
+          <Button href="https://docs.terrarium.ai/" color="inherit">Contact</Button>
+        </Link>
+
         <Button href="https://docs.terrarium.ai/" color="inherit">Help</Button>
+        
+        <div className={classes.divider} />
         <MenuItems />
         <AuthBtns />
       </Toolbar>

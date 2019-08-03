@@ -61,7 +61,7 @@ const Index = ({ users }) => {
             </Link>
           </Grid>
           <Grid item>
-            <Button variant="outlined" color="primary">
+            <Button href="https://docs.terrarium.ai" variant="outlined" color="primary">
               Learn More
             </Button>
           </Grid>
@@ -88,6 +88,8 @@ const Index = ({ users }) => {
             gutterBottom
           >
             Observe the environment live from your browser!
+            <br />
+            Use the arrow keys ↑↓→← to explore
           </Typography>
         </Grid>
 
@@ -107,9 +109,9 @@ const Index = ({ users }) => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small" color="primary">
+                {/* <Button size="small" color="primary">
                   Learn More
-                </Button>
+                </Button> */}
               </CardActions>
             </Card>
           </Grid>
@@ -125,9 +127,9 @@ const Index = ({ users }) => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small" color="primary">
+                {/* <Button size="small" color="primary">
                   Learn More
-                </Button>
+                </Button> */}
               </CardActions>
             </Card>
           </Grid>
@@ -143,9 +145,9 @@ const Index = ({ users }) => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small" color="primary">
+                {/* <Button size="small" color="primary">
                   Learn More
-                </Button>
+                </Button> */}
               </CardActions>
             </Card>
           </Grid>

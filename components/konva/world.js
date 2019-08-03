@@ -63,11 +63,17 @@ class World extends React.Component {
         event.preventDefault();
         break;
       case DOWN_KEY_CODE:
+        if (centerPos.y < 0) {
+          break;
+        }
         centerPos.y -= 1;
         this.changeCenterPos(centerPos);
         event.preventDefault();
         break;
       case LEFT_KEY_CODE:
+          if (centerPos.x < 0) {
+            break;
+          }
         centerPos.x -= 1;
         this.changeCenterPos(centerPos);
         event.preventDefault();
