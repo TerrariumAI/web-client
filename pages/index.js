@@ -1,219 +1,166 @@
-import Konva from "konva";
-import { render } from "react-dom";
-import { Stage, Layer, Rect, Text } from "react-konva";
-import {
-  withStyles,
-  Typography,
-  Grid,
-  Paper,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardActions,
-  Button
-} from "@material-ui/core";
-import Computer from "@material-ui/icons/Computer";
-import ImportExport from "@material-ui/icons/ImportExport";
-import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-import uuidv1 from "uuid/v1";
+import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import Router from "next/router";
-import withNavBar from "../lib/withNavBar";
-import { withFirebase, firebaseConnect } from "react-redux-firebase";
-const styles = ({ palette, spacing, breakpoints }) => ({
-  root: {
-    paddingTop: 40
+import Link from "next/link";
+import { withFirebase, firestoreConnect } from "react-redux-firebase";
+import {
+  Typography,
+  Container,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  CardActions
+} from "@material-ui/core";
+import withNavbar from "../src/withNavbar";
+import SimpleEnvObs from "../components/simpleEnvObs";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles(theme => ({
+  header: {
+    paddingBottom: theme.spacing(6)
   },
-  worldImg: {
-    width: "80%",
-    maxHeight: 350,
-    maxWidth: 350
+  bigBody: {
+    fontSize: 25
   },
-  cellInspectorContainer: {
-    padding: 10
+  watchNow: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(6),
+    backgroundColor: "white"
   },
-  centerText: {
-    textAlign: "center"
-  },
-  paper: {
-    padding: 15
-  },
-  cardContent: {
-    height: 250
-  },
-  cardTitle: {
-    textAlign: "center"
-  },
-  icon: {
-    color: palette.primary.main,
-    fontSize: 40
+  infoCardGrid: {
+    paddingTop: theme.spacing(8),
+    paddingBottom: theme.spacing(8)
   }
-});
+}));
 
-class Index extends React.Component {
-  state = {
-    selectedEntity: null
-  };
+const Index = ({ users }) => {
+  const classes = useStyles();
 
-  async componentDidMount() {
-    // Add key listener
-    document.addEventListener("keydown", this._handleKeyDown);
-  }
+  return (
+    <Grid container spacing={0} alignItems="center" justify="center">
+      <Grid item xs={10} className={classes.header}>
+        <Typography variant="h2" align="center" gutterBottom>
+          A persistant, online environment for AI
+        </Typography>
+        <Typography variant="h5" align="center" color="textSecondary" paragraph>
+          Terrarium.AI is focused on creating a community around learning,
+          developing and further researching Reinforcemnt Learning AI. Our goal
+          is to create an environment that simulates simple life and will enable
+          developers to truly push the limits of AI. Through simple actions such
+          as movement, consumption, rest, communication and combat, the
+          possibilities are endless.
+        </Typography>
 
-  // When an entity is clicked in the spectate window,
-  //  add it's data to the side bar
-  onCellClick = entity => {
-    this.setState({
-      selectedEntity: entity
-    });
-  };
-
-  render() {
-    const { classes } = this.props;
-    const { selectedEntity } = this.state;
-    return (
-      <div className={classes.root}>
-        <Grid container spacing={32} justify="center">
-          <Grid item xs={10} md={5} style={{ textAlign: "center" }}>
-            <img
-              src="/static/world.png"
-              alt="my image"
-              className={classes.worldImg}
-            />
+        <Grid container spacing={2} justify="center">
+          <Grid item>
+            <Link href="/signup">
+              <Button variant="contained" color="primary">
+                Get started
+              </Button>
+            </Link>
           </Grid>
-          <Grid item xs={10} md={5}>
-            <Typography variant="h4">Welcome to Terrarium AI</Typography>
-            <Typography variant="subheading">
-              A persistant online environment for AI
-            </Typography>
-            <br />
-            <Paper className={classes.paper}>
-              <Typography variant="subtitle2">Step 1</Typography>
-              <Typography variant="subtitle1">
-                Write a model locally using the training environment
-              </Typography>
-              <br />
-              <Typography variant="subtitle2">Step 2</Typography>
-              <Typography variant="subtitle1">
-                Connect your model to the online environment
-              </Typography>
-              <br />
-              <Typography variant="subtitle2">Step 3</Typography>
-              <Typography variant="subtitle1">
-                Watch your agents fight for survival live!
-              </Typography>
-            </Paper>
-          </Grid>
-
-          <Grid item xs={10}>
-            <Typography variant="h4">Getting started</Typography>
-            <Typography variant="subheading">
-              Terrarium AI is easy to use and gives you ultimate freedom. You
-              develop your model and control your agents from your computer,
-              giving you complete freedom.
-            </Typography>
-            <br />
-
-            <Grid container spacing={32}>
-              <Grid item xs={12} md={4}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h6" className={classes.cardTitle}>
-                      <Computer className={classes.icon} />
-                      <br />
-                      Train
-                    </Typography>
-                    <br />
-                    <Typography variant="subtitle1">
-                      Run and connect to the training model locally. Use our
-                      example code and documentation to get started.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        Router.push(
-                          "https://olamai.gitbook.io/olamai/training-models/installing-the-environment"
-                        );
-                      }}
-                    >
-                      Learn More
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-
-              <Grid item item xs={12} md={4}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h6" className={classes.cardTitle}>
-                      <ImportExport className={classes.icon} />
-                      <br />
-                      Connect
-                    </Typography>
-                    <br />
-                    <Typography variant="subtitle1">
-                      Using your model is easy! Simply connect to our servers
-                      and your model will immediatly be ready to use.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        Router.push(
-                          "https://olamai.gitbook.io/olamai/connecting-models/uploading-your-model"
-                        );
-                      }}
-                    >
-                      Learn More
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-
-              <Grid item item xs={12} md={4}>
-                <Card>
-                  <CardContent className={classes.cardContent}>
-                    <Typography variant="h6" className={classes.cardTitle}>
-                      <RemoveRedEye className={classes.icon} />
-                      <br />
-                      Watch
-                    </Typography>
-                    <br />
-                    <Typography variant="subtitle1">
-                      From our website, you can create new agents that will use
-                      your model to make decisions. Watch them try to survive in
-                      the world!
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        Router.push("/environment");
-                      }}
-                    >
-                      Learn More
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            </Grid>
+          <Grid item>
+            <Button href="https://docs.terrarium.ai" variant="outlined" color="primary">
+              Learn More
+            </Button>
           </Grid>
         </Grid>
-      </div>
-    );
-  }
-}
+      </Grid>
 
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justify="center"
+        xs={12}
+        className={classes.watchNow}
+      >
+        <Grid item xs={12}>
+          <Typography variant="h2" align="center" gutterBottom>
+            Watch Now
+          </Typography>
+          <Typography
+            variant="h5"
+            align="center"
+            color="textSecondary"
+            paragraph
+            gutterBottom
+          >
+            Observe the environment live from your browser!
+            <br />
+            Use the arrow keys ↑↓→← to explore
+          </Typography>
+        </Grid>
+
+        <SimpleEnvObs />
+      </Grid>
+
+      <Container className={classes.infoCardGrid} maxWidth="md">
+        <Grid container spacing={4}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  Learn
+                </Typography>
+                <Typography>
+                  Use Terrarium to learn how to develop your own RL models
+                </Typography>
+              </CardContent>
+              <CardActions>
+                {/* <Button size="small" color="primary">
+                  Learn More
+                </Button> */}
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  Compete
+                </Typography>
+                <Typography>
+                  Use Terrarium to learn how to develop your own RL models
+                </Typography>
+              </CardContent>
+              <CardActions>
+                {/* <Button size="small" color="primary">
+                  Learn More
+                </Button> */}
+              </CardActions>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card className={classes.card}>
+              <CardContent className={classes.cardContent}>
+                <Typography gutterBottom variant="h5" component="h2">
+                  Watch
+                </Typography>
+                <Typography>
+                  Use Terrarium to learn how to develop your own RL models
+                </Typography>
+              </CardContent>
+              <CardActions>
+                {/* <Button size="small" color="primary">
+                  Learn More
+                </Button> */}
+              </CardActions>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Grid>
+  );
+};
 export default compose(
-  withNavBar({ useBuffer: true }),
-  withStyles(styles),
+  withNavbar(),
   withFirebase
+  // firestoreConnect(["users"]), // or { collection: 'todos' }
+  // connect((state, props) => ({
+  //   users: state.firestore.ordered.users
+  // }))
 )(Index);

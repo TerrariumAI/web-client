@@ -1,73 +1,151 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import {
-  TextField,
-  FormControl,
-  FormHelperText,
-  Button,
-  Typography,
-  Divider
-} from "@material-ui/core";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
+import Box from "@material-ui/core/Box";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
 
-const styles = {
-  root: {
-    flexGrow: 1,
-    textAlign: "center"
+const useStyles = makeStyles(theme => ({
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
   },
-  textField: {
-    width: 400
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main
+  },
+  form: {
+    width: "100%", // Fix IE 11 issue.
+    marginTop: theme.spacing(1)
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2)
   }
-};
+}));
 
-const SignupForm = ({ classes, state, handleChange, onSubmit }) => (
-  <FormControl className={classes.formControl} error={state.error !== null}>
-    <Typography align="left" variant="subtitle1">
-      Account Info
-    </Typography>
-    <Divider />
-    <TextField
-      id="standard-name"
-      variant="outlined"
-      label="Full Name"
-      className={classes.textField}
-      value={state.name}
-      onChange={handleChange("name")}
-      margin="normal"
-    />
-    <br />
-    <TextField
-      id="standard-name"
-      variant="outlined"
-      label="Email"
-      className={classes.textField}
-      value={state.email}
-      onChange={handleChange("email")}
-      margin="normal"
-    />
-    <br />
-    <TextField
-      id="standard-name"
-      variant="outlined"
-      label="Password"
-      type="password"
-      className={classes.textField}
-      value={state.password}
-      onChange={handleChange("password")}
-      margin="normal"
-    />
+export default function SignupForm(props) {
+  const classes = useStyles();
 
-    <br />
-    <FormHelperText id="component-error-text">{state.error}</FormHelperText>
+  const [values, setValues] = React.useState({
+    firstName: null,
+    lastName: null,
+    phone: null,
+    email: null,
+    password: null
+  });
 
-    <Button onClick={onSubmit} variant="contained" color="primary">
-      Signup
-    </Button>
-  </FormControl>
-);
+  const handleChange = name => event => {
+    setValues({ ...values, [name]: event.target.value });
+  };
 
-SignupForm.propTypes = {
-  classes: PropTypes.object.isRequired
-};
+  const onSubmit = e => {
+    e.preventDefault();
 
-export default withStyles(styles)(SignupForm);
+    if (props.onSubmit) {
+      props.onSubmit(values.firstName, values.lastName, values.phone, values.email, values.password);
+    }
+  };
+
+  return (
+    <div className={classes.paper}>
+      <Avatar className={classes.avatar}>
+        <LockOutlinedIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Sign up
+      </Typography>
+      <form className={classes.form} noValidate>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              autoComplete="fname"
+              onChange={handleChange("firstName")}
+              name="firstName"
+              variant="outlined"
+              required
+              fullWidth
+              id="firstName"
+              label="First Name"
+              autoFocus
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              variant="outlined"
+              onChange={handleChange("lastName")}
+              required
+              fullWidth
+              id="lastName"
+              label="Last Name"
+              name="lastName"
+              autoComplete="lname"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              onChange={handleChange("email")}
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              onChange={handleChange("phone")}
+              fullWidth
+              id="phone"
+              label="Phone Number"
+              name="phone"
+              autoComplete="phone"
+            />
+            <Typography variant="body1" color="textSecondary">We will only ever contact you for feedback about our product. We will never use this number for promotion or share it with anyone.</Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              variant="outlined"
+              onChange={handleChange("password")}
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+          </Grid>
+        </Grid>
+        <Button
+          onClick={onSubmit}
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          Sign In
+        </Button>
+        <Grid container justify="flex-end">
+          <Grid item>
+            <Link href="/login" variant="body2">
+              Already have an account? Sign in
+            </Link>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  );
+}

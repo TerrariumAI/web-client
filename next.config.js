@@ -6,9 +6,5 @@ module.exports = {
     config.plugins.push(new webpack.EnvironmentPlugin(localEnv));
 
     return config;
-  },
-  publicRuntimeConfig: {
-    // Will be available on both server and client
-    serverAddr: process.env.SERVER_ADDR
   }
 };

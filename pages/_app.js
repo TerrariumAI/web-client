@@ -1,55 +1,29 @@
-import React from "react";
 import App, { Container } from "next/app";
 import Head from "next/head";
-import { MuiThemeProvider } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import JssProvider from "react-jss/lib/JssProvider";
+import React from "react";
+import withReduxStore from "../src/with-redux-store";
 import { Provider } from "react-redux";
-import getPageContext from "../lib/getPageContext";
-
-import withReduxStore from "../lib/withReduxStore";
+// Material ui
+import { ThemeProvider } from "@material-ui/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import theme from "../src/theme";
 
 class MyApp extends App {
-  constructor(props) {
-    super(props);
-    this.pageContext = getPageContext();
-  }
-
-  componentDidMount() {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector("#jss-server-side");
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles);
-    }
-  }
-
   render() {
     const { Component, pageProps, reduxStore } = this.props;
     return (
       <Container>
         <Head>
-          <title>Terrarium.Ai</title>
+          <title>Terrarium AI</title>
         </Head>
-        {/* Wrap every page in Jss and Theme providers */}
-        <JssProvider
-          registry={this.pageContext.sheetsRegistry}
-          generateClassName={this.pageContext.generateClassName}
-        >
-          {/* MuiThemeProvider makes the theme available down the React
-              tree thanks to React context. */}
-          <MuiThemeProvider
-            theme={this.pageContext.theme}
-            sheetsManager={this.pageContext.sheetsManager}
-          >
+
+        <Provider store={reduxStore}>
+          <ThemeProvider theme={theme}>
             {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
-            {/* Pass pageContext to the _document though the renderPage enhancer
-                to render collected styles on server side. */}
-            <Provider store={reduxStore}>
-              <Component pageContext={this.pageContext} {...pageProps} />
-            </Provider>
-          </MuiThemeProvider>
-        </JssProvider>
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </Provider>
       </Container>
     );
   }

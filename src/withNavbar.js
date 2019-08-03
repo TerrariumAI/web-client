@@ -1,8 +1,7 @@
-// withNavBar.js - HOC
+// withNavbar.js - HOC
 import React from "react";
-import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import NavBar from "../components/navBar";
+import Navbar from "../components/navbar";
 
 const styles = theme => ({
   root: {
@@ -12,12 +11,12 @@ const styles = theme => ({
 });
 
 export default options => Page => {
-  class PageWithNavBar extends React.Component {
+  class PageWithNavbar extends React.Component {
     render() {
       const { classes } = this.props;
       return (
         <div className={classes.root}>
-          <NavBar />
+          <Navbar />
           {!options ||
           options.useBuffer === null ||
           options.useBuffer === true ? (
@@ -29,7 +28,7 @@ export default options => Page => {
     }
   }
 
-  return withStyles(styles)(PageWithNavBar);
+  return withStyles(styles)(PageWithNavbar);
 };
 
 // export default withStyles(styles)(WithNavbarHOC);
