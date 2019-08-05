@@ -160,12 +160,12 @@ class EnvObservation extends React.Component {
     const {regionSubs} = this.state
     // Make sure x and y exist!
     if (x === null || y === null || x < 0 || y < 0) {
-      console.error("subscribeToRegion(): X or Y is null or negative");
+      console.warn("subscribeToRegion(): X or Y is null or negative");
       return;
     }
     // Check if we are already subbed to this region, exit if so
     if (_.find(regionSubs, { x, y })) {
-      console.error("subscribeToRegion(): Already subbed to this region");
+      console.warn("subscribeToRegion(): Already subbed to this region");
       return;
     }
 
