@@ -44,12 +44,10 @@ const Index = ({ users }) => {
           A persistant, online environment for AI
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
-          Terrarium.AI is focused on creating a community around learning,
-          developing and further researching Reinforcemnt Learning AI. Our goal
-          is to create an environment that simulates simple life and will enable
-          developers to truly push the limits of AI. Through simple actions such
-          as movement, consumption, rest, communication and combat, the
-          possibilities are endless.
+        Terrarium AI simulates simple life and enables developers to truly push the 
+        limits of AI with an online, persistent environment. Models are forced to compete 
+        for survival by using sensors for observation, and simple actions such as movement, 
+        consumption, rest, communication and combat.
         </Typography>
 
         <Grid container spacing={2} justify="center">

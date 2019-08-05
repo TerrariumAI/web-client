@@ -75,7 +75,7 @@ let Navbar = ({ firebase, auth }) => {
           <Button color="inherit">Contact</Button>
         </Link>
 
-        <Button href="https://docs.terrarium.ai/" color="inherit">Help</Button>
+        <Button href="https://docs.terrarium.ai/" color="inherit">Documentation</Button>
         
         <div className={classes.divider} />
         <MenuItems />
