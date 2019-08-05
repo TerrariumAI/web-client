@@ -29,7 +29,7 @@ let Contact = ({ firebase, router }) => {
         <Typography variant="h6">Email</Typography>
         <Typography variant="h6" color="textSecondary">zacharyholland@gmail.com</Typography>
         <Typography variant="h6">Twitter</Typography>
-        <Typography variant="h6" color="textSecondary">@terrariumai <br /> @zolland</Typography>
+        <Typography variant="h6" color="textSecondary">@terrariumai <br /> @zollandd</Typography>
       </Container>
     </Grid>
   );
