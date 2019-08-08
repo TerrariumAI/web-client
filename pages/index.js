@@ -124,7 +124,7 @@ const Index = ({ users }) => {
         className={classes.white}
       >
         <Container className={classes.infoCardGrid} maxWidth="md">
-          <Typography variant="h2" align="center" gutterBottom>Getting started in Python</Typography>
+          <Typography variant="h2" align="center" gutterBottom>Getting started in Python3</Typography>
           <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
             Our goal is to be <i>as simple as possible.</i> 
             <br />
@@ -148,124 +148,29 @@ const Index = ({ users }) => {
         <Grid container>
           <Grid item xs={12} >
             <Typography variant="h2" align="center" gutterBottom>Train Your Model</Typography>
-            <Typography variant="h5" align="center" color="textSecondary" gutterBottom paragraph>
-              You will most likely want to train your model before connecting it to our live environment.
+            <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
+              After messing around with the live environment, you will most likely want to train your model on something quicker.
               This can be done with our training environment that runs locally on your computer. It is kept
-              up to date with the live server and has 0 delay.
+              up to date with the live server and has zero delay.
+
+              <br />
+              <br />
+              First, download the correct binary for your machine.
             </Typography>
-          </Grid>
-        </Grid>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Download
-                </Typography>
-                <Typography>
-                  Download the training environment from our git repo.
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color="primary">
-                  Download
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Run the server
-                </Typography>
-                <Typography>
-                  Run the server on your local machine
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color="primary">
-                  Run
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Connect
-                </Typography>
-                <Typography>
-                  Connect the same way you would to the live servers
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" color="primary">
-                  Connect
-                </Button>
-              </CardActions>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-
-      <Container className={classes.infoCardGrid} maxWidth="md">
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Learn
-                </Typography>
-                <Typography>
-                  Use Terrarium to learn how to develop your own RL models
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {/* <Button size="small" color="primary">
-                  Learn More
-                </Button> */}
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Compete
-                </Typography>
-                <Typography>
-                  Use Terrarium to learn how to develop your own RL models
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {/* <Button size="small" color="primary">
-                  Learn More
-                </Button> */}
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={4}>
-            <Card className={classes.card}>
-              <CardContent className={classes.cardContent}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Watch
-                </Typography>
-                <Typography>
-                  Use Terrarium to learn how to develop your own RL models
-                </Typography>
-              </CardContent>
-              <CardActions>
-                {/* <Button size="small" color="primary">
-                  Learn More
-                </Button> */}
-              </CardActions>
-            </Card>
+            <Button href="https://github.com/TerrariumAI/simulation/releases" variant="contained" color="primary">
+              Download
+            </Button>
+            <br /> <br />
+            <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
+              Now run the binary
+              <SyntaxHighlighter language='' style={dark}>{"./training-osx-<version>.sh"}</SyntaxHighlighter>
+              or
+              <SyntaxHighlighter language='' style={dark}>{"./training-osx-<version>.sh"}</SyntaxHighlighter>
+            </Typography>
+            <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
+              Now connect to it by specifying an address when you connect your function.
+              <SyntaxHighlighter language='python' style={dark}>{connectModelTrainingStr}</SyntaxHighlighter>
+            </Typography>
           </Grid>
         </Grid>
       </Container>
@@ -300,6 +205,12 @@ def modelFunc(obsv):
 const connectModelStr = `connectRemoteModel(
   secret='<model-secret>', 
   modelFunc=modelFunc
+)`
+
+const connectModelTrainingStr = `connectRemoteModel(
+  secret='<model-secret>', 
+  modelFunc=modelFunc,
+  addr='localhost:9090'
 )`
 
 let dark = {
