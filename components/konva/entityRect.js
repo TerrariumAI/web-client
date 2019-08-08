@@ -21,13 +21,13 @@ class EntityRect extends React.Component {
       onClick
     } = this.props;
     let fill = "white";
-    if (!entity || entity.class === 0) { // Empty
+    if (!entity || entity.classID === 0) { // Empty
       fill = "#32ff7e";
-    } else if (entity.class === 1) { // Agent
+    } else if (entity.classID === 1) { // Agent
       fill = "#18dcff";
-    } else if (entity.class === 2) { // Rock
+    } else if (entity.classID === 2) { // Rock
       fill = "#000000";
-    } else if (entity.class === 3) { // Food
+    } else if (entity.classID === 3) { // Food
       fill = "#33c466";
     }
     return (

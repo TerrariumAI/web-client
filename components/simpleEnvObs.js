@@ -86,7 +86,7 @@ class EnvObservation extends React.Component {
     }
   }
 
-  onRegionChange = (region) => {
+  onRegionChange = async (region) => {
     const {regionSubs} = this.state
     let newRegionSubs = getRegionsAroundInclusive(region);
     let regionsToUnsubFrom = regionSubs.filter(
