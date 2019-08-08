@@ -103,6 +103,10 @@ const Index = ({ users }) => {
         <Typography variant="h2" align="center" gutterBottom>Creating your Remote Model</Typography>
         <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
           The first step to using Terrarium.ai is to create a new Remote Model in your dashboard. 
+          <br />
+          <br />
+          You will be able to give it some metadata such as a name and description that other users can see.
+          The Dashboard will also be where you interact with the environment using your Remote Models.
         </Typography>
         <Link href="/dashboard">
           <Button variant="contained" color="primary">
