@@ -2,100 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import Link from "next/link";
+import classNames from "classnames";
 import SyntaxHighlighter from 'react-syntax-highlighter';
-
-let dark = {
-  "hljs": {
-    "display": "block",
-    "overflowX": "auto",
-    "padding": "0.5em",
-    "background": "#444",
-    "color": "#ddd"
-  },
-  "hljs-keyword": {
-    "color": "white",
-    "fontWeight": "bold"
-  },
-  "hljs-selector-tag": {
-    "color": "white",
-    "fontWeight": "bold"
-  },
-  "hljs-literal": {
-    "color": "white",
-    "fontWeight": "bold"
-  },
-  "hljs-section": {
-    "color": "white",
-    "fontWeight": "bold"
-  },
-  "hljs-link": {
-    "color": "white"
-  },
-  "hljs-subst": {
-    "color": "#ddd"
-  },
-  "hljs-string": {
-    "color": "#d88"
-  },
-  "hljs-title": {
-    "color": "#d88",
-    "fontWeight": "bold"
-  },
-  "hljs-name": {
-    "color": "#d88",
-    "fontWeight": "bold"
-  },
-  "hljs-type": {
-    "color": "#d88",
-    "fontWeight": "bold"
-  },
-  "hljs-attribute": {
-    "color": "#d88"
-  },
-  "hljs-symbol": {
-    "color": "#d88"
-  },
-  "hljs-bullet": {
-    "color": "#d88"
-  },
-  "hljs-built_in": {
-    "color": "#d88"
-  },
-  "hljs-addition": {
-    "color": "#d88"
-  },
-  "hljs-variable": {
-    "color": "#d88"
-  },
-  "hljs-template-tag": {
-    "color": "#d88"
-  },
-  "hljs-template-variable": {
-    "color": "#d88"
-  },
-  "hljs-comment": {
-    "color": "#777"
-  },
-  "hljs-quote": {
-    "color": "#777"
-  },
-  "hljs-deletion": {
-    "color": "#777"
-  },
-  "hljs-meta": {
-    "color": "#777"
-  },
-  "hljs-doctag": {
-    "fontWeight": "bold"
-  },
-  "hljs-strong": {
-    "fontWeight": "bold"
-  },
-  "hljs-emphasis": {
-    "fontStyle": "italic"
-  }
-};
-
 import { withFirebase, firestoreConnect } from "react-redux-firebase";
 import {
   Typography,
@@ -121,7 +29,9 @@ const useStyles = makeStyles(theme => ({
   watchNow: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(6),
-    backgroundColor: "white"
+  },
+  white: {
+    backgroundColor: "white",
   },
   infoCardGrid: {
     paddingTop: theme.spacing(8),
@@ -167,7 +77,7 @@ const Index = ({ users }) => {
         alignItems="center"
         justify="center"
         xs={12}
-        className={classes.watchNow}
+        className={classNames(classes.white, classes.watchNow)}
       >
         <Grid item xs={12}>
           <Typography variant="h2" align="center" gutterBottom>
@@ -190,24 +100,45 @@ const Index = ({ users }) => {
       </Grid>
 
       <Container className={classes.infoCardGrid} maxWidth="md">
-        <Typography variant="h2" align="center" gutterBottom>Getting started in Python</Typography>
+        <Typography variant="h2" align="center" gutterBottom>Creating your Remote Model</Typography>
         <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
-          Our goal is to be <i>as simple as possible.</i> 
-          <br />
-          <br />
-          Once you have created a Remote Model in your dashboard, simply install our pip package:
-          <SyntaxHighlighter language='python' style={dark}>{"pip install terrariumai"}</SyntaxHighlighter>
-          Create a simple model function
-          <SyntaxHighlighter language='python' style={dark}>{modelStr}</SyntaxHighlighter>
-          Connect to your remote model
-          <SyntaxHighlighter language='python' style={dark}>{connectModelStr}</SyntaxHighlighter>
-          It's that easy!
-          <br />
-          <br />
-          Now you can interract with the live environment from the dashboard. The agents you spawn will
-          be using the code running on your local machine!
+          The first step to using Terrarium.ai is to create a new Remote Model in your dashboard. 
         </Typography>
+        <Link href="/dashboard">
+          <Button variant="contained" color="primary">
+            Go to dashboard
+          </Button>
+        </Link>
       </Container>
+
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justify="center"
+        xs={12}
+        className={classes.white}
+      >
+        <Container className={classes.infoCardGrid} maxWidth="md">
+          <Typography variant="h2" align="center" gutterBottom>Getting started in Python</Typography>
+          <Typography variant="h5" color="textSecondary" gutterBottom paragraph>
+            Our goal is to be <i>as simple as possible.</i> 
+            <br />
+            <br />
+            Once you have created a Remote Model in your dashboard, simply install our pip package:
+            <SyntaxHighlighter language='python' style={dark}>{"pip install terrariumai"}</SyntaxHighlighter>
+            Create a simple model function
+            <SyntaxHighlighter language='python' style={dark}>{modelStr}</SyntaxHighlighter>
+            Connect to your remote model
+            <SyntaxHighlighter language='python' style={dark}>{connectModelStr}</SyntaxHighlighter>
+            It's that easy!
+            <br />
+            <br />
+            Now you can interract with the live environment from the dashboard. The agents you spawn will
+            be using the code running on your local machine!
+          </Typography>
+        </Container>
+      </Grid>
 
       <Container className={classes.infoCardGrid} maxWidth="md">
         <Grid container>
@@ -366,3 +297,95 @@ const connectModelStr = `connectRemoteModel(
   secret='<model-secret>', 
   modelFunc=modelFunc
 )`
+
+let dark = {
+  "hljs": {
+    "display": "block",
+    "overflowX": "auto",
+    "padding": "0.5em",
+    "background": "#444",
+    "color": "#ddd"
+  },
+  "hljs-keyword": {
+    "color": "white",
+    "fontWeight": "bold"
+  },
+  "hljs-selector-tag": {
+    "color": "white",
+    "fontWeight": "bold"
+  },
+  "hljs-literal": {
+    "color": "white",
+    "fontWeight": "bold"
+  },
+  "hljs-section": {
+    "color": "white",
+    "fontWeight": "bold"
+  },
+  "hljs-link": {
+    "color": "white"
+  },
+  "hljs-subst": {
+    "color": "#ddd"
+  },
+  "hljs-string": {
+    "color": "#d88"
+  },
+  "hljs-title": {
+    "color": "#d88",
+    "fontWeight": "bold"
+  },
+  "hljs-name": {
+    "color": "#d88",
+    "fontWeight": "bold"
+  },
+  "hljs-type": {
+    "color": "#d88",
+    "fontWeight": "bold"
+  },
+  "hljs-attribute": {
+    "color": "#d88"
+  },
+  "hljs-symbol": {
+    "color": "#d88"
+  },
+  "hljs-bullet": {
+    "color": "#d88"
+  },
+  "hljs-built_in": {
+    "color": "#d88"
+  },
+  "hljs-addition": {
+    "color": "#d88"
+  },
+  "hljs-variable": {
+    "color": "#d88"
+  },
+  "hljs-template-tag": {
+    "color": "#d88"
+  },
+  "hljs-template-variable": {
+    "color": "#d88"
+  },
+  "hljs-comment": {
+    "color": "#777"
+  },
+  "hljs-quote": {
+    "color": "#777"
+  },
+  "hljs-deletion": {
+    "color": "#777"
+  },
+  "hljs-meta": {
+    "color": "#777"
+  },
+  "hljs-doctag": {
+    "fontWeight": "bold"
+  },
+  "hljs-strong": {
+    "fontWeight": "bold"
+  },
+  "hljs-emphasis": {
+    "fontStyle": "italic"
+  }
+};
