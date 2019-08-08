@@ -8,6 +8,7 @@ import firebase from "firebase";
 // import { reduxFirestore, firestoreReducer } from 'redux-firestore' // <- needed if using firestore
 import "firebase/firestore"; // <- needed if using firestore
 // import 'firebase/functions' // <- needed if using httpsCallable
+const dev = process.env.NODE_ENV !== "production";
 
 var firebaseConfig = {
   apiKey: "AIzaSyDpQXU2exKpLVi30gpsBK2ekX79wQU5Np0",
@@ -16,6 +17,18 @@ var firebaseConfig = {
   projectId: "olamai-d64a7",
   appId: "1:1045534123345:web:a319fd1bf081157e"
 };
+
+if (dev) {
+  console.warn("Using staging firebase environment")
+  firebaseConfig = {
+    apiKey: process.env.API_KEY,
+    authDomain: process.env.AUTH_DOMAIN,
+    databaseURL: process.env.DATABASE_URL,
+    projectId: process.env.PROJECT_ID,
+    storageBucket: process.env.STORAGE_BUCKET,
+    messagingSenderId: process.env.MESSAGING_SENDER_ID
+  };
+}
 
 // react-redux-firebase config
 const rrfConfig = {

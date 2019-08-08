@@ -52,8 +52,8 @@ let ProfileNavbarMenu = ({ firebase }) => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
+        {/* <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem> */}
         <MenuItem onClick={logout}>Logout</MenuItem>
       </Menu>
     </div>
