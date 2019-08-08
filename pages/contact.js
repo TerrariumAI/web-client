@@ -30,6 +30,8 @@ let Contact = ({ firebase, router }) => {
         <Typography variant="h6" color="textSecondary">zacharyholland@gmail.com</Typography>
         <Typography variant="h6">Twitter</Typography>
         <Typography variant="h6" color="textSecondary">@terrariumai <br /> @zollandd</Typography>
+        <Typography variant="h6">Discord</Typography>
+        <iframe src="https://discordapp.com/widget?id=608052244314849311&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
       </Container>
     </Grid>
   );
