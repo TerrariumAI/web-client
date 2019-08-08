@@ -9,6 +9,8 @@ import { CreateEntity, DeleteEntity, SpawnFood } from "../lib/environmentApi";
 import SimpleEnvObs from "../components/simpleEnvObs";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
+import Router from 'next/router'
+
 const useStyles = makeStyles(theme => ({
   modelFormControl: {
     minWidth: 100
@@ -29,6 +31,10 @@ let Dashboard = props => {
   const [selectedCell, setSelectedCell] = React.useState({});
   const [selectedRMId, setSelectedRMId] = React.useState("");
   const [open, setOpen] = React.useState(false);
+
+  if (isLoaded(props.auth) && isEmpty(props.auth)) {
+    Router.push('/signup')
+  }
 
   // componentDidMount and componentDidUpdate:
   useEffect(() => {
