@@ -31,12 +31,6 @@ let Signup = ({ firebase, router }) => {
       },
       {firstName, lastName, phone, email});
 
-      // Attempt to login, throws error if unsuccesful
-      await firebase.login({
-        email,
-        password
-      });
-
       // Succesful login go back to home screen
       router.push("/");
     } catch (error) {

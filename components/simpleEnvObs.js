@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import { Typography, Grid } from "@material-ui/core";
+import { Typography, Grid, CircularProgress } from "@material-ui/core";
 import World from "./konva/world";
 import { GetEntitiesInRegion } from "../lib/environmentApi";
 import { withFirebase, isLoaded, isEmpty } from "react-redux-firebase";
@@ -227,6 +227,7 @@ class EnvObservation extends React.Component {
     
   render() {
     const { classes } = this.props;
+    const {posEntityMap} = this.state;
 
     return (
       <div className={classes.obsPanel}>
@@ -239,11 +240,14 @@ class EnvObservation extends React.Component {
           className={classes.comingSoonContainer}
         >
           <Grid item className={classes.worldContainer}>
+            {Object.keys(posEntityMap).length == 0 ? <CircularProgress /> :
             <World
-              onRegionChange={this.onRegionChange}
-              getEntityByPos={this.getEntityByPos}
-              onCellClick={this.onCellClick}
-            />
+            onRegionChange={this.onRegionChange}
+            getEntityByPos={this.getEntityByPos}
+            onCellClick={this.onCellClick}
+          />
+          }
+            
           </Grid>
         </Grid>
       </div>

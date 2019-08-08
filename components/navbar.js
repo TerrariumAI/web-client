@@ -26,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 let Navbar = ({ firebase, auth }) => {
   const classes = useStyles();
+  console.log("navbar auth: ", auth)
 
   // AuthBtns decides which buttons to render depending on the auth status
   let AuthBtns = () => {
