@@ -46,7 +46,7 @@ const Index = ({ users }) => {
     <Grid container spacing={0} alignItems="center" justify="center">
       <Grid item xs={10} className={classes.header}>
         <Typography variant="h2" align="center" gutterBottom>
-          A persistant, online environment for AI
+          A persistent, online environment for AI
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" paragraph>
         Terrarium AI simulates simple life and enables developers to truly push the 
