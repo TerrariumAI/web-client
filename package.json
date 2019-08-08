@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node server.js -p $PORT",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js -p $PORT", 
+    "start": "NODE_ENV=production node server.js -p $PORT",
     "heroku-postbuild": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -39,6 +39,7 @@
     "react": "^16.8.6",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.8.6",
+    "react-ga": "^2.6.0",
     "react-konva": "^16.8.7-3",
     "react-redux": "^5.1.1",
     "react-redux-firebase": "^2.2.6",

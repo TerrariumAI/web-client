@@ -1,6 +1,7 @@
 // withNavbar.js - HOC
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+import { initGA, logPageView } from '../lib/analytics'
 import Navbar from "../components/navbar";
 
 const styles = theme => ({
@@ -12,6 +13,14 @@ const styles = theme => ({
 
 export default options => Page => {
   class PageWithNavbar extends React.Component {
+    componentDidMount () {
+      if (!window.GA_INITIALIZED) {
+        initGA()
+        window.GA_INITIALIZED = true
+      }
+      logPageView()
+    }
+    
     render() {
       const { classes } = this.props;
       return (
