@@ -3,7 +3,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Typography, Grid, CircularProgress } from "@material-ui/core";
 import World from "./konva/world";
 import { GetEntitiesInRegion } from "../lib/environmentApi";
-import { withFirebase, isLoaded, isEmpty } from "react-redux-firebase";
+import { withFirebase, isLoaded, isEmpty, withFirestore } from "react-redux-firebase";
 import { connect } from "react-redux";
 import update from 'immutability-helper';
 import { compose } from "redux";
@@ -115,14 +115,19 @@ class EnvObservation extends React.Component {
             idToken = _idToken
             this.onRegionChange({x: 0, y: 0});
           });
-        } else {
-          this.props.firebase.auth().signInAnonymously().catch(function(error) {
-            console.error("ERROR ANON SIGNIN: ", error);
-          });
         }
       });
     } else {
       this.onRegionChange({x: 0, y: 0});
+    }
+  }
+
+  componentDidUpdate() {
+    const {auth} = this.props
+    if (isLoaded(auth) && isEmpty(auth)) {
+      this.props.firebase.auth().signInAnonymously().catch(function(error) {
+        console.error("ERROR ANON SIGNIN: ", error);
+      });
     }
   }
 
@@ -269,4 +274,11 @@ const getRegionsAroundInclusive = region => {
   return regions;
 };
 
-export default compose(withFirebase, withStyles(styles))(EnvObservation);
+export default compose(
+  withFirebase, 
+  withFirestore,
+  withStyles(styles),
+  connect(({ firestore, firebase: { auth } }, props) => ({
+    auth,
+  })),
+)(EnvObservation);
