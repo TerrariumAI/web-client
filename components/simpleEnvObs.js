@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import { Typography, Grid, CircularProgress } from "@material-ui/core";
 import World from "./konva/world";
-import { GetEntitiesInRegion } from "../lib/environmentApi";
+import { GetEntitiesInRegion, CLASS_IDS } from "../lib/environmentApi";
 import { withFirebase, isLoaded, isEmpty, withFirestore } from "react-redux-firebase";
 import { connect } from "react-redux";
 import update from 'immutability-helper';
@@ -216,8 +216,8 @@ class EnvObservation extends React.Component {
 
   // Return entity at given position
   getEntityByPos = ({x, y}) => {
-    if (x < 1 || y < 1) {
-      return {class: "ROCK"}
+    if (x < 0 || y < 0) {
+      return {classID: CLASS_IDS.ROCK}
     }
     let e = this.state.posEntityMap[`${x}.${y}`]
     return e;
