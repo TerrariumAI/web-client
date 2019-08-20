@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import { Stage, Layer, Rect, Image } from "react-konva";
 import EntityRect from "./entityRect";
+import EffectRect from "./effectRect";
 var _ = require("lodash");
 
 const CELLS_IN_REGION = 16;
@@ -137,7 +138,7 @@ class World extends React.Component {
 
   renderCells = () => {
     const { selectedPos, centerPos, stageWidth } = this.state;
-    const { getEntityByPos } = this.props;
+    const { getEntityByPos, getEffectByPos } = this.props;
     const cellSize = stageWidth / CELLS_IN_REGION
     let cells = [];
     for (let x = 0; x < CELLS_IN_REGION; x++) {
@@ -151,21 +152,31 @@ class World extends React.Component {
           y: -(y - CELLS_IN_REGION / 2 - centerPos.y)
         };
         cells.push(
-          <EntityRect
-            key={`${worldPos.x}.${worldPos.y}`}
-            entity={getEntityByPos(worldPos)}
+            <EntityRect
+              key={`${worldPos.x}.${worldPos.y}-entity`}
+              entity={getEntityByPos(worldPos)}
+              screenPos={screenPos}
+              worldPos={worldPos}
+              width={cellSize}
+              height={cellSize}
+              selected={
+                selectedPos &&
+                selectedPos.x === worldPos.x &&
+                selectedPos.y === worldPos.y
+              }
+              onClick={this.onCellClick}
+            />
+        );
+        cells.push(
+          <EffectRect
+            key={`${worldPos.x}.${worldPos.y}-effect`}
+            effect={getEffectByPos(worldPos)}
             screenPos={screenPos}
             worldPos={worldPos}
-            width={cellSize}
-            height={cellSize}
-            selected={
-              selectedPos &&
-              selectedPos.x === worldPos.x &&
-              selectedPos.y === worldPos.y
-            }
-            onClick={this.onCellClick}
+            width={cellSize/2}
+            height={cellSize/2}
           />
-        );
+        )
       }
     }
     return cells;

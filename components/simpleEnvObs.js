@@ -37,6 +37,7 @@ class EnvObservation extends React.Component {
       super(props);
       this.state = {
           posEntityMap: {},
+          posEffectMap: {},
           idPosMap: {},
           regionSubs: []
       };
@@ -72,6 +73,14 @@ class EnvObservation extends React.Component {
         newState = update(this.state, {
           idPosMap: {[e.id]: {$set: undefined}},
           posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+        });
+      } else if (eventName == "createEffect") {
+        newState = update(newState, {
+            posEffectMap: {[`${e.x}.${e.y}`]: {$set: e}}
+        });
+      } else if (eventName == "deleteEffect") {
+        newState = update(this.state, {
+          posEffectMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
         });
       }
     })
@@ -223,6 +232,15 @@ class EnvObservation extends React.Component {
     return e;
   };
 
+  // Return entity at given position
+  getEffectByPos = ({x, y}) => {
+    if (x < 0 || y < 0) {
+      return null
+    }
+    let e = this.state.posEffectMap[`${x}.${y}`]
+    return e;
+  };
+
   onCellClick = (position, entity) => {
     if (this.props.onCellClick) {
       this.props.onCellClick(position, entity)
@@ -248,6 +266,7 @@ class EnvObservation extends React.Component {
             <World
             onRegionChange={this.onRegionChange}
             getEntityByPos={this.getEntityByPos}
+            getEffectByPos={this.getEffectByPos}
             onCellClick={this.onCellClick}
           />
           }
