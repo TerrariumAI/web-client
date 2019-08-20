@@ -44,10 +44,13 @@ class World extends React.Component {
     // take a look here https://developers.google.com/web/updates/2016/10/resizeobserver
     // for simplicity I will just listen window resize
     window.addEventListener("resize", this.checkSize);
+    // Refresh every second
+    this.interval = setInterval(() => this.setState(this.state), 1000);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.checkSize);
+    clearInterval(this.interval);
   }
 
   /**
