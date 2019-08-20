@@ -20,17 +20,20 @@ class EffectRect extends React.Component {
     } = this.props;
     let fill = "white";
     if (!effect) { // Empty
-      fill = "#00000000";
+      return null
     } else { 
       let strength = 100 / Math.pow(effect.decay, (new Date().getTime() / 1000) - effect.timestamp)
       strength = Math.round(strength)
-      console.log(effect, strength)
-      fill = "#5ac0e6"+strength.toString(16);
+      let strengthHex = strength.toString(16)
+      if (strengthHex.length != 2) {
+        strengthHex = "00"
+      }
+      fill = "#5ac0e6"+strengthHex;
     }
     return (
       <Rect
-        x={screenPos.x}
-        y={screenPos.y}
+        x={screenPos.x + width/2}
+        y={screenPos.y + height/2}
         width={width}
         height={height}
         fill={fill}
