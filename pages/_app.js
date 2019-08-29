@@ -8,7 +8,21 @@ import { ThemeProvider } from "@material-ui/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
 
+import { Typography } from "@material-ui/core";
+
 class MyApp extends App {
+
+  async componentDidMount() {
+    let result = await import('@widgetbot/crate')
+    const Crate = await result.cdn();
+
+    const myCrate = new Crate({
+      server: '608052244314849311',
+      channel: '608052244314849317',
+      shard: 'https://disweb.deploys.io'
+    })
+  }
+
   render() {
     const { Component, pageProps, reduxStore } = this.props;
     return (
