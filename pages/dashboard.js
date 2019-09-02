@@ -9,6 +9,7 @@ import { CreateEntity, DeleteEntity, SpawnFood } from "../lib/environmentApi";
 import SimpleEnvObs from "../components/simpleEnvObs";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
+import TopEntitiesTable from "../components/topEntitiesTable";
 import Router from 'next/router'
 
 const useStyles = makeStyles(theme => ({
@@ -213,6 +214,15 @@ let Dashboard = props => {
             <SpawnEntity />
             <br />
             <EntityInspector />
+          </Grid>
+        </Grid>
+
+        <br /> <br />
+
+        <Grid container>
+          <Grid item>
+            <Typography variant="h3">Oldest Agents</Typography>
+            <TopEntitiesTable />
           </Grid>
         </Grid>
 
