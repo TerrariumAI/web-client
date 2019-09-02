@@ -1,8 +1,10 @@
 import { makeStyles } from "@material-ui/core/styles";
-import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty, populate } from "react-redux-firebase";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Table, TableHead, TableCell, TableBody, TableRow, Paper, CircularProgress } from "@material-ui/core";
+
+const populates = [{ child: 'ModelID', root: 'remoteModels' }]
 
 const useStyles = makeStyles(theme => ({
   spacer: {
@@ -21,6 +23,7 @@ let TopEntitiesTable = ({ firebase, auth, entities }) => {
   if (isEmpty(entities)) {
     return null // TODO
   }
+  console.log(entities)
   return (
     <Paper>
       <Table className={classes.table}>
@@ -38,7 +41,7 @@ let TopEntitiesTable = ({ firebase, auth, entities }) => {
               <TableCell component="th" scope="row">
                 {id}
               </TableCell>
-              <TableCell align="right">{entity.ModelID}</TableCell>
+              <TableCell align="right">{entity.ModelID.name}</TableCell>
               <TableCell align="right">{entity.CreatedAt}</TableCell>
             </TableRow>)
           })}
@@ -52,7 +55,7 @@ export default compose(
   withFirebase,
   withFirestore,
   connect(({ firestore, firebase: { auth, profile } }, props) => ({
-    entities: firestore.data.topEntities,
+    entities: populate(firestore, "entities", populates),
     auth,
     profile
   })),
@@ -63,7 +66,7 @@ export default compose(
         ['CreatedAt', 'asc']
       ],
       limit: 10,
-      storeAs: "topEntities",
+      populates,
     }
   ])
   )(TopEntitiesTable);
