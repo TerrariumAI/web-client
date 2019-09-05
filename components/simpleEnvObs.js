@@ -51,11 +51,14 @@ class EnvObservation extends React.Component {
       e.y = e.y || 0
       if (eventName == "createEntity") {
         newState = update(newState, {
-            idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
+            idPosMap: {[e.id]: {$set: {x: e.x, y: e.y}}},
             posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
         });
       } else if (eventName == "updateEntity") {
+        // Get last pos
         const lastPos = newState.idPosMap[e.id]
+        // Convert last pos to index
+        lastPos = `${lastPos.x}.${lastPos.y}`
         const curPos = `${e.x}.${e.y}`;
         if (lastPos == curPos) { // If the entity didn't move
           // Update the state, but don't worry about his last position
@@ -65,7 +68,7 @@ class EnvObservation extends React.Component {
         } else { // If the entity did move
           // Update the state AND delete the data for the entities last position
           newState = update(newState, {
-            idPosMap: {[e.id]: {$set: curPos}},
+            idPosMap: {[e.id]: {$set: {x: e.x, y: e.y}}},
             posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
           });
         }
@@ -161,7 +164,7 @@ class EnvObservation extends React.Component {
       e.y = e.y || 0
       // add to the temp object
       const newState = update(this.state, {
-        idPosMap: {[e.id]: {$set: `${e.x}.${e.y}`}},
+        idPosMap: {[e.id]: {$set: {x: e.x, y: e.y}}},
         posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
       });
       this.setState(newState);
@@ -233,6 +236,11 @@ class EnvObservation extends React.Component {
   };
 
   // Return entity at given position
+  getEntityPosById = id => {
+    return this.state.idPosMap[id];
+  };
+
+  // Return entity at given position
   getEffectByPos = ({x, y}) => {
     if (x < 0 || y < 0) {
       return null
@@ -248,7 +256,7 @@ class EnvObservation extends React.Component {
   };
     
   render() {
-    const { classes } = this.props;
+    const { classes, selectedEntity } = this.props;
     const {posEntityMap} = this.state;
 
     return (
@@ -264,11 +272,13 @@ class EnvObservation extends React.Component {
           <Grid item className={classes.worldContainer}>
             {Object.keys(posEntityMap).length == 0 ? <CircularProgress /> :
             <World
-            onRegionChange={this.onRegionChange}
-            getEntityByPos={this.getEntityByPos}
-            getEffectByPos={this.getEffectByPos}
-            onCellClick={this.onCellClick}
-          />
+              onRegionChange={this.onRegionChange}
+              getEntityByPos={this.getEntityByPos}
+              getEntityPosById={this.getEntityPosById}
+              getEffectByPos={this.getEffectByPos}
+              onCellClick={this.onCellClick}
+              selectedEntity={selectedEntity}
+            />
           }
             
           </Grid>

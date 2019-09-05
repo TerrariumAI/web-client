@@ -2,7 +2,8 @@ import { withStyles } from "@material-ui/core/styles";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty, populate } from "react-redux-firebase";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Table, TableHead, TableCell, TableBody, TableRow, Paper, CircularProgress } from "@material-ui/core";
+import { Table, TableHead, TableCell, TableBody, TableRow, Paper, CircularProgress, Button } from "@material-ui/core";
+import { GetEntity } from "../lib/environmentApi";
 
 const populates = [{ child: 'model', root: 'remoteModels' }]
 
@@ -24,8 +25,16 @@ class TopEntitiesTable extends React.Component {
     clearInterval(this.interval);
   }
 
+  onEntityClick(id) {
+    const { firebase, onSelectEntity } = this.props
+    firebase.auth().currentUser.getIdToken(false).then(async function(idToken) {
+      const {data: { entity } } = await GetEntity(idToken, id)
+      onSelectEntity(entity)
+    })
+  }
+
   render() {
-    const { classes, entities } = this.props;
+    const { classes, entities, onSelectEntity } = this.props;
     if (!isLoaded(entities)) {
       return <CircularProgress></CircularProgress>
     }
@@ -75,7 +84,7 @@ class TopEntitiesTable extends React.Component {
               const seconds = delta % 60
               return (<TableRow key={id}>
                 <TableCell component="th" scope="row">
-                  {id}
+                  <Button onClick={() => this.onEntityClick(id) }>{id}</Button>
                 </TableCell>
                 <TableCell align="right">{entity.model.name || ""}</TableCell>
                 <TableCell align="right">{hours}:{minutes}:{seconds}</TableCell>
@@ -92,10 +101,11 @@ export default compose(
   withStyles(styles),
   withFirebase,
   withFirestore,
-  connect(({ firestore, firebase: { auth, profile } }, props) => ({
+  connect(({ firestore, firebase }, props) => ({
     entities: populate(firestore, "entities", populates),
-    auth,
-    profile
+    auth: firebase.auth,
+    profile: firebase.profile,
+    firebase
   })),
   firestoreConnect(({ firebase, auth }) => [
     {

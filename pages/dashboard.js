@@ -31,6 +31,7 @@ let Dashboard = props => {
 
   const [selectedCell, setSelectedCell] = React.useState({});
   const [selectedRMId, setSelectedRMId] = React.useState("");
+  const [selectedEntity, setSelectedEntity] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
   if (isLoaded(props.auth) && isEmpty(props.auth)) {
@@ -208,7 +209,7 @@ let Dashboard = props => {
 
         <Grid container>
           <Grid item className={classes.env}>
-            <SimpleEnvObs onCellClick={onCellClick} />
+            <SimpleEnvObs selectedEntity={selectedEntity} onCellClick={onCellClick} />
           </Grid>
           <Grid item>
             <SpawnEntity />
@@ -222,7 +223,7 @@ let Dashboard = props => {
         <Grid container>
           <Grid item>
             <Typography variant="h3">Oldest Agents</Typography>
-            <TopEntitiesTable />
+            <TopEntitiesTable onSelectEntity={(entity) => setSelectedEntity(entity)} />
           </Grid>
         </Grid>
 

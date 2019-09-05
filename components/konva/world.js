@@ -30,7 +30,7 @@ class World extends React.Component {
       x: 9,
       y: 9
     },
-    region: this.getRegionForPos({ x: 0, y: 0 }),
+    region: this.getRegionForPos({ x: 9, y: 9 }),
     // Any errors that come up
     error: ""
   };
@@ -51,6 +51,19 @@ class World extends React.Component {
   componentWillUnmount() {
     window.removeEventListener("resize", this.checkSize);
     clearInterval(this.interval);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { getEntityPosById } = this.props;
+    const { selectedEntity } = nextProps;
+    if (selectedEntity) {
+      const pos = getEntityPosById(selectedEntity.id)
+      if (pos) { // Entity is in view
+        this.changeCenterPos(pos)
+      } else { // Entity is not in view, use the innacurate info we've gotten earlier
+        this.changeCenterPos({x: selectedEntity.x, y: selectedEntity.y})
+      }
+    }
   }
 
   /**
