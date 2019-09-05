@@ -13,10 +13,8 @@ class EffectRect extends React.Component {
     const {
       effect,
       screenPos,
-      worldPos,
       width,
       height,
-      onClick
     } = this.props;
     let fill = "white";
     if (!effect) { // Empty
