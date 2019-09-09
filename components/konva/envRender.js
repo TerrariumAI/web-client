@@ -5,7 +5,8 @@ import EntityRect from "./entityRect";
 import { withStyles } from "@material-ui/styles";
 import EffectRect from "./effectRect";
 
-const ENV_MAX_POSITION = 100
+// TODO: This should not be hard coded!
+const ENV_MAX_POSITION = 100 // Max position an entity can be in, defined by the environment
 
 const STAGE_WIDTH = 300
 const CELLS_IN_VIEW = 16
@@ -19,14 +20,6 @@ const styles = theme => ({
 });
 
 class EnvRender extends React.Component {
-
-  state = {
-    targetPos: {
-      x: 0,
-      y: 0
-    }
-  }
-
   renderEnvironment() {
     const { entities, effects } = this.props;
     const envObjects = [];
@@ -75,8 +68,7 @@ class EnvRender extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const { targetPos } = this.state;
+    const { classes, targetPos } = this.props;
     return (
       <div 
         className={classes.root} 
@@ -93,8 +85,8 @@ class EnvRender extends React.Component {
             <Rect
               x={0}
               y={0}
-              width={STAGE_WIDTH}
-              height={STAGE_WIDTH}
+              width={ENV_MAX_POSITION * CELL_SIZE}
+              height={ENV_MAX_POSITION * CELL_SIZE}
               fill={"#32ff7e"}
             />
             {this.renderEnvironment()}

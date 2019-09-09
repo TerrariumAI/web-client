@@ -1,5 +1,8 @@
-import { Typography } from "@material-ui/core";
-import EnvRender from "../components/konva/envRender";
+import { Typography, withStyles } from "@material-ui/core";
+import EnvObservation from "../components/envObservation";
+import { isLoaded, isEmpty, withFirestore, withFirebase } from "react-redux-firebase";
+import { compose } from "redux";
+import { connect } from "react-redux";
 
 const ENTITIES = {
   test_id: {x: 1, y: 1}
@@ -10,15 +13,21 @@ const EFFECTS = {
 
 class MyApp extends React.Component {
   render() {
-    return (
-      <Typography>
-        <EnvRender 
-          entities={ENTITIES}
-          effects={EFFECTS}
-        />
-      </Typography>
-    );
+    const { auth } = this.props;
+    if (isLoaded(auth) && !isEmpty(auth)) {
+      return (
+        <EnvObservation />
+      );
+    } else {
+      return null
+    }
   }
 }
 
-export default MyApp;
+export default compose(
+  withFirebase, 
+  withFirestore,
+  connect(({ firestore, firebase: { auth } }, props) => ({
+    auth,
+  })),
+)(MyApp);
