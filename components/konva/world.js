@@ -6,7 +6,7 @@ import EntityRect from "./entityRect";
 import EffectRect from "./effectRect";
 var _ = require("lodash");
 
-const CELLS_IN_REGION = 16;
+const CELLS_IN_REGION = 10;
 
 const LEFT_KEY_CODE = 37;
 const RIGHT_KEY_CODE = 39;
@@ -120,8 +120,9 @@ class World extends React.Component {
     const { region } = this.state;
     const { onRegionChange } = this.props;
     const newRegion = this.getRegionForPos(newCenterPos);
+    console.log("New Region: ", newRegion);
     this.setState({ centerPos: newCenterPos });
-    if (!_.isEqual(region, newRegion)) {
+    if (region.x != newRegion.x && region.y != newRegion.y) { // regions aren't equal
       if (onRegionChange) {
         onRegionChange(newRegion);
         this.setState({ region: newRegion });

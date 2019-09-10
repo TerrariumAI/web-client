@@ -21,16 +21,25 @@ const styles = theme => ({
 
 class EnvRender extends React.Component {
   renderEnvironment() {
-    const { entities, effects } = this.props;
+    const { entities, effects, targetPos } = this.props;
     const envObjects = [];
+    // Calc min and max we can see so we know whether or not to render
+    const min = {x: targetPos.x - CELLS_IN_VIEW/2, y: targetPos.y - CELLS_IN_VIEW/2}
+    const max = {x: targetPos.x + CELLS_IN_VIEW/2, y: targetPos.y + CELLS_IN_VIEW/2}
     // Render entities
     if (entities) {
       Object.keys(entities).map(id => {
         const e = entities[id];
+        // Skip the entity if it's out of view
+        if (e.x < min.x || e.y < min.y || e.x > max.x || e.y > max.y) {
+          return null
+        }
+        // Get screen position of entity
         const screenPos = {
           x: e.x * CELL_SIZE,
           y: e.y * CELL_SIZE
         }
+        // Add entity to environment to render
         envObjects.push(
           <EntityRect
             key={id}
