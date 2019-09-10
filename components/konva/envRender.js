@@ -39,7 +39,7 @@ class EnvRender extends React.Component {
   
   renderEnvironment() {
     const { entities, effects, targetPos } = this.props;
-    const { stageWidth } = this.state;
+    const { stageWidth, selectedPos } = this.state;
     const cellSize = stageWidth/CELLS_IN_VIEW;
     const effectSize = cellSize / 2;
     const envObjects = [];
@@ -69,6 +69,7 @@ class EnvRender extends React.Component {
             width={cellSize}
             height={cellSize}
             onClick={this.onCellClick}
+            selected={selectedPos ? selectedPos.x == e.x && selectedPos.y == e.y : false}
           />
         )
       })

@@ -11,7 +11,7 @@ const RIGHT_KEY_CODE = 39;
 const UP_KEY_CODE = 38;
 const DOWN_KEY_CODE = 40;
 
-const DEFAULT_TARGET_POS = {x: 0, y: 0}
+const DEFAULT_TARGET_POS = {x: 8, y: 8}
 const CELLS_IN_REGION = 10;
 
 let unsubscribeAuthStateListener = null;
