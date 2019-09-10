@@ -34,6 +34,8 @@ const styles = theme => ({
   }
 });
 
+let listening = false
+
 class EnvObservation extends React.Component {
   state = {
     entities: {},
@@ -44,14 +46,6 @@ class EnvObservation extends React.Component {
     user: null,
   }
   regionSubs = {} // Object where we only care about keys, formatted like this {index: region}
-
-  listener = {
-    message: this.onPubnubMessage,
-    presence: function(presenceEvent) {
-        // handle presence
-    }
-  }
-  listening = false
 
   async componentDidMount() {
     const { firebase } = this.props;
@@ -67,10 +61,10 @@ class EnvObservation extends React.Component {
       });
     }
     // Add pubnub listener
-    if (!this.listening) {
+    if (!listening) {
       console.log("INFO: adding listener")
       pubnub.addListener(this.listener)
-      this.listening = true
+      listening = true
     }
     // Add key event listener
     document.addEventListener("keydown", this._handleKeyDown);
@@ -78,7 +72,6 @@ class EnvObservation extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const { targetEntity } = nextProps;
-    console.log(targetEntity)
     if (targetEntity) {
       this.changeTargetPos({x: targetEntity.x, y: targetEntity.y})
     }
@@ -92,7 +85,7 @@ class EnvObservation extends React.Component {
     document.removeEventListener("keydown", this._handleKeyDown);
     // Remove pubnub listener
     pubnub.removeListener(this.listener) 
-    this.listening = false;
+    listening = false;
     console.log("INFO: removing pubnub listener")
   }
 
@@ -130,6 +123,7 @@ class EnvObservation extends React.Component {
   };
 
   subscribeToRegion(regionIndex) {
+    console.log("SUB TO: ", regionIndex)
     // Subscribe to the region
     pubnub.subscribe({
       channels: [regionIndex] 
@@ -138,7 +132,7 @@ class EnvObservation extends React.Component {
 
   unsubscribeFromRegion(regionIndex) {
     // Unsubscribe from the region
-    pubnub.subscribe({
+    pubnub.unsubscribe({
       channels: [regionIndex] 
     });
   }
@@ -163,7 +157,8 @@ class EnvObservation extends React.Component {
     this.setState(newState);
   }
 
-  onPubnubMessage = ({message: {Events}, channel}) => {
+  onMessage = ({message: {Events}, channel}) => {
+    console.log("got pubnub message: ", Events, channel)
     let newState = this.state
     Events.forEach(({eventName,entityData}) => {
       var e = JSON.parse(entityData)
@@ -171,38 +166,31 @@ class EnvObservation extends React.Component {
       e.y = e.y || 0
       if (eventName == "createEntity") {
         newState = update(newState, {
-            posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
+          entities: {[e.id]: {$set: e}}
         });
       } else if (eventName == "updateEntity") {
-        // Convert last pos to index
-        lastPos = `${lastPos.x}.${lastPos.y}`
-        const curPos = `${e.x}.${e.y}`;
-        if (lastPos == curPos) { // If the entity didn't move
-          // Update the state, but don't worry about his last position
-          newState = update(newState, {
-            posEntityMap: {[curPos]: {$set: e} }
-          });
-        } else { // If the entity did move
-          // Update the state AND delete the data for the entities last position
-          newState = update(newState, {
-            posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
-          });
-        }
+        newState = update(newState, {
+          entities: {[e.id]: {$set: e} }
+        });
       } else if (eventName == "deleteEntity") {
         newState = update(this.state, {
-          posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+          entities: {[e.id]: {$set: undefined}}
         });
       } else if (eventName == "createEffect") {
         newState = update(newState, {
-            posEffectMap: {[`${e.x}.${e.y}`]: {$set: e}}
+          effects: {[e.id]: {$set: e}}
         });
       } else if (eventName == "deleteEffect") {
         newState = update(this.state, {
-          posEffectMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+          effects: {[e.id]: {$set: undefined}}
         });
       }
     })
     this.setState(newState);
+  }
+
+  listener = {
+    message: this.onMessage,
   }
 
   changeTargetPos(newPos) {
