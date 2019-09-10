@@ -1,7 +1,7 @@
 import EnvRender from "../components/konva/envRender";
 import { withFirebase, withFirestore } from "react-redux-firebase";
 import { compose } from "redux";
-import { withStyles } from "@material-ui/core";
+import { withStyles, Grid, CircularProgress } from "@material-ui/core";
 import PubNub from "pubnub";
 import { GetEntitiesInRegion } from "../lib/environmentApi";
 import update from 'immutability-helper';
@@ -122,7 +122,6 @@ class EnvObservation extends React.Component {
   };
 
   subscribeToRegion(regionIndex) {
-    console.log("TODO: SUB TO REGION: ", regionIndex)
     // Subscribe to the region
     pubnub.subscribe({
       channels: [regionIndex] 
@@ -130,7 +129,6 @@ class EnvObservation extends React.Component {
   }
 
   unsubscribeFromRegion(regionIndex) {
-    console.log("TODO: UNSUB FROM REGION: ", regionIndex)
     // Unsubscribe from the region
     pubnub.subscribe({
       channels: [regionIndex] 
@@ -281,8 +279,25 @@ class EnvObservation extends React.Component {
 
   render() {
     const {entities, effects, targetPos} = this.state;
+    const {classes} = this.props;
     return (
-      <EnvRender entities={entities} effects={effects} targetPos={targetPos} />
+      <div className={classes.obsPanel}>
+        <Grid
+          container
+          spacing={0}
+          align="center"
+          justify="center"
+          direction="column"
+          className={classes.comingSoonContainer}
+        >
+          <Grid item className={classes.worldContainer}>
+            {Object.keys(entities).length == 0 ? <CircularProgress /> :
+            <EnvRender entities={entities} effects={effects} targetPos={targetPos} />
+          }
+          </Grid>
+        </Grid>
+      </div>
+      
     )
   }
 }

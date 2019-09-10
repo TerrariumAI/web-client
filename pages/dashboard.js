@@ -6,7 +6,7 @@ import { compose } from "redux";
 import RemoteModelsList from "../components/remoteModelsList";
 import NewRemoteModelDialog from "../components/newRemoteModelDialog";
 import { CreateEntity, DeleteEntity, SpawnFood } from "../lib/environmentApi";
-import SimpleEnvObs from "../components/simpleEnvObs";
+import EnvObservation from "../components/envObservation";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
 import TopEntitiesTable from "../components/topEntitiesTable";
@@ -209,7 +209,7 @@ let Dashboard = props => {
 
         <Grid container>
           <Grid item className={classes.env}>
-            <SimpleEnvObs selectedEntity={selectedEntity} onCellClick={onCellClick} />
+            <EnvObservation selectedEntity={selectedEntity} onCellClick={onCellClick} />
           </Grid>
           <Grid item>
             <SpawnEntity />

@@ -8,10 +8,8 @@ import EffectRect from "./effectRect";
 // TODO: This should not be hard coded!
 const ENV_MAX_POSITION = 100 // Max position an entity can be in, defined by the environment
 
-const STAGE_WIDTH = 300
+const DEFAULT_STAGE_WIDTH = 300
 const CELLS_IN_VIEW = 16
-const CELL_SIZE = STAGE_WIDTH/CELLS_IN_VIEW
-const EFFECT_SIZE = CELL_SIZE/2
 
 const styles = theme => ({
   root: {
@@ -20,8 +18,30 @@ const styles = theme => ({
 });
 
 class EnvRender extends React.Component {
+  state = {
+    stageWidth: DEFAULT_STAGE_WIDTH,
+  }
+  componentDidMount() {
+    // Get the size of the container and set the canvas size
+    this.checkSize();
+    // TODO: here we should add listener for "container" resize
+    // take a look here https://developers.google.com/web/updates/2016/10/resizeobserver
+    // for simplicity I will just listen window resize
+    window.addEventListener("resize", this.checkSize);
+    // Refresh every second
+    this.interval = setInterval(() => this.setState(this.state), 1000);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.checkSize);
+    clearInterval(this.interval);
+  }
+  
   renderEnvironment() {
     const { entities, effects, targetPos } = this.props;
+    const { stageWidth } = this.state;
+    const cellSize = stageWidth/CELLS_IN_VIEW;
+    const effectSize = cellSize / 2;
     const envObjects = [];
     // Calc min and max we can see so we know whether or not to render
     const min = {x: targetPos.x - CELLS_IN_VIEW/2, y: targetPos.y - CELLS_IN_VIEW/2}
@@ -36,8 +56,8 @@ class EnvRender extends React.Component {
         }
         // Get screen position of entity
         const screenPos = {
-          x: e.x * CELL_SIZE,
-          y: e.y * CELL_SIZE
+          x: e.x * cellSize,
+          y: e.y * cellSize
         }
         // Add entity to environment to render
         envObjects.push(
@@ -46,8 +66,8 @@ class EnvRender extends React.Component {
             entity={e}
             screenPos={screenPos}
             worldPos={{x: e.x, y: e.y}}
-            width={CELL_SIZE}
-            height={CELL_SIZE}
+            width={cellSize}
+            height={cellSize}
           />
         )
       })
@@ -57,8 +77,8 @@ class EnvRender extends React.Component {
       Object.keys(effects).map(id => {
         const eff = effects[id];
         const screenPos = {
-          x: eff.x * CELL_SIZE,
-          y: eff.y * CELL_SIZE
+          x: eff.x * cellSize,
+          y: eff.y * cellSize
         }
         envObjects.push(
           <EffectRect
@@ -66,8 +86,8 @@ class EnvRender extends React.Component {
             effect={eff}
             screenPos={screenPos}
             worldPos={{x: eff.x, y: eff.y}}
-            width={EFFECT_SIZE}
-            height={EFFECT_SIZE}
+            width={effectSize}
+            height={effectSize}
           />
         )
       })
@@ -76,8 +96,17 @@ class EnvRender extends React.Component {
     return envObjects
   }
 
+  checkSize = () => {
+    const width = this.container.offsetWidth;
+    this.setState({
+      stageWidth: width,
+    });
+  };
+
   render() {
     const { classes, targetPos } = this.props;
+    const { stageWidth } = this.state;
+    const cellSize = stageWidth/CELLS_IN_VIEW;
     return (
       <div 
         className={classes.root} 
@@ -85,17 +114,17 @@ class EnvRender extends React.Component {
           this.container = node;
         }}
       >
-        <Stage width={STAGE_WIDTH} height={STAGE_WIDTH}>
+        <Stage width={stageWidth} height={stageWidth}>
           <Layer 
             scaleY={-1} 
-            offsetX={targetPos.x * CELL_SIZE - STAGE_WIDTH/2} 
-            offsetY={STAGE_WIDTH/2 + (targetPos.y * CELL_SIZE)}
+            offsetX={targetPos.x * cellSize - stageWidth/2} 
+            offsetY={stageWidth/2 + (targetPos.y * cellSize)}
           >
             <Rect
               x={0}
               y={0}
-              width={ENV_MAX_POSITION * CELL_SIZE}
-              height={ENV_MAX_POSITION * CELL_SIZE}
+              width={ENV_MAX_POSITION * cellSize}
+              height={ENV_MAX_POSITION * cellSize}
               fill={"#32ff7e"}
             />
             {this.renderEnvironment()}
