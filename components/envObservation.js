@@ -76,6 +76,14 @@ class EnvObservation extends React.Component {
     document.addEventListener("keydown", this._handleKeyDown);
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { targetEntity } = nextProps;
+    console.log(targetEntity)
+    if (targetEntity) {
+      this.changeTargetPos({x: targetEntity.x, y: targetEntity.y})
+    }
+  }
+
   componentWillUnmount() {
     if (unsubscribeAuthStateListener) {
       unsubscribeAuthStateListener();

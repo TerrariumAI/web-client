@@ -209,7 +209,7 @@ let Dashboard = props => {
 
         <Grid container>
           <Grid item className={classes.env}>
-            <EnvObservation selectedEntity={selectedEntity} onCellClick={onCellClick} />
+            <EnvObservation targetEntity={selectedEntity} onCellClick={onCellClick} />
           </Grid>
           <Grid item>
             <SpawnEntity />
