@@ -68,6 +68,7 @@ class EnvRender extends React.Component {
             worldPos={{x: e.x, y: e.y}}
             width={cellSize}
             height={cellSize}
+            onClick={this.onCellClick}
           />
         )
       })
@@ -95,6 +96,17 @@ class EnvRender extends React.Component {
 
     return envObjects
   }
+
+  // When a cell is clicked
+  onCellClick = (worldPos, entity) => {
+    const { onCellClick } = this.props;
+    this.setState({
+      selectedPos: worldPos
+    });
+    if (onCellClick) {
+      onCellClick(worldPos, entity);
+    }
+  };
 
   checkSize = () => {
     const width = this.container.offsetWidth;

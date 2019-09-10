@@ -277,6 +277,12 @@ class EnvObservation extends React.Component {
     }
   };
 
+  onCellClick = (position, entity) => {
+    if (this.props.onCellClick) {
+      this.props.onCellClick(position, entity)
+    }
+  };
+
   render() {
     const {entities, effects, targetPos} = this.state;
     const {classes} = this.props;
@@ -292,7 +298,7 @@ class EnvObservation extends React.Component {
         >
           <Grid item className={classes.worldContainer}>
             {Object.keys(entities).length == 0 ? <CircularProgress /> :
-            <EnvRender entities={entities} effects={effects} targetPos={targetPos} />
+            <EnvRender entities={entities} effects={effects} targetPos={targetPos} onCellClick={this.onCellClick} />
           }
           </Grid>
         </Grid>
