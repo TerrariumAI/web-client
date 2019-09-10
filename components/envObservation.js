@@ -2,6 +2,7 @@ import EnvRender from "../components/konva/envRender";
 import { withFirebase, withFirestore } from "react-redux-firebase";
 import { compose } from "redux";
 import { withStyles } from "@material-ui/core";
+import PubNub from "pubnub";
 import { GetEntitiesInRegion } from "../lib/environmentApi";
 import update from 'immutability-helper';
 
@@ -14,6 +15,10 @@ const DEFAULT_TARGET_POS = {x: 0, y: 0}
 const CELLS_IN_REGION = 10;
 
 let unsubscribeAuthStateListener = null;
+
+const pubnub = new PubNub({
+  subscribeKey : 'sub-c-b4ba4e28-a647-11e9-ad2c-6ad2737329fc'
+})
 
 const styles = theme => ({
   obsPanel: {
@@ -40,6 +45,14 @@ class EnvObservation extends React.Component {
   }
   regionSubs = {} // Object where we only care about keys, formatted like this {index: region}
 
+  listener = {
+    message: this.onPubnubMessage,
+    presence: function(presenceEvent) {
+        // handle presence
+    }
+  }
+  listening = false
+
   async componentDidMount() {
     const { firebase } = this.props;
     // Get id token
@@ -53,6 +66,12 @@ class EnvObservation extends React.Component {
         }
       });
     }
+    // Add pubnub listener
+    if (!this.listening) {
+      console.log("INFO: adding listener")
+      pubnub.addListener(this.listener)
+      this.listening = true
+    }
     // Add key event listener
     document.addEventListener("keydown", this._handleKeyDown);
   }
@@ -63,10 +82,14 @@ class EnvObservation extends React.Component {
     }
     // Unbind event listener
     document.removeEventListener("keydown", this._handleKeyDown);
+    // Remove pubnub listener
+    pubnub.removeListener(this.listener) 
+    this.listening = false;
+    console.log("INFO: removing pubnub listener")
   }
 
   getIndexForPosition(p) {
-    return `${p.x}.${p.y}`
+    return `${p.x}-${p.y}`
   }
 
   // Returns the region that a given position is in
@@ -99,11 +122,19 @@ class EnvObservation extends React.Component {
   };
 
   subscribeToRegion(regionIndex) {
-    console.log("TODO: SUB TO REGION")
+    console.log("TODO: SUB TO REGION: ", regionIndex)
+    // Subscribe to the region
+    pubnub.subscribe({
+      channels: [regionIndex] 
+    });
   }
 
   unsubscribeFromRegion(regionIndex) {
-    console.log("TODO: UNSUB FROM REGION")
+    console.log("TODO: UNSUB FROM REGION: ", regionIndex)
+    // Unsubscribe from the region
+    pubnub.subscribe({
+      channels: [regionIndex] 
+    });
   }
 
   onReceiveRegionState = ({data: {entities}}) => {
@@ -120,9 +151,51 @@ class EnvObservation extends React.Component {
       e.y = e.y || 0
       // update state
       newState = update(newState, {
-        entities: {[e.id]: {$set: {x: e.x, y: e.y}}},
+        entities: {[e.id]: {$set: {...e}}},
       });
     }
+    this.setState(newState);
+  }
+
+  onPubnubMessage = ({message: {Events}, channel}) => {
+    let newState = this.state
+    Events.forEach(({eventName,entityData}) => {
+      var e = JSON.parse(entityData)
+      e.x = e.x || 0
+      e.y = e.y || 0
+      if (eventName == "createEntity") {
+        newState = update(newState, {
+            posEntityMap: {[`${e.x}.${e.y}`]: {$set: e}}
+        });
+      } else if (eventName == "updateEntity") {
+        // Convert last pos to index
+        lastPos = `${lastPos.x}.${lastPos.y}`
+        const curPos = `${e.x}.${e.y}`;
+        if (lastPos == curPos) { // If the entity didn't move
+          // Update the state, but don't worry about his last position
+          newState = update(newState, {
+            posEntityMap: {[curPos]: {$set: e} }
+          });
+        } else { // If the entity did move
+          // Update the state AND delete the data for the entities last position
+          newState = update(newState, {
+            posEntityMap: {[curPos]: {$set: e}, [lastPos]: {$set: undefined} }
+          });
+        }
+      } else if (eventName == "deleteEntity") {
+        newState = update(this.state, {
+          posEntityMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+        });
+      } else if (eventName == "createEffect") {
+        newState = update(newState, {
+            posEffectMap: {[`${e.x}.${e.y}`]: {$set: e}}
+        });
+      } else if (eventName == "deleteEffect") {
+        newState = update(this.state, {
+          posEffectMap: {[`${e.x}.${e.y}`]: {$set: undefined}}
+        });
+      }
+    })
     this.setState(newState);
   }
 
@@ -144,19 +217,27 @@ class EnvObservation extends React.Component {
     let newRegionSubs = {}
     // Get current region, and all regions around it
     const allRegions = this.getRegionsAroundInclusive(newRegion);
-    // Get state and subscribe to all new regions
+    // For any new regions
+    // Get state and subscribe
     allRegions.map(region => {
       const regionIndex = this.getIndexForPosition(region)
-      if (!this.regionSubs[this.getIndexForPosition(region)]) {
-        // Put the region in the sub list
-        newRegionSubs[regionIndex] = region
+      // Put the region in the sub list
+      newRegionSubs[regionIndex] = region
+      if (this.regionSubs[regionIndex] == null) { // If this new region isn't already in sub list
         // Get region state ASYNCHRONOUSLY
         GetEntitiesInRegion(idToken, region.x, region.y).then(this.onReceiveRegionState)
         // Subscribe to region
         this.subscribeToRegion(regionIndex)
       }
     })
+    // For any regions we aren't looking at anymore, unsub
+    Object.keys(this.regionSubs).map(regionIndex => {
+      if (newRegionSubs[regionIndex] == null) {
+        this.unsubscribeFromRegion(regionIndex);
+      }
+    })
     // Set current region in state
+    this.regionSubs = newRegionSubs
     this.setState({currentRegion: newRegion})
   }
 
