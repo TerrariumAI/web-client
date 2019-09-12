@@ -6,9 +6,10 @@ import { compose } from "redux";
 import RemoteModelsList from "../components/remoteModelsList";
 import NewRemoteModelDialog from "../components/newRemoteModelDialog";
 import { CreateEntity, DeleteEntity, SpawnFood } from "../lib/environmentApi";
-import SimpleEnvObs from "../components/simpleEnvObs";
+import EnvObservation from "../components/envObservation";
 import { withFirebase, withFirestore, firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
 import { connect } from "react-redux";
+import TopEntitiesTable from "../components/topEntitiesTable";
 import Router from 'next/router'
 
 const useStyles = makeStyles(theme => ({
@@ -30,6 +31,7 @@ let Dashboard = props => {
 
   const [selectedCell, setSelectedCell] = React.useState({});
   const [selectedRMId, setSelectedRMId] = React.useState("");
+  const [selectedEntity, setSelectedEntity] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
   if (isLoaded(props.auth) && isEmpty(props.auth)) {
@@ -207,12 +209,21 @@ let Dashboard = props => {
 
         <Grid container>
           <Grid item className={classes.env}>
-            <SimpleEnvObs onCellClick={onCellClick} />
+            <EnvObservation targetEntity={selectedEntity} onCellClick={onCellClick} />
           </Grid>
           <Grid item>
             <SpawnEntity />
             <br />
             <EntityInspector />
+          </Grid>
+        </Grid>
+
+        <br /> <br />
+
+        <Grid container>
+          <Grid item>
+            <Typography variant="h3">Oldest Agents</Typography>
+            <TopEntitiesTable onSelectEntity={(entity) => setSelectedEntity(entity)} />
           </Grid>
         </Grid>
 

@@ -36,7 +36,6 @@
     "heroku-ssl-redirect": "0.0.4",
     "immutability-helper": "^3.0.1",
     "konva": "^3.4.0",
-    "lodash": "^4.17.14",
     "next": "^8.1.0",
     "pubnub": "^4.24.3",
     "react": "^16.8.6",

@@ -15,7 +15,7 @@ import {
   CardActions
 } from "@material-ui/core";
 import withNavbar from "../src/withNavbar";
-import SimpleEnvObs from "../components/simpleEnvObs";
+import EnvObservation from "../components/envObservation";
 import { makeStyles } from "@material-ui/core/styles";
 
 
@@ -96,7 +96,7 @@ const Index = ({ users }) => {
           </Typography>
         </Grid>
 
-        <SimpleEnvObs />
+        <EnvObservation />
       </Grid>
 
       <Container className={classes.infoCardGrid} maxWidth="md">

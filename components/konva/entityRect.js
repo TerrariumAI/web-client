@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
-import { Stage, Layer, Rect, Text } from "react-konva";
-import Konva from "konva";
+import { Rect } from "react-konva";
 import { CLASS_IDS } from "../../lib/environmentApi";
 class EntityRect extends React.Component {
   handleClick = () => {
