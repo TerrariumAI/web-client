@@ -50,6 +50,9 @@ class EnvRender extends React.Component {
     if (entities) {
       Object.keys(entities).map(id => {
         const e = entities[id];
+        if (!e) { // Removing an entity will make it undefined but won't remove the id
+          return null
+        }
         // Skip the entity if it's out of view
         if (e.x < min.x || e.y < min.y || e.x > max.x || e.y > max.y) {
           return null

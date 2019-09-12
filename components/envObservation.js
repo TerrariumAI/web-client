@@ -123,7 +123,6 @@ class EnvObservation extends React.Component {
   };
 
   subscribeToRegion(regionIndex) {
-    console.log("SUB TO: ", regionIndex)
     // Subscribe to the region
     pubnub.subscribe({
       channels: [regionIndex] 
@@ -158,7 +157,6 @@ class EnvObservation extends React.Component {
   }
 
   onMessage = ({message: {Events}, channel}) => {
-    console.log("got pubnub message: ", Events, channel)
     let newState = this.state
     Events.forEach(({eventName,entityData}) => {
       var e = JSON.parse(entityData)
@@ -177,12 +175,13 @@ class EnvObservation extends React.Component {
           entities: {[e.id]: {$set: undefined}}
         });
       } else if (eventName == "createEffect") {
+        // Effects do NOT have an id so we access them by position
         newState = update(newState, {
-          effects: {[e.id]: {$set: e}}
+          effects: {[`${e.x}-${e.y}`]: {$set: e}}
         });
       } else if (eventName == "deleteEffect") {
         newState = update(this.state, {
-          effects: {[e.id]: {$set: undefined}}
+          effects: {[`${e.x}-${e.y}`]: {$set: undefined}}
         });
       }
     })
