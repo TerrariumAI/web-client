@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Image } from "react-konva";
 import { Typography } from "@material-ui/core";
 import EntityRect from "./entityRect";
 import { withStyles } from "@material-ui/styles";
+import useImage from 'use-image';
 import EffectRect from "./effectRect";
 
 // TODO: This should not be hard coded!
@@ -16,6 +17,17 @@ const styles = theme => ({
     display: "flex"
   }
 });
+
+const BackgroundRect = props => {
+  const [grassImg] = useImage('/static/grass.png');
+  return (
+    <Rect
+      {...props}
+      // fill={"#32ff7e"}
+      fillPatternImage={grassImg}
+    />
+  )
+}
 
 class EnvRender extends React.Component {
   state = {
@@ -136,12 +148,18 @@ class EnvRender extends React.Component {
             offsetX={targetPos.x * cellSize - stageWidth/2} 
             offsetY={stageWidth/2 + (targetPos.y * cellSize)}
           >
-            <Rect
+            {/* <GrassImage 
               x={0}
               y={0}
               width={ENV_MAX_POSITION * cellSize}
               height={ENV_MAX_POSITION * cellSize}
-              fill={"#32ff7e"}
+            /> */}
+            <BackgroundRect
+              x={0}
+              y={0}
+              width={ENV_MAX_POSITION * cellSize}
+              height={ENV_MAX_POSITION * cellSize}
+              fillPatternScaleX={2}
             />
             {this.renderEnvironment()}
           </Layer>

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Rect } from "react-konva";
 import { CLASS_IDS } from "../../lib/environmentApi";
+
 class EntityRect extends React.Component {
   handleClick = () => {
     this.setState({
