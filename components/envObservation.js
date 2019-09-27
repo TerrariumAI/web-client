@@ -66,6 +66,17 @@ class EnvObservation extends React.Component {
       pubnub.addListener(this.listener)
       listening = true
     }
+    // Invoke a target position change (data pull)
+    const user = firebase.auth().currentUser;
+    if (user) {
+      user.getIdToken(false).then(idToken => {
+        this.setState({idToken, user})
+        this.changeTargetPos(DEFAULT_TARGET_POS)
+      }).catch(function(error) {
+        console.log("ERROR: ", error)
+      });
+    }
+    
     // Add key event listener
     document.addEventListener("keydown", this._handleKeyDown);
   }
