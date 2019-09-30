@@ -81,6 +81,9 @@ class EnvRender extends React.Component {
     if (effects) {
       Object.keys(effects).map(id => {
         const eff = effects[id];
+        if (!eff) { // Removing an effect will make it undefined but won't remove the id
+          return null
+        }
         const screenPos = {
           x: eff.x * cellSize,
           y: eff.y * cellSize
