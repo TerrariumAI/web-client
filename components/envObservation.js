@@ -84,7 +84,8 @@ class EnvObservation extends React.Component {
   componentWillReceiveProps(nextProps) {
     const { targetEntity } = nextProps;
     if (targetEntity) {
-      this.changeTargetPos({x: targetEntity.x, y: targetEntity.y})
+      // We || 0 because if x is 0 it is not sent in the packet and this is undefined
+      this.changeTargetPos({x: targetEntity.x || 0, y: targetEntity.y || 0})
     }
   }
 
@@ -182,8 +183,9 @@ class EnvObservation extends React.Component {
           entities: {[e.id]: {$set: e} }
         });
       } else if (eventName == "deleteEntity") {
+        const {[e.id]: value, ...newEntities} = newState.entities;
         newState = update(this.state, {
-          entities: {[e.id]: {$set: undefined}}
+          entities: newEntities,
         });
       } else if (eventName == "createEffect") {
         // Effects do NOT have an id so we access them by position
@@ -191,8 +193,9 @@ class EnvObservation extends React.Component {
           effects: {[`${e.x}-${e.y}`]: {$set: e}}
         });
       } else if (eventName == "deleteEffect") {
+        const {[e.id]: value, ...newEffects} = newState.effects;
         newState = update(this.state, {
-          effects: {[`${e.x}-${e.y}`]: {$set: undefined}}
+          effects: newEffects,
         });
       }
     })
@@ -205,6 +208,7 @@ class EnvObservation extends React.Component {
 
   changeTargetPos(newPos) {
     const { currentRegion } = this.state;
+    console.log("INFO: changing target pos to ", newPos)
     // TODO: limit
     // Check if we have changed regions
     const region = this.getRegionForPos(newPos);
