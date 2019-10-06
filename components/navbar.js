@@ -67,6 +67,10 @@ let Navbar = ({ firebase, auth }) => {
         </Link>
         <div className={classes.spacer}  />
 
+        <Link href="/privacypolicy">
+          <Button color="inherit">Privacy Policy</Button>
+        </Link>
+
         <Link href="/about">
           <Button color="inherit">About</Button>
         </Link>
